@@ -1,0 +1,125 @@
+@use '../Abstract' as *;
+
+body {
+  background: $background;
+  background-image: url('../assets/icons/Background.png');
+  background-position: pxToRem(80) pxToRem(-120);
+  background-repeat: no-repeat;
+}
+.section-main-login {
+  @include flex($justify: space-between);
+  @include set-size($w: 92.5%);
+  &__left {
+    .left-box {
+      @include set-size($w: pxToRem(384), $h: pxToRem(560));
+      position: relative;
+      left: 30.5%;
+      top: 8%;
+      &--bgr {
+        @include set-size($w: 100%, $h: 100%);
+        border-radius: pxToRem(36);
+        background-color: $rectangle;
+      }
+
+      &--image {
+        position: absolute;
+        z-index: 2;
+        top: pxToRem(-5);
+        left: 0;
+      }
+    }
+  }
+
+  &__right {
+    padding-top: pxToRem(156);
+    padding-right: pxToRem(15);
+    .right-box {
+      @include set-size($w: pxToRem(486));
+      @include flex($direction: column, $align: flex-start, $gap: pxToRem(40));
+      &--head {
+        @include font(
+          $font-size: pxToRem(64),
+          $font-weight: 600,
+          $line-height: 125%,
+          $color: $second-color
+        );
+        letter-spacing: -1.28px;
+      }
+
+      &--body {
+        @include flex(
+          $direction: column,
+          $align: flex-start,
+          $gap: pxToRem(16)
+        );
+        .input-login {
+          position: relative;
+        }
+        input {
+          @include set-size($w: pxToRem(436), $h: pxToRem(64));
+          @include font(
+            $font-size: pxToRem(17),
+            $font-weight: 500,
+            $color: $text-input
+          );
+          padding: pxToRem(12) pxToRem(16) pxToRem(12) pxToRem(56);
+          background-color: $input;
+          border: 1px solid $boder-input;
+          border-radius: pxToRem(10);
+        }
+        input::placeholder {
+          @include font(
+            $font-size: pxToRem(14),
+            $font-weight: 400,
+            $line-height: 114%,
+            $color: $placeholder-input
+          );
+        }
+        img {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          left: pxToRem(16);
+        }
+        .icon-eye {
+          right: pxToRem(16);
+          left: unset;
+          cursor: pointer;
+        }
+      }
+      &--footer {
+        position: relative;
+        @include set-size($w: 100%);
+        p {
+          @include font(
+            $font-size: pxToRem(16),
+            $font-weight: 300,
+            $line-height: 125%,
+            $color: $second-color
+          );
+          span {
+            color: greenyellow;
+            font-style: italic;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+
+  button {
+    @include set-size($w: pxToRem(436), $h: pxToRem(56));
+    @include font(
+      $font-size: pxToRem(16),
+      $font-weight: 400,
+      $color: $text-button
+    );
+    background-color: $first-button;
+    border-radius: 12px;
+    border: 2px solid $first-button;
+    cursor: pointer;
+  }
+  button:hover {
+    transform: scale(1.01);
+  }
+}

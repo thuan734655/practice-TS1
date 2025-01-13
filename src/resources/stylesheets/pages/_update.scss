@@ -1,0 +1,120 @@
+@use '../Abstract/' as *;
+
+.section-main-update {
+  &__container {
+    &--form-update {
+      .container {
+        @include flex($direction: column, $gap: pxToRem(20));
+        margin-top: pxToRem(40);
+        h2 {
+          @include font(
+            $font-size: pxToRem(32),
+            $font-weight: 600,
+            $line-height: 125%,
+            $color: $ninth-color
+          );
+          margin: 0 auto;
+        }
+        .form-update {
+          form {
+            @include flex($justify: space-between, $wrap: wrap);
+            @include set-size($w: 80%);
+            margin: 0 auto;
+            position: relative;
+            .form-group {
+              @include flex($direction: column);
+              label {
+                @include font(
+                  $font-size: pxToRem(16),
+                  $font-weight: 600,
+                  $line-height: 125%,
+                  $color: $ninth-color
+                );
+              }
+              input,
+              textarea {
+                @include set-size($w: pxToRem(250), $h: pxToRem(40));
+                @include font(
+                  $font-size: pxToRem(16),
+                  $font-weight: 600,
+                  $line-height: 125%,
+                  $color: $ninth-color
+                );
+                border-radius: pxToRem(10);
+                background-color: rgba(120, 117, 117, 0);
+                border: 2px solid $boder-input;
+              }
+              input [name='background'],
+              input[name='avatar'] {
+                @include set-size($h: unset);
+              }
+            }
+            button {
+              @include font(
+                $font-size: pxToRem(16),
+                $font-weight: bold,
+                $color: $text-color
+              );
+              padding: pxToRem(10);
+              border-radius: pxToRem(5);
+              background-color: $fifteenth-color;
+              border: none;
+              cursor: pointer;
+              position: absolute;
+              top: 120%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              transition: background-color 0.3s ease;
+
+              &:hover {
+                background-color: darken($fifteenth-color, 10%);
+              }
+            }
+          }
+        }
+      }
+    }
+    &--box-img {
+      @include flex($direction: column, $gap: pxToRem(30));
+      margin-top: pxToRem(100);
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+      .box-img--title {
+        @include font(
+          $font-size: pxToRem(32),
+          $font-weight: 600,
+          $line-height: 125%,
+          $color: $ninth-color
+        );
+        margin: 0 auto;
+      }
+      .box-img--images {
+        @include set-size($w: 50%);
+        @include flex($align: center, $justify: center, $gap: pxToRem(30));
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+
+        figure {
+          @include flex($direction: column);
+          @include set-size($w: 100%);
+          img {
+            @include set-size($w: 100%, $h: 100%);
+            object-fit: fill;
+            border-radius: pxToRem(10);
+          }
+          figcaption {
+            @include font(
+              $font-size: pxToRem(16),
+              $font-weight: 600,
+              $line-height: 125%,
+              $color: $text-color
+            );
+            margin: 0 auto;
+          }
+        }
+      }
+    }
+  }
+}

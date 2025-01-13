@@ -1,0 +1,41 @@
+@use '../Abstract' as *;
+
+.header-login {
+  @include set-size($w: 85%);
+  @include flex($align: center, $justify: space-between);
+  margin: 0 auto;
+  padding-top: pxToRem(16);
+  .logo img {
+    cursor: pointer;
+  }
+  &--nav {
+    @include set-size($w: pxToRem(521));
+    @include flex($gap: pxToRem(32), $align: center, $justify: right);
+    ul {
+      @include flex($gap: pxToRem(48));
+
+      li:hover {
+        transform: scale(1.05);
+        a {
+          color: rgb(255, 119, 0);
+          stroke: rgb(255, 119, 0);
+        }
+      }
+      a {
+        text-decoration: none;
+        @include font(
+          $font-family: Poppins,
+          $font-size: pxToRem(16),
+          $font-weight: 600,
+          $font-style: false,
+          $line-height: 150%,
+          $color: $first-color
+        );
+      }
+    }
+
+    figure {
+      @include flex($gap: pxToRem(6));
+    }
+  }
+}

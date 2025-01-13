@@ -1,0 +1,331 @@
+@use '../Abstract/' as *;
+
+.section-main {
+  &--title {
+    @include font(
+      $font-size: pxToRem(64),
+      $font-weight: 600,
+      $line-height: 125%,
+      $color: $third-color
+    );
+    letter-spacing: -1.28px;
+    padding-top: pxToRem(20);
+  }
+
+  &__box-search-and-mylist {
+    @include flex($justify: space-between, $align: center);
+    margin-top: pxToRem(36);
+    &--search {
+      @include flex($justify: space-between, $gap: pxToRem(10), $align: center);
+      .search-container {
+        @include flex($gap: pxToRem(16), $align: center);
+        position: relative;
+        left: pxToRem(2);
+        input {
+          @include set-size($w: pxToRem(344), $h: pxToRem(64));
+          @include font(
+            $font-size: pxToRem(18),
+            $font-weight: 600,
+            $line-height: 114%,
+            $color: $third-color
+          );
+          border-radius: 12px;
+          border: 1px solid $boder-input;
+          background: $background;
+          padding: pxToRem(12) pxToRem(16) pxToRem(12) pxToRem(50);
+        }
+        input::placeholder {
+          @include font(
+            $font-size: pxToRem(14),
+            $font-weight: 400,
+            $line-height: 114%,
+            $color: $placeholder-input
+          );
+        }
+        img {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          left: pxToRem(16);
+        }
+      }
+      button {
+        @include set-size($w: pxToRem(121), $h: pxToRem(56));
+        border-radius: 12px;
+        border: 2px solid $thirteenth-color;
+        background: $thirteenth-color;
+        cursor: pointer;
+        @include font(
+          $font-size: pxToRem(16),
+          $font-weight: 400,
+          $line-height: pxToRem(24),
+          $color: $text-color
+        );
+
+        &:hover {
+          transform: scale(1.03);
+          border: transparent;
+        }
+      }
+    }
+    &--mylist {
+      @include flex($justify: space-between, $direction: row-reverse);
+      @include set-size($w: 250);
+      p {
+        @include font(
+          $font-size: pxToRem(20),
+          $font-weight: 600,
+          $line-height: pxToRem(24),
+          $color: $first-color
+        );
+        letter-spacing: 0.48px;
+        text-decoration-line: underline;
+        cursor: pointer;
+
+        &:hover {
+          color: rgb(223, 133, 91);
+          transform: scale(1.02);
+        }
+      }
+    }
+  }
+  &--list-movies {
+    @include flex($gap: pxToRem(40), $justify: space-evenly);
+    flex-wrap: wrap;
+    padding: pxToRem(24) 0 pxToRem(44) 0;
+    .list-movies-container {
+      @include flex($direction: column, $align: flex-start, $gap: pxToRem(16));
+      @include set-size($w: pxToRem(282), $h: pxToRem(480));
+      border-radius: pxToRem(12);
+      background: $third-background-color;
+      padding: pxToRem(8) pxToRem(8) pxToRem(16) pxToRem(8);
+      backdrop-filter: blur(40px);
+      position: relative;
+      cursor: pointer;
+
+      &:hover {
+        transform: scale(1.02);
+      }
+
+      &--head {
+        position: absolute;
+        top: pxToRem(15);
+        left: pxToRem(15);
+        .head-box {
+          @include flex($gap: 4px, $align: center);
+          border-radius: 8px;
+          background: $second-background-color;
+          backdrop-filter: blur(4px);
+          padding: 4px 8px;
+          p {
+            @include font(
+              $font-size: pxToRem(16),
+              $font-weight: 400,
+              $line-height: pxToRem(24),
+              $color: $eighth-color
+            );
+          }
+        }
+      }
+      &--body {
+        @include set-size($w: 100%, $h: 100%);
+        img {
+          @include set-size($w: 100%, $h: 100%);
+          min-width: pxToRem(266);
+          min-height: pxToRem(416);
+          object-fit: cover;
+          border-radius: pxToRem(10);
+        }
+      }
+      &--footer {
+        p {
+          @include font(
+            $font-size: pxToRem(16),
+            $font-weight: 400,
+            $line-height: pxToRem(24),
+            $color: $ninth-color
+          );
+          letter-spacing: 0.32px;
+        }
+      }
+      .action-buttons {
+        @include flex($gap: pxToRem(10));
+        margin-top: pxToRem(10);
+        position: absolute;
+        top: pxToRem(40);
+        left: pxToRem(15);
+      }
+
+      .action-buttons button {
+        @include font(
+          $font-size: pxToRem(14),
+          $font-weight: 600,
+          $color: $text-color
+        );
+        padding: pxToRem(8) pxToRem(12);
+        border: none;
+        border-radius: pxToRem(4);
+        cursor: pointer;
+        background-color: #3c373793;
+        transition:
+          background-color 0.3s,
+          color 0.3s;
+      }
+      .btn-view:hover {
+        background-color: #2980b9;
+      }
+      .btn-edit {
+        // background-color: #f1c40f;
+
+        &:hover {
+          background-color: #d4ac0d;
+        }
+      }
+      .btn-delete {
+        // background-color: #e74c3c;
+
+        &:hover {
+          background-color: #c0392b;
+        }
+      }
+    }
+  }
+  .pagination-controls {
+    @include flex($justify: center, $gap: pxToRem(10));
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+
+    button {
+      @include font(
+        $font-size: pxToRem(16),
+        $font-weight: 400,
+        $line-height: pxToRem(24),
+        $color: $text-button
+      );
+      background-color: transparent;
+      border: transparent;
+      padding: 0 pxToRem(10);
+      cursor: pointer;
+    }
+    button:hover {
+      border: 1px solid #9c92f8;
+    }
+    .pagination-controls-button-active {
+      background-color: orangered !important;
+    }
+  }
+}
+
+// form add
+.form-add {
+  padding: pxToRem(20);
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+
+  .container {
+    background-color: $fourth-background-color;
+    border-radius: pxToRem(10);
+
+    h2 {
+      @include font(
+        $font-size: pxToRem(30),
+        $font-weight: 900,
+        $color: $third-color
+      );
+      text-align: center;
+      padding: pxToRem(30);
+    }
+
+    form {
+      @include flex($wrap: wrap, $gap: pxToRem(20), $justify: space-around);
+      .form-group {
+        margin-bottom: 20px;
+        @include set-size($w: 45%);
+        label {
+          @include font(
+            $font-size: pxToRem(16),
+            $font-weight: bold,
+            $line-height: pxToRem(24),
+            $color: #b0b0b0
+          );
+          margin-bottom: 5px;
+        }
+
+        input,
+        textarea {
+          @include set-size($w: 100%);
+          @include font(
+            $font-size: pxToRem(16),
+            $font-weight: bold,
+            $line-height: pxToRem(24),
+            $color: $text-color
+          );
+          padding: 12px;
+          border: 1px solid $border-color;
+          border-radius: 5px;
+          background-color: $input-background;
+          transition: border-color 0.3s;
+
+          &:focus {
+            border-color: $fourteenth-color;
+          }
+        }
+
+        textarea {
+          @include set-size($h: pxToRem(100));
+        }
+      }
+    }
+
+    .btn-add-video {
+      @include set-size($w: 60%);
+      @include font(
+        $font-size: pxToRem(16),
+        $font-weight: bold,
+        $color: $text-color
+      );
+      padding: pxToRem(12);
+      background-color: $fourteenth-color;
+      border: none;
+      border-radius: 5px;
+      margin: 0 auto;
+      position: relative;
+      bottom: pxToRem(20);
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+
+      &:hover {
+        background-color: darken($fourteenth-color, 10%);
+      }
+    }
+
+    .btn-cancel {
+      @include font(
+        $font-size: pxToRem(16),
+        $font-weight: bold,
+        $color: $text-color
+      );
+      position: absolute;
+      top: pxToRem(40);
+      right: pxToRem(40);
+      padding: pxToRem(10);
+      background-color: $fifteenth-color;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: darken($fifteenth-color, 10%);
+      }
+    }
+  }
+}
+
+.idUser-temp {
+  display: none;
+}

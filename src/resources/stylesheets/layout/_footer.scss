@@ -1,0 +1,102 @@
+@use '../Abstract' as *;
+
+footer {
+  @include flex($direction: column, $gap: pxToRem(50));
+  li:hover {
+    transform: scale(1.02);
+  }
+  .footer--head {
+    .head-container {
+      margin-left: pxToRem(10);
+      figure {
+        @include flex(
+          $direction: column,
+          $gap: pxToRem(10),
+          $justify: center,
+          $align: center
+        );
+        @include set-size($w: pxToRem(70), $h: pxToRem(60));
+        img {
+          @include set-size($w: 100%, $h: 100%);
+          object-fit: cover;
+        }
+
+        figcaption {
+          @include font(
+            $font-size: pxToRem(18),
+            $font-weight: 600,
+            $line-height: 66%,
+            $color: $ninth-color
+          );
+          letter-spacing: 0.72px;
+        }
+      }
+    }
+  }
+  .footer--body {
+    .body-container {
+      @include flex($justify: space-between);
+      &--listTerms {
+        @include flex(
+          $direction: column,
+          $align: flex-start,
+          $gap: pxToRem(20)
+        );
+      }
+      &--listFeedback {
+        @include flex(
+          $direction: column,
+          $align: flex-start,
+          $gap: pxToRem(20)
+        );
+      }
+      &--AboutUs {
+        @include flex(
+          $direction: column,
+          $align: flex-start,
+          $gap: pxToRem(20)
+        );
+
+        .AboutUs-icon {
+          @include flex($gap: pxToRem(10));
+          figure {
+            @include set-size($w: pxToRem(30), $h: pxToRem(30));
+
+            img {
+              @include set-size($w: 100%, $h: 100%);
+              object-fit: cover;
+            }
+          }
+        }
+      }
+      ul {
+        @include flex(
+          $direction: column,
+          $align: flex-start,
+          $gap: pxToRem(15)
+        );
+        li {
+          a {
+            @include font(
+              $font-size: pxToRem(14),
+              $font-weight: 600,
+              $line-height: 150%,
+              $color: $fourth-color
+            );
+            letter-spacing: 0.32px;
+            text-decoration: none;
+          }
+        }
+      }
+      p {
+        @include font(
+          $font-size: pxToRem(18),
+          $font-weight: 600,
+          $line-height: 100%,
+          $color: $second-color
+        );
+        letter-spacing: 0.72px;
+      }
+    }
+  }
+}

@@ -1,0 +1,101 @@
+@use '../Abstract/' as *;
+
+.section-main-dashboard {
+  &__container {
+    &--welcome {
+      @include flex($direction: column, $align: start, $gap: pxToRem(30));
+      @include set-size($w: 88%);
+      margin: pxToRem(80) auto;
+      p {
+        @include font(
+          $font-size: pxToRem(30),
+          $font-weight: 600,
+          $line-height: 116%,
+          $color: $third-color
+        );
+        letter-spacing: -0.96px;
+      }
+      .welcome--body {
+        @include flex(
+          $align: flex-start,
+          $gap: pxToRem(24),
+          $justify: space-between
+        );
+        @include set-size($w: 100%);
+        .welcome-body-box {
+          @include flex(
+            $direction: column,
+            $justify: center,
+            $align: center,
+            $gap: pxToRem(8)
+          );
+          border-radius: 12px;
+          opacity: 0.8;
+          background: var(--Grey-900, #121829);
+          padding: 40px 16px;
+          flex: 1 0 0;
+
+          .box-title {
+            @include font(
+              $font-size: pxToRem(32),
+              $font-weight: 600,
+              $line-height: 125%,
+              $color: $third-color
+            );
+            letter-spacing: -0.64px;
+          }
+          .box-value {
+            @include font(
+              $font-size: pxToRem(16),
+              $font-weight: 400,
+              $line-height: 150%,
+              $color: $seventh-color
+            );
+          }
+        }
+      }
+    }
+    &--Quick-links {
+      @include flex($direction: column, $align: start, $gap: pxToRem(30));
+      @include set-size($w: 88%);
+      margin: pxToRem(80) auto;
+      .Quick-links--text {
+        @include font(
+          $font-size: pxToRem(20),
+          $font-weight: 700,
+          $line-height: 120%,
+          $color: $eleventh-color
+        );
+        text-align: center;
+        margin: 0 auto;
+        letter-spacing: -0.3px;
+      }
+      .Quick-links--body {
+        @include flex($justify: space-between, $gap: pxToRem(24));
+        @include set-size($w: 100%);
+        button {
+          @include font(
+            $font-size: pxToRem(16),
+            $font-weight: 600,
+            $line-height: 150%,
+            $color: $thirteenth-color
+          );
+          @include flex($align: center, $justify: center, $gap: pxToRem(8));
+          @include set-size($w: 100%);
+          flex: 1 0 0;
+          letter-spacing: 0.32px;
+          border-radius: 12px;
+          border: none;
+          opacity: 0.8;
+          background: $fifth-bgr;
+          padding: 40px;
+          cursor: pointer;
+
+          &:hover {
+            transform: scale(1.02);
+          }
+        }
+      }
+    }
+  }
+}

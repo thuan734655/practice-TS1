@@ -1,0 +1,153 @@
+@use '../Abstract/' as *;
+
+.section-main {
+  &--title {
+    @include flex($direction: column);
+    p {
+      @include font(
+        $font-size: pxToRem(12),
+        $font-weight: 400,
+        $line-height: 133%,
+        $color: $tenth-color
+      );
+      letter-spacing: 0.1px;
+      cursor: pointer;
+    }
+    h3 {
+      @include font(
+        $font-size: pxToRem(64),
+        $font-weight: 600,
+        $line-height: 125%,
+        $color: $third-color
+      );
+      letter-spacing: -1.28px;
+    }
+  }
+  .quantity-videos {
+    @include font(
+      $font-size: pxToRem(16),
+      $font-weight: 400,
+      $line-height: 150%,
+      $color: $seventh-color
+    );
+    margin-top: pxToRem(48);
+  }
+
+  &--search {
+    .search-container {
+      @include flex($gap: pxToRem(16), $align: center);
+      position: relative;
+      margin-top: pxToRem(36);
+      left: pxToRem(2);
+      input {
+        @include set-size($w: pxToRem(344), $h: pxToRem(64));
+        @include font(
+          $font-size: pxToRem(18),
+          $font-weight: 600,
+          $line-height: 114%,
+          $color: $third-color
+        );
+        border-radius: 12px;
+        border: 1px solid $boder-input;
+        background: $background;
+        padding: pxToRem(12) pxToRem(16) pxToRem(12) pxToRem(50);
+      }
+      input::placeholder {
+        @include font(
+          $font-size: pxToRem(14),
+          $font-weight: 400,
+          $line-height: 114%,
+          $color: $placeholder-input
+        );
+      }
+      img {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        left: pxToRem(16);
+      }
+    }
+  }
+  &--list-movies {
+    @include flex($gap: pxToRem(30), $justify: space-evenly);
+    flex-wrap: wrap;
+    padding: pxToRem(24) 0 pxToRem(44) 0;
+    .list-movies-container {
+      @include flex($direction: column, $align: flex-start, $gap: pxToRem(16));
+      @include set-size($w: pxToRem(282), $h: pxToRem(480));
+      border-radius: pxToRem(12);
+      background: $third-background-color;
+      padding: pxToRem(8) pxToRem(8) pxToRem(16) pxToRem(8);
+      backdrop-filter: blur(40px);
+      position: relative;
+      cursor: pointer;
+
+      &:hover {
+        transform: scale(1.02);
+      }
+
+      &--head {
+        position: absolute;
+        top: pxToRem(15);
+        left: pxToRem(15);
+        .head-box {
+          @include flex($gap: 4px, $align: center);
+          border-radius: 8px;
+          background: $second-background-color;
+          backdrop-filter: blur(4px);
+          padding: 4px 8px;
+          p {
+            @include font(
+              $font-size: pxToRem(16),
+              $font-weight: 400,
+              $line-height: pxToRem(24),
+              $color: $eighth-color
+            );
+          }
+        }
+      }
+      &--footer {
+        p {
+          @include font(
+            $font-size: pxToRem(16),
+            $font-weight: 400,
+            $line-height: pxToRem(24),
+            $color: $ninth-color
+          );
+          letter-spacing: 0.32px;
+        }
+      }
+    }
+  }
+  .pagination-controls {
+    @include flex($justify: center, $gap: pxToRem(10));
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+
+    button {
+      @include font(
+        $font-size: pxToRem(16),
+        $font-weight: 400,
+        $line-height: pxToRem(24),
+        $color: $text-button
+      );
+      background-color: transparent;
+      border: transparent;
+      padding: 0 pxToRem(10);
+      cursor: pointer;
+    }
+    button:hover {
+      border: 1px solid #9c92f8;
+    }
+    .pagination-controls-button-active {
+      background-color: orangered !important;
+    }
+  }
+}
+
+// sub nav
+.button-active {
+  background-color: $first-button !important;
+  color: $sixth-color !important;
+}

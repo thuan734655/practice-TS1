@@ -1,0 +1,60 @@
+{
+  "movies": [
+    {
+      "id": 1,
+      "title": "Black Widow",
+      "posterUrl": "https://image.tmdb.org/t/p/w500/qAZ0pzat24kLdO3o8ejmbLxyOac.jpg",
+      "rating": 7.8,
+      "type": "movie"
+    },
+    {
+      "id": 2,
+      "title": "Shang-Chi",
+      "posterUrl": "https://image.tmdb.org/t/p/w500/1BIoJGKbXjdFDAqUEiA2VHqkK1Z.jpg",
+      "rating": 7.9,
+      "type": "movie"
+    },
+    {
+      "id": 3,
+      "title": "Loki",
+      "posterUrl": "https://image.tmdb.org/t/p/w500/kEl2t3OhXc3Zb9FBh1AuYzRTgZp.jpg",
+      "rating": 8.4,
+      "type": "tv"
+    },
+    {
+      "id": 4,
+      "title": "How I Met Your Mother",
+      "posterUrl": "https://image.tmdb.org/t/p/w500/b34jPzmB0wZy7EjUZoleXOl2RRI.jpg",
+      "rating": 8.3,
+      "type": "tv"
+    },
+    {
+      "id": 5,
+      "title": "Money Heist",
+      "posterUrl": "https://image.tmdb.org/t/p/w500/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg",
+      "rating": 8.3,
+      "type": "tv"
+    },
+    {
+      "id": 6,
+      "title": "Friends",
+      "posterUrl": "https://image.tmdb.org/t/p/w500/f496cm9enuEsZkSPzCwnTESEK5s.jpg",
+      "rating": 8.4,
+      "type": "tv"
+    },
+    {
+      "id": 7,
+      "title": "The Big Bang Theory",
+      "posterUrl": "https://image.tmdb.org/t/p/w500/ooBGRQBdbGzBxAVfExiO8r7kloA.jpg",
+      "rating": 8.1,
+      "type": "tv"
+    },
+    {
+      "id": 8,
+      "title": "Two And a Half Men",
+      "posterUrl": "https://image.tmdb.org/t/p/w500/dPqxgdPhTB7NSG5kOXcjyLhde6o.jpg",
+      "rating": 7.1,
+      "type": "tv"
+    }
+  ]
+}

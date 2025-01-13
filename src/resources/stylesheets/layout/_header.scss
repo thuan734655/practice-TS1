@@ -1,0 +1,39 @@
+@use '../Abstract' as *;
+
+header {
+  @include flex($align: center, $justify: space-between);
+  margin: 0 auto;
+  padding-top: pxToRem(16);
+  .logo {
+    cursor: pointer;
+  }
+  .header--nav {
+    @include flex($align: center, $gap: pxToRem(48));
+
+    ul {
+      @include flex($gap: pxToRem(32), $align: center);
+
+      li:hover {
+        transform: scale(1.05);
+        a,
+        path {
+          color: rgb(255, 119, 0);
+          stroke: rgb(255, 119, 0);
+        }
+      }
+
+      a {
+        text-decoration: none;
+        @include font(
+          $font-size: pxToRem(16),
+          $font-weight: 600,
+          $line-height: 150%,
+          $color: $first-color
+        );
+      }
+    }
+    figure {
+      @include flex($direction: row-reverse, $gap: pxToRem(8), $align: center);
+    }
+  }
+}

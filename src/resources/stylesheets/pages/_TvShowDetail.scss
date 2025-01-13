@@ -1,0 +1,149 @@
+@use '../Abstract' as *;
+
+body {
+  background-image: url('https://s3.cloudfly.vn/practice-js/images/Background.png');
+  background-color: $background;
+  background-position: pxToRem(80) pxToRem(-120);
+  background-repeat: no-repeat;
+}
+
+.section-main-tvshow {
+  &__container {
+    padding-top: pxToRem(40);
+    @include flex($direction: column, $gap: pxToRem(152));
+    &--top {
+      .top-container {
+        @include flex($direction: column);
+        position: relative;
+
+        figure {
+          @include set-size($w: 100%, $h: pxToRem(580));
+          img {
+            border-radius: pxToRem(20) !important;
+            @include set-size($w: 100%, $h: 100%);
+            overflow: hidden;
+          }
+        }
+      }
+      .top-detail {
+        border-radius: 24px;
+        background: $third-background-color;
+        backdrop-filter: blur(12px);
+        @include flex($direction: column, $align: flex-start, $gap: pxToRem(8));
+        @include set-size($w: pxToRem(560));
+        padding: 40px;
+        position: absolute;
+        bottom: pxToRem(-55);
+        left: pxToRem(78);
+
+        &-container {
+          &--nav {
+            @include flex($gap: pxToRem(8));
+            p {
+              @include font(
+                $font-size: pxToRem(12),
+                $font-weight: 400,
+                $line-height: 133%,
+                $color: $twelfth-color
+              );
+              cursor: pointer;
+              text-decoration: none;
+            }
+          }
+          &--name-movie {
+            @include font(
+              $font-size: pxToRem(32),
+              $font-weight: 600,
+              $line-height: 125%,
+              $color: $ninth-color
+            );
+            letter-spacing: -0.64px;
+          }
+        }
+      }
+    }
+    &--bottom {
+      padding-left: pxToRem(80);
+      .bottom-container {
+        @include flex($gap: pxToRem(80));
+        &--left {
+          figure {
+            @include set-size($w: 480, $h: pxToRem(720));
+            img {
+              border-radius: pxToRem(20) !important;
+              @include set-size($w: 100%, $h: 100%);
+              overflow: hidden;
+            }
+          }
+        }
+        &--right {
+          @include set-size($w: pxToRem(480));
+          @include flex($direction: column, $gap: pxToRem(24));
+          .right--head {
+            .head--title {
+              @include font(
+                $font-size: pxToRem(24),
+                $font-weight: 700,
+                $line-height: 133%,
+                $color: $ninth-color
+              );
+              letter-spacing: -0.36px;
+            }
+            .head--desc {
+              @include font(
+                $font-size: pxToRem(20),
+                $font-weight: 400,
+                $line-height: 160%,
+                $color: $fourth-color
+              );
+              @include set-size($w: pxToRem(480));
+            }
+            figure {
+              @include flex($gap: pxToRem(4), $justify: center);
+              border-radius: 8px;
+              background: $second-background-color;
+              backdrop-filter: blur(4px);
+              max-width: pxToRem(60);
+              padding: pxToRem(5) 0;
+              overflow: hidden;
+              margin-top: pxToRem(24);
+              figcaption {
+                @include font(
+                  $font-size: pxToRem(16),
+                  $font-weight: 400,
+                  $line-height: 150%,
+                  $color: $eighth-color
+                );
+              }
+            }
+          }
+          .right--body {
+            @include flex($gap: pxToRem(24));
+            flex-wrap: wrap;
+            .body-box {
+              min-width: pxToRem(150);
+              @include flex($direction: column, $gap: pxToRem(8));
+              .box-title {
+                @include font(
+                  $font-size: pxToRem(16),
+                  $font-weight: 400,
+                  $line-height: 150%,
+                  $color: $seventh-color
+                );
+              }
+              .box-value {
+                @include font(
+                  $font-size: pxToRem(20),
+                  $font-weight: 400,
+                  $line-height: 160%,
+                  $color: $second-color
+                );
+                line-height: 32px; /* 160% */
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

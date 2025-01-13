@@ -1,0 +1,10 @@
+export { default as IcBackground } from './Background.png';
+export { default as IcError } from './Film-rolls-rafiki1.svg';
+export { default as IcSaly } from './Saly-11.png';
+export { default as IcEmail } from './email.svg';
+export { default as IcEye } from './eye.svg';
+export { default as IcLogo } from './ic-logo.svg';
+export { default as IcStar } from './ic-star.svg';
+export { default as IcKeySquare } from './key-square.svg';
+export { default as IcLogout } from './logout.svg';
+export { default as ICSearch} from './search.svg';
