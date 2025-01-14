@@ -9,6 +9,7 @@ interface IHomePageState {
   currentFilter: 'all' | 'movies' | 'tv-shows';
   searchQuery: string;
   media: IMedia[];
+  mediaSearch: IMedia[];
   itemsPerPage: number;
   currentPage: number;
   pageMovies: number;
@@ -23,6 +24,7 @@ export class HomePage extends BasePage {
       currentFilter: 'all',
       searchQuery: '',
       media: [],
+      mediaSearch:[],
       itemsPerPage: 8,
       currentPage: 1,
       pageMovies: 1,
@@ -152,7 +154,7 @@ export class HomePage extends BasePage {
         button.addEventListener('click', async () => {
           if (this.state.currentFilter !== filter) {
             this.updateActiveFilterButton(filter);
-            await this.updateFilteredContent(filter); // Cập nhật lại dữ liệu theo filter
+            await this.updateFilteredContent(filter); 
             this.renderPagination();
           }
         });
@@ -166,7 +168,11 @@ export class HomePage extends BasePage {
       searchInput.addEventListener('input', async (e) => {
         const query = (e.target as HTMLInputElement).value;
         this.setState({ searchQuery: query });
-        await this.updateSearchContent(query);
+        if(query === "") {
+          this.renderMovieList();
+        }else {
+          await this.updateSearchContent(query);
+        }
       });
     }
   }
@@ -211,21 +217,27 @@ export class HomePage extends BasePage {
   private async updateSearchContent(query: string): Promise<void> {
     try {
       const searchContent = await movieController.searchMovies(query);
-      const filteredContent = searchContent.filter((item) => item.type === this.state.currentFilter);
-      this.setState({ media: filteredContent, totalItems: filteredContent.length });
-      this.renderMovieList();
-      this.updateQuantityVideos();
+      const filteredContent = searchContent.filter((item) => item.type === this.state.currentFilter || this.state.currentFilter === 'all');
+      this.setState({ mediaSearch: filteredContent, totalItems: filteredContent.length });
+      this.renderMovieList(true);
     } catch (error) {
       console.error('Error during search:', error);
       this.setState({ media: [] });
     }
   }
 
-  private renderMovieList(): void {
+  private renderMovieList(isSearch?: Boolean): void {
     const listMoviesElement = document.querySelector('.section-main--list-movies');
-    if (listMoviesElement) {
-      listMoviesElement.innerHTML = LoadMovies(this.state.media);
-      this.scrollToTop();
+    if(isSearch) {
+      if (listMoviesElement) {
+        listMoviesElement.innerHTML = LoadMovies(this.state.mediaSearch);
+        this.scrollToTop();
+      }
+    } else {
+      if (listMoviesElement) {
+        listMoviesElement.innerHTML = LoadMovies(this.state.media);
+        this.scrollToTop();
+      }
     }
   }
 
