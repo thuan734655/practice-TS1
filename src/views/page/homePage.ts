@@ -11,20 +11,22 @@ interface IHomePageState {
   media: IMedia[];
   itemsPerPage: number;
   currentPage: number;
-
+  pageMovies: number;
+  pageTvShow: number;
+  totalItems: number;
 }
 
 export class HomePage extends BasePage {
-  private isEventListenersAttached = false;
-
   constructor() {
     super();
     this.state = {
       currentFilter: 'all',
       searchQuery: '',
-      media: [], 
+      media: [],
       itemsPerPage: 8,
       currentPage: 1,
+      pageMovies: 1,
+      pageTvShow: 1,
       totalItems: 0,
     };
   }
@@ -42,22 +44,27 @@ export class HomePage extends BasePage {
         <div class="section-main--desc">
           <p>List of movies and TV Shows I have watched to date.<br>Explore what I have watched and also feel free to make a suggestion. 😉</p>
         </div>
-        <div class="section-main--search">
-          <div class="search-container">
-            <input id="searchInput" class="search-container--input" type="text" placeholder="Search Movies or TV Shows">
-            <img class="search-container--icon" src="${ICSearch}" alt="icon search">
-          </div>
-        </div>
-
+        ${this.renderSearchBox()}
         ${this.renderFilterButtons()}
         <p class="section-main--desc-subNav quantity-videos">
           ${this.state.currentFilter.toUpperCase()} <span>(${this.state.totalItems})</span>
         </p>
         <div class="section-main--list-movies" id="movieList">
-        ${LoadMovies(this.state.media)}
+          ${LoadMovies(this.state.media)}
         </div>
-        
-      ${this.renderPagination()}
+        <div class="pagination">
+      </div>
+      </div>
+    `;
+  }
+
+  private renderSearchBox(): string {
+    return `
+      <div class="section-main--search">
+        <div class="search-container">
+          <input id="searchInput" class="search-container--input" type="text" placeholder="Search Movies or TV Shows">
+          <img class="search-container--icon" src="${ICSearch}" alt="icon search">
+        </div>
       </div>
     `;
   }
@@ -80,108 +87,156 @@ export class HomePage extends BasePage {
     `;
   }
 
-  private async fetchMedia(filter?: string): Promise<void> {
+  private async fetchMedia(filter?: 'all' | 'movies' | 'tv-shows'): Promise<void> {
     try {
-      const response = filter
-        ? await movieController.getMoviesByFilter(filter,this.state.currentPage,this.state.itemsPerPage)
-        : await movieController.getMovies(this.state.currentPage,this.state.itemsPerPage);
+      const page = filter === 'movies' ? this.state.pageMovies : 
+                  filter === 'tv-shows' ? this.state.pageTvShow : 
+                  this.state.currentPage; 
 
-      const  mediaRes:IMedia[] = response.data;
+      const response = filter !== undefined 
+        ? await movieController.getMoviesByFilter(filter, page, this.state.itemsPerPage)
+        : await movieController.getMovies(page, this.state.itemsPerPage);
+
+      const mediaRes: IMedia[] = response.data;
       const totalItemsRes = response.totalItems;
+
       if (Array.isArray(mediaRes)) {
-        this.setState({ media: mediaRes, totalItems: totalItemsRes || 0});
+        this.setState({ media: mediaRes, totalItems: totalItemsRes || 0 });
       } else {
         console.error('Unexpected response format:', mediaRes);
-        this.setState({ media: []});
+        this.setState({ media: [] });
       }
     } catch (error) {
       console.error('Error fetching movies:', error);
-      this.setState({ media: []});
+      this.setState({ media: [] });
     }
   }
 
-  private async renderMovieList(): Promise<string> {
-    if (!this.state.media) {
-      return `<p class="no-movies">No movies or TV shows found.</p>`;
-    }
-   await this.fetchMedia();
-    return `
-      ${LoadMovies(this.state.media)}
-    `;
-  }
-
-  private renderPagination(): string {
-    const currentPage = this.state.currentPage;
-    const totalPages = Math.ceil(this.state.totalItems / this.state.itemsPerPage );
-    if (totalPages <= 1) return '';
-
-    const createPageButton = (pageNum: number, label: string = pageNum.toString()): string => `
-      <button class="pagination-btn ${pageNum === currentPage ? 'active' : ''}" data-page="${pageNum}">
-        ${label}
+  private renderPagination(): void {
+    const paginationElement = document.querySelector('.pagination');
+    const totalPages = Math.ceil(this.state.totalItems / this.state.itemsPerPage);
+  
+    const createPageButton = (pageNum: number): string => `
+      <button class="pagination-btn ${pageNum === this.state.currentPage ? 'active' : ''}" data-page="${pageNum}">
+        ${pageNum}
       </button>
     `;
 
-    let paginationHtml = '<div class="pagination">';
-    
-    const startPage = Math.max(1, currentPage - 2);
+    const startPage = Math.max(1, this.state.currentPage - 2);
     const endPage = Math.min(totalPages, startPage + 4);
 
-    for (let i = startPage; i <= endPage; i++) {
-      paginationHtml += createPageButton(i);
+    if (totalPages <= 1) {
+      if (paginationElement) {
+        paginationElement.innerHTML = ""; 
+      }
+    } else {
+      if (paginationElement) {
+        const paginationContent = `${Array.from({ length: endPage - startPage + 1 }, (_, i) => createPageButton(startPage + i)).join('')}`;
+        paginationElement.innerHTML = paginationContent; 
+      }
     }
-
-    paginationHtml += '</div>';
-    return paginationHtml;
   }
 
   private attachEventListeners(): void {
-    if (this.isEventListenersAttached) return;
+    this.attachFilterEventListeners();
+    this.attachSearchEventListener();
+    this.attachPaginationEventListener();
+    this.renderPagination();
+  }
 
+  private attachFilterEventListeners(): void {
     const filters: ('all' | 'movies' | 'tv-shows')[] = ['all', 'movies', 'tv-shows'];
     filters.forEach((filter) => {
       const button = document.getElementById(filter);
       if (button) {
         button.addEventListener('click', async () => {
           if (this.state.currentFilter !== filter) {
-            this.setState({ currentFilter: filter });
-            await this.fetchMedia(filter === 'all' ? undefined : filter);
-            this.updateFilteredContent();
+            this.updateActiveFilterButton(filter);
+            await this.updateFilteredContent(filter); // Cập nhật lại dữ liệu theo filter
+            this.renderPagination();
           }
         });
       }
     });
+  }
 
+  private attachSearchEventListener(): void {
     const searchInput = document.getElementById('searchInput') as HTMLInputElement;
     if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
+      searchInput.addEventListener('input', async (e) => {
         const query = (e.target as HTMLInputElement).value;
         this.setState({ searchQuery: query });
-        this.updateFilteredContent();
+        await this.updateSearchContent(query);
       });
     }
+  }
 
+  private attachPaginationEventListener(): void {
     document.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
       if (target.classList.contains('pagination-btn')) {
         const page = parseInt(target.dataset.page || '1', 10);
+  
         if (page !== this.state.currentPage) {
+          document.querySelectorAll('.pagination-btn').forEach((btn) => {
+            btn.classList.remove('active');
+          });
+  
+          target.classList.add('active');
           this.setState({ currentPage: page });
-          this.updateFilteredContent();
-          document.querySelector('.section-main--list-movies')?.scrollIntoView({ behavior: 'smooth' });
+          this.updateFilteredContent(this.state.currentFilter === 'all' ? undefined : this.state.currentFilter);
         }
       }
     });
-
-    this.isEventListenersAttached = true;
   }
 
-  private  async updateFilteredContent(): Promise<void> {
-    const listMoviesElement = document.querySelector('.section-main--list-movies');
+  private updateActiveFilterButton(filter: 'all' | 'movies' | 'tv-shows'): void {
+    document.querySelectorAll('.subNav-container button').forEach((btn) => btn.classList.remove('button-active'));
+    const button = document.getElementById(filter);
+    button?.classList.add('button-active');
+    this.setState({ currentFilter: filter });
+  }
 
-    if (listMoviesElement) {
-      const html =  await this.renderMovieList();
-      listMoviesElement.innerHTML = html;
-     console.log(listMoviesElement);
+  private async updateFilteredContent(filter: 'all' | 'movies' | 'tv-shows'): Promise<void> {
+    if (filter === 'all') {
+      await this.fetchMedia();
+    } else {
+      await this.fetchMedia(filter);
     }
+    this.renderPagination();
+    this.renderMovieList();
+    this.updateQuantityVideos();
+  }
+
+  private async updateSearchContent(query: string): Promise<void> {
+    try {
+      const searchContent = await movieController.searchMovies(query);
+      const filteredContent = searchContent.filter((item) => item.type === this.state.currentFilter);
+      this.setState({ media: filteredContent, totalItems: filteredContent.length });
+      this.renderMovieList();
+      this.updateQuantityVideos();
+    } catch (error) {
+      console.error('Error during search:', error);
+      this.setState({ media: [] });
+    }
+  }
+
+  private renderMovieList(): void {
+    const listMoviesElement = document.querySelector('.section-main--list-movies');
+    if (listMoviesElement) {
+      listMoviesElement.innerHTML = LoadMovies(this.state.media);
+      this.scrollToTop();
+    }
+  }
+
+  private updateQuantityVideos(): void {
+    const quantityVideosElement = document.querySelector('.quantity-videos');
+    if (quantityVideosElement) {
+      quantityVideosElement.innerHTML = `${this.state.currentFilter.toUpperCase()} <span>(${this.state.totalItems})</span>`;
+    }
+  }
+
+  private scrollToTop(): void {
+    document.querySelector('.section-main--list-movies')?.scrollIntoView({ behavior: 'smooth' });
   }
 }
