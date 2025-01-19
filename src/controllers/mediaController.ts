@@ -42,10 +42,6 @@ class MovieController {
 
     async deleteMovie(id: number): Promise<boolean> {
         try {
-            const existingMovie = await MediaModel.getMovieById(id);
-            if (!existingMovie) {
-                throw new Error(`Movie with id ${id} not found`);
-            }
             return await MediaModel.deleteMovie(id);
         } catch (error) {
             console.error(`Controller error deleting movie ${id}:`, error);

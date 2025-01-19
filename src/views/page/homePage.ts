@@ -41,7 +41,7 @@ export class HomePage extends BasePage {
           ${this.getState("currentFilter").toUpperCase()} <span>(${this.getState("totalItems")})</span>
         </p>
         <div class="section-main--list-movies" id="movieList">
-          ${LoadMovies(this.getState("media"))}
+          ${LoadMovies.render(this.getState("media"))}
         </div>
         <div class="pagination"></div>
       </div>
@@ -52,6 +52,7 @@ export class HomePage extends BasePage {
     this.attachFilterEventListeners();
     this.attachSearchEventListener();
     this.attachPaginationEventListener();
+    LoadMovies.event();
     pagination.render(this.state);
   }
 
@@ -190,12 +191,14 @@ export class HomePage extends BasePage {
     const listMoviesElement = document.querySelector('.section-main--list-movies');
     if (isSearch) {
       if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies(this.getState("mediaSearch"));
+        listMoviesElement.innerHTML = LoadMovies.render(this.getState("mediaSearch"));
+        LoadMovies.event();
         this.scrollToTop();
       }
     } else {
       if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies(this.getState("media"));
+        listMoviesElement.innerHTML = LoadMovies.render(this.getState("media"));
+        LoadMovies.event();
         this.scrollToTop();
       }
     }
