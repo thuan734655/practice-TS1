@@ -38,7 +38,7 @@ export class AddPage extends BasePage {
           </div>
         </div>
         <div class="section-main--list-movies">
-          ${LoadMovies(this.getState("media"))}
+          ${LoadMovies.render(this.getState("media"))}
         </div>
          <div class="pagination"></div> 
       </section>
@@ -54,6 +54,7 @@ export class AddPage extends BasePage {
     this.attachCloseFormEventListener();
     this.attachAddNewItemEventListener();
     Pagination.render(this.state);  
+    LoadMovies.event();
   }
 
   private renderSearchBox(): string {
@@ -183,12 +184,14 @@ export class AddPage extends BasePage {
     const listMoviesElement = document.querySelector('.section-main--list-movies');
     if (isSearch) {
       if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies(this.getState("searchContent"));
+        listMoviesElement.innerHTML = LoadMovies.render(this.getState("searchContent"));
+        LoadMovies.event();
         this.scrollToTop();
       }
     } else {
       if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies(this.getState("media"));
+        listMoviesElement.innerHTML = LoadMovies.render(this.getState("media"));
+        LoadMovies.event();
         this.scrollToTop();
       }
     }
