@@ -1,0 +1,114 @@
+@use '../Abstract/' as *;
+
+.form-add {
+    padding: pxToRem(10);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 200;
+    width: 80%;
+    max-width: pxToRem(800);
+    display: none;
+  
+    .add-form-container {
+      background-color: $fourth-background-color;
+      border-radius: pxToRem(10);
+      padding: pxToRem(10);
+      h2 {
+        @include font(
+          $font-size: pxToRem(30),
+          $font-weight: 900,
+          $color: $third-color
+        );
+        text-align: center;
+        padding: pxToRem(15) pxToRem(15) pxToRem(10);
+      }
+  
+      form {
+        @include flex($wrap: wrap, $gap: pxToRem(10), $justify: space-around);
+        @include set-size($w: auto, $h: 600px);
+        overflow: auto;
+        .form-group {
+          margin-bottom: pxToRem(10);
+          @include set-size($w: 45%);
+          label {
+            @include font(
+              $font-size: pxToRem(16),
+              $font-weight: bold,
+              $line-height: pxToRem(24),
+              $color: #b0b0b0
+            );
+            display: block;
+            margin-bottom: pxToRem(2);
+          }
+  
+          input,
+          textarea,
+          select {
+            @include set-size($w: 100%);
+            @include font(
+              $font-size: pxToRem(16),
+              $font-weight: normal,
+              $line-height: pxToRem(24),
+              $color: $text-color
+            );
+            padding: pxToRem(8);
+            border: 1px solid $border-color;
+            border-radius: pxToRem(5);
+            background-color: $input-background;
+            transition: border-color 0.3s;
+  
+            &:focus {
+              border-color: $fourteenth-color;
+              outline: none;
+            }
+          }
+  
+          textarea {
+            @include set-size($h: pxToRem(80));
+            resize: vertical;
+          }
+        }
+      }
+  
+      .form-actions {
+        @include flex($justify: center, $gap: pxToRem(20));
+        margin-top: pxToRem(10);
+      }
+  
+      .btn {
+        @include font(
+          $font-size: pxToRem(16),
+          $font-weight: bold,
+          $color: $text-color
+        );
+        padding: pxToRem(8) pxToRem(16);
+        border: none;
+        border-radius: pxToRem(5);
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          opacity: 0.9;
+        }
+      }
+  
+      .btn-primary {
+        background-color: $fourteenth-color;
+  
+        &:hover {
+          background-color: darken($fourteenth-color, 10%);
+        }
+      }
+  
+      .btn-secondary {
+        background-color: $fifteenth-color;
+  
+        &:hover {
+          background-color: darken($fifteenth-color, 10%);
+        }
+      }
+    }
+  }
+  

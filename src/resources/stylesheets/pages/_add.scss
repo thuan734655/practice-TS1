@@ -96,6 +96,7 @@
     .list-movies-container {
       @include flex($direction: column, $align: flex-start, $gap: pxToRem(16));
       @include set-size($w: pxToRem(282), $h: pxToRem(480));
+      margin-top: 30px;
       border-radius: pxToRem(12);
       background: $third-background-color;
       padding: pxToRem(8) pxToRem(8) pxToRem(16) pxToRem(8);
@@ -175,15 +176,11 @@
         background-color: #2980b9;
       }
       .btn-edit {
-        // background-color: #f1c40f;
-
         &:hover {
           background-color: #d4ac0d;
         }
       }
       .btn-delete {
-        // background-color: #e74c3c;
-
         &:hover {
           background-color: #c0392b;
         }
@@ -214,118 +211,6 @@
     .pagination-controls-button-active {
       background-color: orangered !important;
     }
+    
   }
-}
-
-// form add
-.form-add {
-  padding: pxToRem(20);
-  position: absolute;
-  top: 70%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 200;
-
-  .container {
-    background-color: $fourth-background-color;
-    border-radius: pxToRem(10);
-
-    h2 {
-      @include font(
-        $font-size: pxToRem(30),
-        $font-weight: 900,
-        $color: $third-color
-      );
-      text-align: center;
-      padding: pxToRem(30);
-    }
-
-    form {
-      @include flex($wrap: wrap, $gap: pxToRem(20), $justify: space-around);
-      .form-group {
-        margin-bottom: 20px;
-        @include set-size($w: 45%);
-        label {
-          @include font(
-            $font-size: pxToRem(16),
-            $font-weight: bold,
-            $line-height: pxToRem(24),
-            $color: #b0b0b0
-          );
-          margin-bottom: 5px;
-        }
-
-        input,
-        textarea {
-          @include set-size($w: 100%);
-          @include font(
-            $font-size: pxToRem(16),
-            $font-weight: bold,
-            $line-height: pxToRem(24),
-            $color: $text-color
-          );
-          padding: 12px;
-          border: 1px solid $border-color;
-          border-radius: 5px;
-          background-color: $input-background;
-          transition: border-color 0.3s;
-
-          &:focus {
-            border-color: $fourteenth-color;
-          }
-        }
-
-        textarea {
-          @include set-size($h: pxToRem(100));
-        }
-      }
-    }
-
-    .btn-add-video {
-      @include set-size($w: 60%);
-      @include font(
-        $font-size: pxToRem(16),
-        $font-weight: bold,
-        $color: $text-color
-      );
-      padding: pxToRem(12);
-      background-color: $fourteenth-color;
-      border: none;
-      border-radius: 5px;
-      margin: 0 auto;
-      position: relative;
-      bottom: pxToRem(20);
-      transition: background-color 0.3s ease;
-      cursor: pointer;
-
-      &:hover {
-        background-color: darken($fourteenth-color, 10%);
-      }
-    }
-
-    .btn-cancel {
-      @include font(
-        $font-size: pxToRem(16),
-        $font-weight: bold,
-        $color: $text-color
-      );
-      position: absolute;
-      top: pxToRem(40);
-      right: pxToRem(40);
-      padding: pxToRem(10);
-      background-color: $fifteenth-color;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-
-      &:hover {
-        background-color: darken($fifteenth-color, 10%);
-      }
-    }
-  }
-}
-
-.idUser-temp {
-  display: none;
 }
