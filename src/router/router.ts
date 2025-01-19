@@ -10,7 +10,6 @@ export class Router {
   private static instance: Router;
   private routes: Route[] = [];
   private root: HTMLElement | null = null;
-  private currentComponent: BasePage | null = null;
 
   private constructor() {
     this.setupEventListeners();
@@ -60,12 +59,10 @@ export class Router {
     const route = this.findMatchingRoute(path);
 
     if (route && this.root) {
-      // Update page title
       document.title = route.title;
 
-      // Create and render new component
+      // Create and render new componen
       const component = new route.component();
-      this.currentComponent = component;
 
       try {
         const content = await component.render();
