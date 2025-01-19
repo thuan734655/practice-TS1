@@ -1,10 +1,7 @@
 import { NavChild } from './NavChild';
 import { IcLogout, IcLogo } from '../../resources/assets/icons';
+import { NavItem } from '../../types/general.js';
 
-interface NavItem {
-  text: string;
-  href: string;
-}
 
 export default class Header {
   private readonly listNav: NavItem[] = [
@@ -21,7 +18,6 @@ export default class Header {
   ];
 
   public render(): string {
-    const navChild = new NavChild();
     
     return `
       <header id="rootApp">
@@ -31,8 +27,8 @@ export default class Header {
           </figure>
         </div>
         <div class="header--nav">
-          <ul>${navChild.render(this.listNav)}</ul>
-          <ul>${navChild.render(this.listNavIcon)}</ul>
+          <ul>${NavChild.render(this.listNav)}</ul>
+          <ul>${NavChild.render(this.listNavIcon)}</ul>
         </div>
       </header>
     `;

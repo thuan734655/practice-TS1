@@ -29,16 +29,18 @@ class MediaModel {
         }
     }
 
-    static async getMovieByType(type: string, page:number, limit:number): Promise<IApiResponse> {
+    static async getMovieByType(type: string, page: number, limit: number): Promise<IApiResponse> {
         try {
-            const response = await axiosAPI.get(`/media/type/${type}`,{params: {
-                page: page || 1, 
-                limit: limit || 8
-            }});
+            const response = await axiosAPI.get(`/media/type/${type}`, {
+                params: {
+                    page: page || 1,
+                    limit: limit || 8
+                }
+            });
             console.log(response);
             return response.data;
         } catch (error) {
-            console.error(`Error fetching movie with id ${type}:`, error);
+            console.error(`Error fetching movies with type ${type}:`, error);
             throw error;
         }
     }
@@ -59,6 +61,38 @@ class MediaModel {
             return true;
         } catch (error) {
             console.error('Error deleting movie:', error);
+            throw error;
+        }
+    }
+
+    static async addMovie(newMovie: FormData): Promise<IMedia> {
+        try {
+            const response = await axiosAPI.post('/media-add', newMovie,{
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            console.log('Movie added successfully:', response.data);
+            return response.data.data;
+        } catch (error) {
+            console.error('Error adding movie:', error);
+            throw error;
+        }
+    }
+
+    static async getMediaByAuthor(authorName: string, page: number, limit: number): Promise<IApiResponse> {
+        try {
+            const response = await axiosAPI.get(`media-author`, {
+                params: {
+                    page: page || 1,
+                    limit: limit || 8,
+                    username: authorName
+                }
+            });
+            console.log(response);
+            return response.data;
+        } catch (error) {
+            console.error(`Error fetching movies for author ${authorName}:`, error);
             throw error;
         }
     }

@@ -2,6 +2,7 @@ import { IMedia } from '../../models/mediaForm';
 import { IcStar } from '../../resources/assets/icons';
 
 const LoadMovies =  (media: IMedia[]) : string => {
+  console.log('Loading movies',media)
  return media.map((data) => {
          return `
            <div class="list-movies-container" id="${data.id}" selected="true">
