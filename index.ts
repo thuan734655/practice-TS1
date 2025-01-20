@@ -28,10 +28,15 @@ class App {
 
       // Set up router
       this.router.setRoot(rootElement);
-      this.router.addRoute('/', LoginPage, 'Login');
-      this.router.addRoute('/login', LoginPage, 'Login');
-      this.router.addRoute('/home', HomePage, 'Home');
-      this.router.addRoute('/add', AddPage, 'Home');
+      this.router.addRoute('/', 'Login');
+      this.router.addRoute('/login', 'Login');
+      this.router.addRoute('/home', 'Home');
+      this.router.addRoute('/add/:author', 'Add');
+      this.router.addRoute('/update/:id', 'Update');
+      this.router.addRoute('/detail/:id', 'Detai');
+      this.router.addRoute('/movies', 'Movie');
+      this.router.addRoute('/tvshows', 'TV Show');
+      this.router.addRoute('/error', 'Error');
 
       // Navigate to current path
       await this.router.navigateTo(window.location.pathname);

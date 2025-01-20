@@ -20,9 +20,11 @@
     }
   },
   "include": [
-    "global.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "files": [
+    "src/types/assets.d.ts"
+  ]
 }
