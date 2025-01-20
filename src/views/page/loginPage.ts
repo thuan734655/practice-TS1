@@ -1,32 +1,22 @@
-import { BasePage } from './BasePage';
+import { BasePage } from './basePage';
 import headerLogin from '../components/HeaderLogin';
-<<<<<<< Updated upstream
-import { IcEmail, IcEye, IcKeySquare,IcSaly } from '../../resources/assets/icons';
-import { dataLogin } from '../../types/login';
-import UserController from '@/controllers/userController';
-
-export class LoginPage extends BasePage  {
-=======
 import { IcEmail, IcEye, IcKeySquare, IcSaly } from '../../resources/assets/icons';
 import { dataLogin, dataRegister } from '../../types/login';
 import UserController from '../../controllers/userController';
+import { ContentRender } from '@/types/general';
 
 export class LoginPage extends BasePage {
->>>>>>> Stashed changes
   constructor() {
     super();
     this.state = {
       email: '',
       password: '',
       errorMessage: '',
-<<<<<<< Updated upstream
-=======
       name: ""
->>>>>>> Stashed changes
     };
   }
 
-  protected async renderContent(): Promise<string> {
+  public async renderContent(content:ContentRender): Promise<string> {
     return `
       ${headerLogin()}
       <section class="section-main-login" id="rootLogin">
@@ -62,31 +52,6 @@ export class LoginPage extends BasePage {
           </div>
         </div>
       </section>
-<<<<<<< Updated upstream
-      <section class="section-main-register"></section>
-    `;
-  }
-
-  protected async updateView(): Promise<void> {
-    const rootElement = document.querySelector('#rootLogin');
-    if (rootElement) {
-      try {
-        rootElement.innerHTML = await this.render();
-        this.afterRender();
-      } catch (error) {
-        console.error('Error updating login view:', error);
-        rootElement.innerHTML = this.renderError();
-      }
-    }
-  }
-
-  public afterRender(): void {
-    this.attachEventListeners();
-  }
-
-  private attachEventListeners(): void {
-    this.attachLoginEventListener();
-=======
       
       <!-- Register Popup -->
       <div class="register-popup hidden">
@@ -106,20 +71,14 @@ export class LoginPage extends BasePage {
     `;
   }
 
-  private attachEventListeners(): void {
+  protected attachEventListeners(): void {
     this.attachLoginEventListener();
     this.attachRegisterPopupEvents();
->>>>>>> Stashed changes
   }
 
   private attachLoginEventListener(): void {
     const loginButton = document.querySelector('.btn-login') as HTMLButtonElement;
-<<<<<<< Updated upstream
-    const section = document.querySelector('.section-main-login');
-    if (loginButton && section) {
-=======
     if (loginButton) {
->>>>>>> Stashed changes
       loginButton.addEventListener('click', async () => {
         const emailInput = document.querySelector('.input-email') as HTMLInputElement;
         const passwordInput = document.querySelector('.input-password') as HTMLInputElement;
@@ -128,7 +87,6 @@ export class LoginPage extends BasePage {
           const email = emailInput.value;
           const password = passwordInput.value;
 
-          // Update state with the values
           this.setState({ email, password });
 
           this.login();
@@ -137,11 +95,6 @@ export class LoginPage extends BasePage {
     }
   }
 
-<<<<<<< Updated upstream
-  private async login(): Promise<void> {
-    try {
-      const dataLogin: dataLogin = {email: this.state.email, password: this.state.password};
-=======
   private attachRegisterPopupEvents(): void {
     const registerLink = document.querySelector('.right-box--footer span') as HTMLElement;
     const popup = document.querySelector('.register-popup') as HTMLElement;
@@ -186,15 +139,12 @@ export class LoginPage extends BasePage {
   private async login(): Promise<void> {
     try {
       const dataLogin: dataLogin = { email: this.getState("email"), password: this.getState("password") };
->>>>>>> Stashed changes
       await UserController.login(dataLogin);
     } catch (error) {
       console.error('Login failed:', error);
       this.setState({ errorMessage: 'An error occurred during login. Please try again.' });
     }
   }
-<<<<<<< Updated upstream
-=======
   private async register(): Promise<void> {
     try {
       const dataRegister : dataRegister = { email: this.getState("email"), password: this.getState("password"), name: this.getState("name") };
@@ -205,5 +155,4 @@ export class LoginPage extends BasePage {
       this.setState({ errorMessage: 'An error occurred during registration. Please try again.' });   
     }
   }
->>>>>>> Stashed changes
 }
