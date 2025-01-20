@@ -1,5 +1,6 @@
 import { HomePage } from './src/views/page/homePage';
 import { Router } from './src/router/router';
+import {LoginPage} from './src/views/page/loginPage'
 
 class App {
   private static instance: App;
@@ -26,7 +27,9 @@ class App {
 
       // Set up router
       this.router.setRoot(rootElement);
-      this.router.addRoute('/', HomePage, 'Home');
+      this.router.addRoute('/', LoginPage, 'Login');
+      this.router.addRoute('/login', LoginPage, 'Login');
+      this.router.addRoute('/home', HomePage, 'Home');
 
       // Navigate to current path
       await this.router.navigateTo(window.location.pathname);

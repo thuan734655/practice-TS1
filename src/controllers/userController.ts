@@ -1,13 +1,7 @@
 import { Validate } from "../helper/validate";
-<<<<<<< Updated upstream
-import AuthModel from "../models/authModel";
-import { Router } from "../router/router";
-import { dataLogin } from "../types/login";
-=======
 import UserModel from "../models/userModel";
 import { Router } from "../router/router";
 import { dataLogin, dataRegister } from "../types/login";
->>>>>>> Stashed changes
 import { Toast } from "../utils/toast";
 
 export default class UserController {
@@ -19,11 +13,7 @@ export default class UserController {
                 return;
             }
 
-<<<<<<< Updated upstream
-            const result = await AuthModel.login(dataLogin);
-=======
             const result = await UserModel.login(dataLogin);
->>>>>>> Stashed changes
 
             if (result.success) {
                 Router.getInstance().navigateTo("/home");
@@ -38,9 +28,6 @@ export default class UserController {
             throw error;
         }
     }
-<<<<<<< Updated upstream
-}
-=======
     public static async register(dataRegister: dataRegister) {
         try {
             const validationError = Validate.validateCredentials(dataRegister.email, dataRegister.password, dataRegister.name);
@@ -63,4 +50,3 @@ export default class UserController {
         }
     }
 }
->>>>>>> Stashed changes

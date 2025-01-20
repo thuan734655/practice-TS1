@@ -87,6 +87,7 @@ export class LoginPage extends BasePage {
           const email = emailInput.value;
           const password = passwordInput.value;
 
+          // Update state with the values
           this.setState({ email, password });
 
           this.login();

@@ -1,120 +1,154 @@
 @use '../Abstract/' as *;
 
-.section-main-update {
-  &__container {
-    &--form-update {
-      .container {
-        @include flex($direction: column, $gap: pxToRem(20));
-        margin-top: pxToRem(40);
-        h2 {
-          @include font(
-            $font-size: pxToRem(32),
-            $font-weight: 600,
-            $line-height: 125%,
-            $color: $ninth-color
-          );
-          margin: 0 auto;
-        }
-        .form-update {
-          form {
-            @include flex($justify: space-between, $wrap: wrap);
-            @include set-size($w: 80%);
-            margin: 0 auto;
-            position: relative;
-            .form-group {
-              @include flex($direction: column);
-              label {
-                @include font(
-                  $font-size: pxToRem(16),
-                  $font-weight: 600,
-                  $line-height: 125%,
-                  $color: $ninth-color
-                );
-              }
-              input,
-              textarea {
-                @include set-size($w: pxToRem(250), $h: pxToRem(40));
-                @include font(
-                  $font-size: pxToRem(16),
-                  $font-weight: 600,
-                  $line-height: 125%,
-                  $color: $ninth-color
-                );
-                border-radius: pxToRem(10);
-                background-color: rgba(120, 117, 117, 0);
-                border: 2px solid $boder-input;
-              }
-              input [name='background'],
-              input[name='avatar'] {
-                @include set-size($h: unset);
-              }
-            }
-            button {
-              @include font(
-                $font-size: pxToRem(16),
-                $font-weight: bold,
-                $color: $text-color
-              );
-              padding: pxToRem(10);
-              border-radius: pxToRem(5);
-              background-color: $fifteenth-color;
-              border: none;
-              cursor: pointer;
-              position: absolute;
-              top: 120%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-              transition: background-color 0.3s ease;
+.update-page {
+  @include flex($direction: column, $align: center);
+  padding-bottom: 100px;
 
-              &:hover {
-                background-color: darken($fifteenth-color, 10%);
-              }
-            }
-          }
+  h1 {
+    @include font($font-size: 2.5rem, $font-weight: 600, $color: $text-color);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.update-form-container {
+  background-color: $third-background-color;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  backdrop-filter: blur(10px);
+}
+
+#update-feature-form {
+  @include grid($grid-tplt-column: repeat(3, 1fr), $grid-gap: 1.5rem);
+
+  .form-group {
+    @include flex($direction: column, $gap: 0.5rem);
+
+    label {
+      @include font(
+        $font-size: 1rem,
+        $font-weight: 500,
+        $color: $fourth-color
+      );
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    textarea,
+    select {
+      @include font($font-size: 1rem, $color: $text-color);
+      background-color: rgba($rectangle, 0.6);
+      border: 1px solid $placeholder-input;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      width: 100%;
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+        border-color: $thirteenth-color;
+        box-shadow: 0 0 0 2px rgba($thirteenth-color, 0.2);
+      }
+
+      &::placeholder {
+        color: $placeholder-input;
+      }
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    input[type="file"] {
+      @include font($color: $fourth-color);
+      background-color: transparent;
+      padding: 0.5rem 0;
+
+      &::-webkit-file-upload-button {
+        background-color: $third-background-color;
+        border: 1px solid $placeholder-input;
+        border-radius: 6px;
+        padding: 0.5rem 1rem;
+        color: $text-color;
+        margin-right: 1rem;
+        cursor: pointer;
+
+        &:hover {
+          background-color: lighten($third-background-color, 5%);
         }
       }
     }
-    &--box-img {
-      @include flex($direction: column, $gap: pxToRem(30));
-      margin-top: pxToRem(100);
-      position: relative;
-      left: 50%;
-      transform: translateX(-50%);
-      .box-img--title {
-        @include font(
-          $font-size: pxToRem(32),
-          $font-weight: 600,
-          $line-height: 125%,
-          $color: $ninth-color
-        );
-        margin: 0 auto;
-      }
-      .box-img--images {
-        @include set-size($w: 50%);
-        @include flex($align: center, $justify: center, $gap: pxToRem(30));
-        position: relative;
-        left: 50%;
-        transform: translateX(-50%);
 
-        figure {
-          @include flex($direction: column);
-          @include set-size($w: 100%);
-          img {
-            @include set-size($w: 100%, $h: 100%);
-            object-fit: fill;
-            border-radius: pxToRem(10);
-          }
-          figcaption {
-            @include font(
-              $font-size: pxToRem(16),
-              $font-weight: 600,
-              $line-height: 125%,
-              $color: $text-color
-            );
-            margin: 0 auto;
-          }
+    input[type="date"] {
+      color: $text-color;
+
+      &::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        opacity: 0.6;
+        cursor: pointer;
+
+        &:hover {
+          opacity: 0.8;
         }
       }
+    }
+  }
+
+  .btn-update-video {
+    @include font($font-size: 1rem, $font-weight: 500, $color: $text-button);
+    @include set-size($w: 30%);
+    background: linear-gradient(135deg, $thirteenth-color, $fourteenth-color);
+    border: none;
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: absolute;
+    bottom: -75px;
+    left: 50%;
+    transform: translate(-50%, 0%);
+
+    &:hover {
+      transform: translate(-50%, -3px);
+      box-shadow: 0 4px 12px rgba($thirteenth-color, 0.3);
+    }
+
+    &:active {
+      transform: translate(-50%, 0%);
+    }
+  }
+}
+
+.box-image {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 2rem;
+  padding-bottom: 30px;
+
+  figure {
+    @include set-size($w: pxToRem(282), $h: pxToRem(480));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    img {
+      @include set-size($w:100%, $h:100%);
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    figcaption {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      color: $text-color;
+      text-align: center;
+      
     }
   }
 }

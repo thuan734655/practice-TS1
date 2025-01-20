@@ -1,9 +1,6 @@
 export type dataLogin = {
     email: string;
     password: string;
-<<<<<<< Updated upstream
-}
-=======
 }
 
 export type dataRegister = { 
@@ -11,4 +8,3 @@ export type dataRegister = {
     password: string;
     name: string;
 }
->>>>>>> Stashed changes
