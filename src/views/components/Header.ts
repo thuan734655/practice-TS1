@@ -1,5 +1,5 @@
 import { NavChild } from './NavChild';
-import { IcLogout, IcLogo } from '../../resources/assets/icons';
+import { IcLogout, IcLogo } from '../../resources/assets/icons/index.js';
 import { NavItem } from '../../types/general.js';
 
 
@@ -23,7 +23,7 @@ export default class Header {
       <header id="rootApp">
         <div class="header--logo">
           <figure>
-            <img class="logo" src="${IcLogo}" alt="logo">
+            <a href="/home"> <img class="logo" src="${IcLogo}" alt="logo"> </a>
           </figure>
         </div>
         <div class="header--nav">

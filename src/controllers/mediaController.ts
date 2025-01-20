@@ -81,6 +81,26 @@ class MovieController {
             throw error;
         }
     }
+    async getMovieById(id: number): Promise<IMedia> {
+        try {
+            const result = await MediaModel.getMovieById(id);
+            
+            return result;
+        } catch (error) {
+            console.error(`Controller error getting movie ${id}:`, error);
+            throw error;
+        }
+    }
+    async updateMovie(id: string, formData: FormData): Promise<boolean> {
+        try {
+            const result = await MediaModel.updateMovieById(id, formData);
+            
+            return result;
+        } catch (error) {
+            console.error(`Controller error updating movie ${id}:`, error);
+            throw error;
+        }
+    }
 }
 
 export default new MovieController();
