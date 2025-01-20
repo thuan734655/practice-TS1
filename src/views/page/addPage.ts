@@ -1,11 +1,13 @@
-import { BasePage } from './BasePage';
+import { BasePage } from './basePage';
 import Header from '../components/Header';
 import { ICSearch } from '../../resources/assets/icons';
 import LoadMovies from '../components/ListMovie';
-import movieController from '../../controllers/mediaController';
+import mediaController from '../../controllers/mediaController';
 import { IMedia } from '../../models/mediaForm';
-import AddForm from '../components/addForm';
-import Pagination from '../components/pagination';
+import AddForm from '../components/AddForm';
+import Pagination from '../components/Pagination';
+import { ContentRender } from '@/types/general';
+import { buildFormData } from '@/helper/formHelper';
 
 export class AddPage extends BasePage {
   constructor() {
@@ -68,7 +70,7 @@ export class AddPage extends BasePage {
   }
   private async fetchMedia(): Promise<void> {
     try {
-      const response = await movieController.getMovieByAuthor(this.getState("currentPage"), this.getState("itemsPerPage"));
+      const response = await mediaController.getMovieByAuthor(this.getState("author"),this.getState("currentPage"), this.getState("itemsPerPage"));
 
       const mediaRes: IMedia[] = response.data;
       const totalItemsRes = response.totalItems;
@@ -94,7 +96,7 @@ export class AddPage extends BasePage {
         const formData = new FormData(form);
 
         try {
-          const newMediaRes:IMedia = await movieController.addMovie(formData); 
+          const newMediaRes:IMedia = await mediaController.addMovie(formData); 
           this.onAddMedia(newMediaRes);
           form.reset();  
         } catch (error) {
@@ -166,7 +168,7 @@ export class AddPage extends BasePage {
   private async updateSearchContent(query: string): Promise<void> {
     try {
      if(query.length > 0) {
-      const searchContent = await movieController.searchMovies(query);
+      const searchContent = await mediaController.searchMovies(query);
       this.setState({ searchContent: searchContent, totalItems: searchContent.length });
       this.renderMovieList(true);
      }

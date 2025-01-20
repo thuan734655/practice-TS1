@@ -92,7 +92,7 @@
   &--list-movies {
     @include flex($gap: pxToRem(40), $justify: space-evenly);
     flex-wrap: wrap;
-    padding: pxToRem(24) 0 pxToRem(44) 0;
+    padding: pxToRem(14) 0 pxToRem(44) 0;
     .list-movies-container {
       @include flex($direction: column, $align: flex-start, $gap: pxToRem(16));
       @include set-size($w: pxToRem(282), $h: pxToRem(480));
