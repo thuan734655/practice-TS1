@@ -1,9 +1,9 @@
-import header from '../components/header';
+import header from '../components/Header';
 import { ContentRender } from "@/types/general";
 import { BasePage } from "./basePage";
 import { IcStar } from '../../resources/assets/icons';
 import loadBoxTVShow from '../components/boxTVShow';
-import loadBoxMovie from '../components/boxMovie';
+import loadBoxMovie from '../components/BoxMovie';
 
 class TvShowsDetailsPage extends BasePage {
   constructor() {
@@ -15,7 +15,7 @@ class TvShowsDetailsPage extends BasePage {
   }
 
   public async renderContent(content: ContentRender): Promise<string> {
-    this.setState({ mediaRes: content.mediaRes, idMedia: content.idMedia });
+    this.setState({ mediaRes: content?.mediaRes, idMedia: content?.idMedia });
     return `
       ${header.render()}
      <section class="section-main-tvshow"  id= "rootApp"> 
@@ -23,7 +23,7 @@ class TvShowsDetailsPage extends BasePage {
         <div class="section-main-tvshow__container--top">
         <div class="top-container">
            <figure>
-           <img src="http://localhost:5001/${this.getState("mediaRes").background}" alt="background">
+           <img src="https://practice-ts-server.onrender.com/${this.getState("mediaRes").background}" alt="background">
            </figure>
          <div class="top-detail">
           <div class="top-detail-container">
@@ -41,7 +41,7 @@ class TvShowsDetailsPage extends BasePage {
         <div class="bottom-container">
          <div class="bottom-container--left">
         <figure>
-           <img src="http://localhost:5001/${this.getState("mediaRes").avatar}" alt="Avatar">
+           <img src="https://practice-ts-server.onrender.com/${this.getState("mediaRes").avatar}" alt="Avatar">
         </figure>
          </div>
          <div class="bottom-container--right">
