@@ -1,4 +1,4 @@
-import { BasePage } from './BasePage';
+import { BasePage } from './basePage';
 import Header from '../components/Header';
 import movieController from '../../controllers/mediaController';
 import { IMedia } from '../../models/mediaForm';
