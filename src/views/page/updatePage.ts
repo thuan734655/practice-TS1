@@ -14,7 +14,7 @@ export class UpdatePage extends BasePage {
     }
 
     public async renderContent(data: ContentRender): Promise<string> {
-        this.setState({ mediaRes: data.mediaRes, idMedia: data.idMedia });
+        this.setState({ mediaRes: data?.mediaRes, idMedia: data?.idMedia });
         console.log(data);
         if (!this.getState("mediaRes")) {
             return '<div>No media found to update</div>';
@@ -28,11 +28,11 @@ export class UpdatePage extends BasePage {
             <section class="update-page">
                 <section class="box-image">
                     <figure class="image-container">
-                      <img src="http://localhost:5001/${avatar}" alt="media avatar" class="image-preview" />
+                      <img src="https://practice-ts-server.onrender.com/${avatar}" alt="media avatar" class="image-preview" />
                       <figcaption>Avatar</figcaption>
                     </figure>
                     <figure class="image-container">
-                      <img src="http://localhost:5001/${background}" alt="media background" class="image-preview" />
+                      <img src="https://practice-ts-server.onrender.com/${background}" alt="media background" class="image-preview" />
                       <figcaption>Background</figcaption>
                     </figure>
                 </section>
@@ -44,28 +44,13 @@ export class UpdatePage extends BasePage {
     }
 
     public afterRender(): void {
-        this.attachSubmitEventListener();
-        this.attachOnChangeEventListener();
+        this.attachEventListeners(); // Gọi phương thức attachEventListeners để đăng ký sự kiện
     }
 
-    public attachOnChangeEventListener(): void {
-        const form = document.getElementById('update-feature-form') as HTMLFormElement;
-        
-        if (form) {
-            form.querySelectorAll('input, textarea, select').forEach((input) => {
-                input.addEventListener('change', (event) => {
-                    const target = event.target as HTMLInputElement;
-                    const key = target.name;
-                    const value = target.type === 'file' ? target.files : target.value;
-
-                    const updatedData = { ...this.getState('updatedData') };
-                    updatedData[key] = value;
-                    this.setState({ updatedData });
-
-                    console.log('Updated data:', updatedData);
-                });
-            });
-        }
+    public attachEventListeners(): void {
+        // Kết hợp các phương thức đăng ký sự kiện ở đây
+        this.attachSubmitEventListener();
+        this.attachOnChangeEventListener();
     }
 
     public attachSubmitEventListener(): void {
@@ -100,22 +85,41 @@ export class UpdatePage extends BasePage {
                 }
     
                 try {
-                  this.updateMediaData(formData);
+                    this.updateMediaData(formData);
                 } catch (error) {
                     console.error('Error updating media:', error);
                 }
             });
         }
     }
-    
 
-    private async updateMediaData(formData:FormData): Promise<any> {
+    public attachOnChangeEventListener(): void {
+        const form = document.getElementById('update-feature-form') as HTMLFormElement;
+        
+        if (form) {
+            form.querySelectorAll('input, textarea, select').forEach((input) => {
+                input.addEventListener('change', (event) => {
+                    const target = event.target as HTMLInputElement;
+                    const key = target.name;
+                    const value = target.type === 'file' ? target.files : target.value;
+
+                    const updatedData = { ...this.getState('updatedData') };
+                    updatedData[key] = value;
+                    this.setState({ updatedData });
+
+                    console.log('Updated data:', updatedData);
+                });
+            });
+        }
+    }
+
+    private async updateMediaData(formData: FormData): Promise<any> {
         try {
            const result = await mediaController.updateMovie(this.getState("idMedia"), formData);
 
-           if(!result) {
-            const resetData :ContentRender = {mediaRes: this.getState("mediaRes")}
-             this.renderContent(resetData)
+           if (!result) {
+            const resetData: ContentRender = { mediaRes: this.getState("mediaRes") }
+             this.renderContent(resetData);
              return;
            }
            
