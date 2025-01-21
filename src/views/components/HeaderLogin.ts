@@ -1,5 +1,5 @@
 import { IcLogo, IcLogout } from '../../resources/assets/icons/index.js';
-import {NavChild} from './navChild.js';
+import {NavChild} from './NavChild.js';
 import { NavItem } from '../../types/general.js';
 
 const listNav: NavItem[] = [
