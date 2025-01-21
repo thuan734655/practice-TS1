@@ -1,8 +1,9 @@
-import { BasePage } from './BasePage';
+import { BasePage } from './basePage';
 import headerLogin from '../components/HeaderLogin';
 import { IcEmail, IcEye, IcKeySquare, IcSaly } from '../../resources/assets/icons';
 import { dataLogin, dataRegister } from '../../types/login';
 import UserController from '../../controllers/userController';
+import { ContentRender } from '@/types/general';
 
 export class LoginPage extends BasePage {
   constructor() {
@@ -15,7 +16,7 @@ export class LoginPage extends BasePage {
     };
   }
 
-  protected async renderContent(): Promise<string> {
+  public async renderContent(content:ContentRender): Promise<string> {
     return `
       ${headerLogin()}
       <section class="section-main-login" id="rootLogin">
@@ -70,7 +71,7 @@ export class LoginPage extends BasePage {
     `;
   }
 
-  private attachEventListeners(): void {
+  protected attachEventListeners(): void {
     this.attachLoginEventListener();
     this.attachRegisterPopupEvents();
   }
