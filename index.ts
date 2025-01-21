@@ -1,7 +1,5 @@
 import { HomePage } from './src/views/page/homePage';
 import { Router } from './src/router/router';
-import {LoginPage} from './src/views/page/loginPage';
-import {AddPage} from './src/views/page/addPage';
 
 class App {
   private static instance: App;

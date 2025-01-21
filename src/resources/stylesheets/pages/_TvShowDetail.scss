@@ -39,7 +39,7 @@ body {
         &-container {
           &--nav {
             @include flex($gap: pxToRem(8));
-            p {
+            a {
               @include font(
                 $font-size: pxToRem(12),
                 $font-weight: 400,
@@ -68,8 +68,9 @@ body {
         @include flex($gap: pxToRem(80));
         &--left {
           figure {
-            @include set-size($w: 480, $h: pxToRem(720));
+            @include set-size($w: 480px, $h: pxToRem(720));
             img {
+              object-fit: cover;
               border-radius: pxToRem(20) !important;
               @include set-size($w: 100%, $h: 100%);
               overflow: hidden;
@@ -120,7 +121,7 @@ body {
           .right--body {
             @include flex($gap: pxToRem(24));
             flex-wrap: wrap;
-            .body-box {
+            .body-box-tvshow {
               min-width: pxToRem(150);
               @include flex($direction: column, $gap: pxToRem(8));
               .box-title {
@@ -138,7 +139,28 @@ body {
                   $line-height: 160%,
                   $color: $second-color
                 );
-                line-height: 32px; /* 160% */
+                line-height: 32px;
+              }
+            }
+            .body-box-movie {
+              min-width: pxToRem(400);
+              @include flex($direction: column, $gap: pxToRem(8));
+              .box-title {
+                @include font(
+                  $font-size: pxToRem(16),
+                  $font-weight: 400,
+                  $line-height: 150%,
+                  $color: $seventh-color
+                );
+              }
+              .box-value {
+                @include font(
+                  $font-size: pxToRem(20),
+                  $font-weight: 400,
+                  $line-height: 160%,
+                  $color: $second-color
+                );
+                line-height: 32px;
               }
             }
           }

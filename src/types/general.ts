@@ -9,4 +9,4 @@ export type ContentRender = {
    totalItems?: number;
    author?: string;
    idMedia?: string;
-}
+} | null;

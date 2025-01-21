@@ -1,0 +1,61 @@
+.toast {
+    position: fixed;
+    top: 80px;
+    right: 0;
+    transform: translateX(100%); 
+    padding: 10px 20px;
+    border-radius: 5px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s, transform 0.4s ease-out;
+    font-size: 14px;
+    color: white;
+    z-index: 9999;
+  
+    &.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%); 
+    }
+  
+    &.success {
+      background-color: #4caf50;
+    }
+  
+    &.error {
+      background-color: #f44336;
+    }
+  
+    &.show {
+      animation: slideInRight 0.2s ease-out forwards;
+    }
+  
+    &.hide {
+      animation: slideOutRight 0.5s ease-in forwards;
+    }
+  }
+  
+  // Animation slide-in
+  @keyframes slideInRight {
+    0% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(-50%);
+      opacity: 1;
+    }
+  }
+  
+  // Animation slide-out
+  @keyframes slideOutRight {
+    0% {
+      transform: translateX(-50%);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+  

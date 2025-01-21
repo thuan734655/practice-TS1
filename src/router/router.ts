@@ -55,7 +55,7 @@ export class Router {
   private async handleRoute(): Promise<void> {
     const path = window.location.pathname;
     const route = this.findMatchingRoute(path);
-
+    console.log(path)
     if (route && this.root) {
 
       try {
@@ -64,7 +64,6 @@ export class Router {
 
       } catch (error) {
         console.error('Error in controller:', error);
-        this.navigateTo("/error");
       }
     } else {
       this.navigateTo("/error");
