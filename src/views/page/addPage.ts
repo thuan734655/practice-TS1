@@ -19,14 +19,15 @@ export class AddPage extends BasePage {
       itemsPerPage: 8,
       currentPage: 1,
       isFormVisible: false,
-      searchContent: []
+      searchContent: [],
+      author: "",
     };
   }
 
-  protected async renderContent(): Promise<string> {
-    await this.fetchMedia(); 
+  public async renderContent(content:ContentRender): Promise<string> {
+    this.setState({ media: content?.mediaRes, totalItems: content?.totalItems, author: content?.author});
     return `
-      ${new Header().render()}
+      ${ Header.render()}
       <section class="section-main" id="rootApp">
         <div class="section-main--title">
           <h3>Add new item</h3>
@@ -40,7 +41,7 @@ export class AddPage extends BasePage {
           </div>
         </div>
         <div class="section-main--list-movies">
-          ${LoadMovies.render(this.getState("media"))}
+          ${this.getState("media") !== undefined ? LoadMovies.render(this.getState("media")) : '<p class = "does_not_exist"  >video does not exist.</p>'}
         </div>
          <div class="pagination"></div> 
       </section>
@@ -68,17 +69,20 @@ export class AddPage extends BasePage {
       <button>search</button>
     `;
   }
+
   private async fetchMedia(): Promise<void> {
     try {
       const response = await mediaController.getMovieByAuthor(this.getState("author"),this.getState("currentPage"), this.getState("itemsPerPage"));
 
-      const mediaRes: IMedia[] = response.data;
+      if(response !== null) {
+        const mediaRes: IMedia[] = response?.data;
       const totalItemsRes = response.totalItems;
       if (Array.isArray(mediaRes)) {
         this.setState({ media: mediaRes, totalItems: totalItemsRes || 0 });
       } else {
         console.error('Unexpected response format:', mediaRes);
         this.setState({ media: [] });
+      }
       }
     } catch (error) {
       console.error('Error fetching movies:', error);
@@ -93,7 +97,7 @@ export class AddPage extends BasePage {
       form.addEventListener('submit', async (event) => {
         event.preventDefault();
   
-        const formData = new FormData(form);
+        const formData = buildFormData(form);
 
         try {
           const newMediaRes:IMedia = await mediaController.addMovie(formData); 
@@ -106,13 +110,13 @@ export class AddPage extends BasePage {
     }
   }
   
-    public attachCloseFormEventListener(): void {
+  public attachCloseFormEventListener(): void {
       const closeFormButton = document.getElementById('close-form');
   
       if (closeFormButton) {
         closeFormButton.addEventListener('click', this.onCloseForm);
       }
-    }
+  }
 
   private  attachPaginationEventListener(): void {
     document.addEventListener('click', async (e) => {
