@@ -1,4 +1,4 @@
-import { BasePage } from './basePage';
+import { BasePage } from './BasePage';
 import Header from '../components/Header';
 import movieController from '../../controllers/mediaController';
 import { IMedia } from '../../models/mediaForm';
@@ -23,12 +23,10 @@ export class HomePage extends BasePage {
     };
   }
 
-  protected async renderContent(): Promise<string> {
-    if (!this.getState("totalItems")) {
-      await this.fetchMedia();
-    }
+  public async renderContent(content:ContentRender): Promise<string> {
+    this.setState({ media: content?.mediaRes, totalItems: content?.totalItems});
     return `
-      ${new Header().render()}
+      ${Header.render()}
       <div class="home-page" id="rootApp">
         <div class="section-main--title">
           <h3>MaileHereko</h3>
@@ -49,7 +47,7 @@ export class HomePage extends BasePage {
     `;
   }
 
-  private attachEventListeners(): void {
+  protected attachEventListeners(): void {
     this.attachFilterEventListeners();
     this.attachSearchEventListener();
     this.attachPaginationEventListener();
