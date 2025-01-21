@@ -30,7 +30,7 @@ export class BaseController {
   
         case path === '/': {
           const loginPage = new LoginPage();
-          const loginPageContent = await loginPage.renderContent({});
+          const loginPageContent = await loginPage.renderContent();
           root.innerHTML = loginPageContent;
           loginPage.afterRender();
           document.title = title;
@@ -39,7 +39,7 @@ export class BaseController {
   
         case path === '/login': {
           const loginPage_2nd = new LoginPage();
-          const loginPageContent_2nd = await loginPage_2nd.renderContent({});
+          const loginPageContent_2nd = await loginPage_2nd.renderContent();
           root.innerHTML = loginPageContent_2nd;
           loginPage_2nd.afterRender();
           document.title = title;
@@ -48,8 +48,11 @@ export class BaseController {
   
         case path.startsWith('/add'): {
           const addPage = new AddPage();
+          let data:ContentRender = null;
           const result = await mediaController.getMovieByAuthor(params.author, page, limit);
-          const data :ContentRender = {mediaRes: result.data,totalItems: result.totalItems,author: params.author};
+          if(result!==null) {
+            data = {mediaRes: result.data,totalItems: result.totalItems,author: params.author};
+          }
           const addPageContent = await addPage.renderContent(data);
           root.innerHTML = addPageContent;
           addPage.afterRender();
