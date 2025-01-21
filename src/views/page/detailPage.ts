@@ -2,7 +2,7 @@ import header from '../components/Header';
 import { ContentRender } from "@/types/general";
 import { BasePage } from "./basePage";
 import { IcStar } from '../../resources/assets/icons';
-import loadBoxTVShow from '../components/boxTVShow';
+import loadBoxTVShow from '../components/BoxTVShow';
 import loadBoxMovie from '../components/BoxMovie';
 
 class TvShowsDetailsPage extends BasePage {
