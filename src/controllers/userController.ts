@@ -3,6 +3,7 @@ import UserModel from "../models/userModel";
 import { Router } from "../router/router";
 import { dataLogin, dataRegister } from "../types/login";
 import { Toast } from "../utils/toast";
+import { setDataLocalStorage } from "./localStorage";
 
 export default class UserController {
     public static async login(dataLogin: dataLogin) {
@@ -17,7 +18,7 @@ export default class UserController {
 
             if (result.success) {
                 Router.getInstance().navigateTo("/home");
-                localStorage.setItem("user", JSON.stringify(result.user));
+                setDataLocalStorage("name", result.user.name);
                 Toast.showSuccess("Login successful!");
             } else {
                 Toast.showError("Login failed. Please try again!");

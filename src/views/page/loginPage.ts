@@ -3,8 +3,6 @@ import headerLogin from '../components/HeaderLogin';
 import { IcEmail, IcEye, IcKeySquare, IcSaly } from '../../resources/assets/icons';
 import { dataLogin, dataRegister } from '../../types/login';
 import UserController from '../../controllers/userController';
-import { ContentRender } from '@/types/general';
-
 export class LoginPage extends BasePage {
   constructor() {
     super();
@@ -16,7 +14,7 @@ export class LoginPage extends BasePage {
     };
   }
 
-  public async renderContent(content:ContentRender): Promise<string> {
+  public async renderContent(): Promise<string> {
     return `
       ${headerLogin()}
       <section class="section-main-login" id="rootLogin">
