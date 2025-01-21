@@ -20,7 +20,7 @@ export class Toast {
             setTimeout(() => {
                 document.body.removeChild(toast);
             }, 300);
-        }, 3000);
+        }, 2000);
     }
 
     public static showSuccess(message: string): void {
