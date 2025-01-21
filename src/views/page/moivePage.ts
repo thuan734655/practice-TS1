@@ -21,7 +21,7 @@ export class MoviePage extends BasePage {
   }
 
   public async renderContent(content:ContentRender): Promise<string> {
-    this.setState({ media: content.mediaRes, totalItems: content.totalItems});
+    this.setState({ media: content?.mediaRes, totalItems: content?.totalItems});
     return `
       ${Header.render()}
       <div class="home-page" id="rootApp">
