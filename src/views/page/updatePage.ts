@@ -28,11 +28,11 @@ export class UpdatePage extends BasePage {
             <section class="update-page">
                 <section class="box-image">
                     <figure class="image-container">
-                      <img src="http://localhost:5001/${avatar}" alt="media avatar" class="image-preview" />
+                      <img src="https://practice-ts-server.onrender.com/${avatar}" alt="media avatar" class="image-preview" />
                       <figcaption>Avatar</figcaption>
                     </figure>
                     <figure class="image-container">
-                      <img src="http://localhost:5001/${background}" alt="media background" class="image-preview" />
+                      <img src="https://practice-ts-server.onrender.com/${background}" alt="media background" class="image-preview" />
                       <figcaption>Background</figcaption>
                     </figure>
                 </section>
