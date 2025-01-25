@@ -44,11 +44,10 @@ export class UpdatePage extends BasePage {
     }
 
     public afterRender(): void {
-        this.attachEventListeners(); // Gọi phương thức attachEventListeners để đăng ký sự kiện
+        this.attachEventListeners();
     }
 
     public attachEventListeners(): void {
-        // Kết hợp các phương thức đăng ký sự kiện ở đây
         this.attachSubmitEventListener();
         this.attachOnChangeEventListener();
     }

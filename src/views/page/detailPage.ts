@@ -66,7 +66,6 @@ class TvShowsDetailsPage extends BasePage {
     `;
   }
 
-  // Gắn sự kiện vào các phần tử
   protected attachEventListeners(): void {
     const navLinks = document.querySelectorAll('.link');
     navLinks.forEach((link) => {
