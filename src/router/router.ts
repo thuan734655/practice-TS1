@@ -1,9 +1,5 @@
 import { BaseController } from '../controllers/baseController';
-
-interface Route {
-  path: string;
-  title: string;
-}
+import { Route } from '../types/general';
 
 export class Router {
   private static instance: Router;
