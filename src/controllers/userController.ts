@@ -1,53 +1,97 @@
+import { Toast } from "@/utils/toast";
 import { Validate } from "../helper/validate";
 import UserModel from "../models/userModel";
 import { Router } from "../router/router";
 import { dataLogin, dataRegister } from "../types/login";
-import { Toast } from "../utils/toast";
-import { setDataLocalStorage } from "./localStorage";
+import { IApiResponse, ILoginResponse, IRegisterResponse } from "../types/apiResponse";
 
 export default class UserController {
-    public static async login(dataLogin: dataLogin) {
-        try {
-            const validationError = Validate.validateCredentials(dataLogin.email, dataLogin.password);
-            if (validationError) {
-                Toast.showError(validationError);
-                return;
-            }
+  public static async login(dataLogin: dataLogin) {
+    const emailValidationError = Validate.validateEmail(dataLogin.email);
+    const passwordValidationError = Validate.validatePassword(dataLogin.password);
 
-            const result = await UserModel.login(dataLogin);
+    if (emailValidationError) {
+      this.showError("email", emailValidationError);
+    } else {
+      this.clearError("email");
+    }
 
-            if (result.success) {
-                Router.getInstance().navigateTo("/home");
-                setDataLocalStorage("name", result.user.name);
-                Toast.showSuccess("Login successful!");
-            } else {
-                Toast.showError("Login failed. Please try again!");
-            }
-        } catch (error) {
-            console.error('Login failed:', error);
-            Toast.showError('Login failed. Please try again!');
-            throw error;
-        }
+    if (passwordValidationError) {
+      this.showError("password", passwordValidationError);
+    } else {
+      this.clearError("password");
     }
-    public static async register(dataRegister: dataRegister) {
-        try {
-            const validationError = Validate.validateCredentials(dataRegister.email, dataRegister.password, dataRegister.name);
-            if (validationError) {
-                Toast.showError(validationError);
-                return;
-            }
-            const result = await UserModel.register(dataRegister);
-            console.log(result)
-            if (result.success) {
-                Toast.showSuccess('Registration successful! Please login.');
-                Router.getInstance().navigateTo('/login');
-            } else {
-                Toast.showError(result.message);
-            }
-            
-        } catch (error) {
-            console.log('Login failed. Please try again!');
-            throw error;
-        }
+
+    if (emailValidationError || passwordValidationError) {
+      return;
     }
+
+    const result: IApiResponse<ILoginResponse> = await UserModel.login(dataLogin);
+
+    if (result.success && result.data) {
+      Router.getInstance().navigateTo("/home");
+      localStorage.setItem("user", JSON.stringify(result.data.user));
+      this.clearError("email");
+      this.clearError("password");
+      Toast.showSuccess("Login successful!");
+    } else {
+      Toast.showError(result.message || "Login failed. Please try again!");
+    }
+  }
+
+  public static async register(dataRegister: dataRegister) {
+    const emailValidationError = Validate.validateEmail(dataRegister.email);
+    const passwordValidationError = Validate.validatePassword(dataRegister.password);
+    const nameValidationError = Validate.validateName(dataRegister.name);
+
+    if (emailValidationError) {
+      this.showError("register-email", emailValidationError);
+    } else {
+      this.clearError("register-email");
+    }
+
+    if (passwordValidationError) {
+      this.showError("register-password", passwordValidationError);
+    } else {
+      this.clearError("register-password");
+    }
+
+    if (nameValidationError) {
+      this.showError("register-name", nameValidationError);
+    } else {
+      this.clearError("register-name");
+    }
+
+    if (emailValidationError || passwordValidationError || nameValidationError) {
+      return;
+    }
+
+    const result: IApiResponse<IRegisterResponse> = await UserModel.register(dataRegister);
+
+    if (result.success) {
+      Router.getInstance().navigateTo('/login');
+      this.clearError("register-email");
+      this.clearError("register-password");
+      this.clearError("register-name");
+      Toast.showSuccess("Registration successful!");
+    } else {
+      Toast.showError(result.message || "Registration failed. Please try again!");
+    }
+  }
+
+  private static showError(inputName: string, errorMessage: string) {
+    const errorElement = document.querySelector(`#error-${inputName}`) as HTMLParagraphElement;
+    if (errorElement) {
+      errorElement.textContent = errorMessage;
+      errorElement.style.display = "block";
+    }
+  }
+
+  private static clearError(inputName: string) {
+    const errorElement = document.querySelector(`#error-${inputName}`) as HTMLParagraphElement;
+    if (errorElement) {
+      errorElement.textContent = "";
+      errorElement.style.display = "none";
+    }
+  }
 }
