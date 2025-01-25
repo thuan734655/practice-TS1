@@ -4,6 +4,7 @@ import UserModel from "../models/userModel";
 import { Router } from "../router/router";
 import { dataLogin, dataRegister } from "../types/login";
 import { IApiResponse, ILoginResponse, IRegisterResponse } from "../types/apiResponse";
+import { setDataLocalStorage } from "./localStorage";
 
 export default class UserController {
   public static async login(dataLogin: dataLogin) {
@@ -30,7 +31,7 @@ export default class UserController {
 
     if (result.success && result.data) {
       Router.getInstance().navigateTo("/home");
-      localStorage.setItem("user", JSON.stringify(result.data.user));
+      setDataLocalStorage("name", result.data.user.name);
       this.clearError("email");
       this.clearError("password");
       Toast.showSuccess("Login successful!");
