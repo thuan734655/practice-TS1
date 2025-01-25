@@ -25,7 +25,7 @@ export class AddPage extends BasePage {
   }
 
   public async renderContent(content:ContentRender): Promise<string> {
-    this.setState({ media: content?.mediaRes, totalItems: content?.totalItems, author: content?.author});
+    this.setState({ media: content.mediaRes, totalItems: content.totalItems, author: content.author});
     return `
       ${ Header.render()}
       <section class="section-main" id="rootApp">
@@ -41,7 +41,7 @@ export class AddPage extends BasePage {
           </div>
         </div>
         <div class="section-main--list-movies">
-          ${this.getState("media") !== undefined ? LoadMovies.render(this.getState("media")) : '<p class = "does_not_exist"  >video does not exist.</p>'}
+          ${LoadMovies.render(this.getState("media"))}
         </div>
          <div class="pagination"></div> 
       </section>
@@ -74,15 +74,13 @@ export class AddPage extends BasePage {
     try {
       const response = await mediaController.getMovieByAuthor(this.getState("author"),this.getState("currentPage"), this.getState("itemsPerPage"));
 
-      if(response !== null) {
-        const mediaRes: IMedia[] = response?.data;
+      const mediaRes: IMedia[] = response.data as IMedia[];
       const totalItemsRes = response.totalItems;
       if (Array.isArray(mediaRes)) {
         this.setState({ media: mediaRes, totalItems: totalItemsRes || 0 });
       } else {
         console.error('Unexpected response format:', mediaRes);
         this.setState({ media: [] });
-      }
       }
     } catch (error) {
       console.error('Error fetching movies:', error);
@@ -173,7 +171,7 @@ export class AddPage extends BasePage {
     try {
      if(query.length > 0) {
       const searchContent = await mediaController.searchMovies(query);
-      this.setState({ searchContent: searchContent, totalItems: searchContent.length });
+      this.setState({ searchContent: searchContent, totalItems: searchContent.totalItems });
       this.renderMovieList(true);
      }
      else {
