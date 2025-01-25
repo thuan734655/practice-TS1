@@ -23,11 +23,7 @@ export class HomePage extends BasePage {
   }
 
   public async renderContent(content:ContentRender): Promise<string> {
-<<<<<<< Updated upstream
-    this.setState({ media: content?.mediaRes, totalItems: content?.totalItems});
-=======
     this.setState({ media: content.mediaRes, totalItems: content.totalItems});
->>>>>>> Stashed changes
     return `
       ${Header.render()}
       <div class="home-page" id="rootApp">
