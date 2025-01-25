@@ -17,7 +17,7 @@ class LoadMovies {
               </div>
             </div>
             <div class="list-movies-container--body">
-              <img src="http://localhost:5001/${data.avatar}" alt="avatar">
+              <img src="https://practice-ts-server.onrender.com/${data.avatar}" alt="avatar">
             </div>
             <div class="list-movies-container--footer">
               <p>${data.movie_name}</p>
