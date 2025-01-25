@@ -65,6 +65,7 @@ export default class UserController {
     if (emailValidationError || passwordValidationError || nameValidationError) {
       return;
     }
+    
 
     const result: IApiResponse<IRegisterResponse> = await UserModel.register(dataRegister);
 

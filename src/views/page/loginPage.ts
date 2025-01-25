@@ -3,6 +3,7 @@ import headerLogin from '../components/HeaderLogin';
 import { IcEmail, IcEye, IcKeySquare, IcSaly } from '../../resources/assets/icons';
 import { dataLogin, dataRegister } from '../../types/login';
 import UserController from '../../controllers/userController';
+
 export class LoginPage extends BasePage {
   constructor() {
     super();
@@ -35,15 +36,16 @@ export class LoginPage extends BasePage {
               <div class="input-login">
                 <img src="${IcEmail}" alt="icon email">
                 <input class="input-email" type="email" placeholder="Email" required>
+                <p id="error-email" class="error-message"></p> 
               </div>
               <div class="input-login">
                 <img class="icon-key" src="${IcKeySquare}" alt="icon key">
                 <input class="input-password" type="password" placeholder="Password" required>
+                <p id="error-password" class="error-message"></p> 
                 <img select="false" class="icon-eye" src="${IcEye}" alt="icon eye">
               </div>
               <button class="btn-login" type="button">Login</button>
-              <div id="errorMessages" style="color: red;">${this.state.errorMessage}</div>
-            </div>   
+            </div>
             <div class="right-box--footer">
               <p class="register">If you don't have an account yet, please <span>register</span>.</p>
             </div>   
@@ -58,16 +60,19 @@ export class LoginPage extends BasePage {
           <h1>Register</h1>
           <form id="registerForm">
             <input type="email" id="register_email" placeholder="Email" required>
+            <p id="error-register-email" class="error-message"></p>
             <input type="password" id="register_password" placeholder="Password" required>
+            <p id="error-register-password" class="error-message"></p>
             <input type="text" id="full-name" placeholder="Full Name" required>
-            <button class="submit-register" >Register</button>
+            <p id="error-register-name" class="error-message"></p>
+            <button class="submit-register">Register</button>
           </form>
-          <div id="errorMessage" class="error-message"></div>
           <div class="footer">Already have an account? <span class="back-to-login">Log in</span></div>
         </div>
       </div>
     `;
-  }
+}
+
 
   protected attachEventListeners(): void {
     this.attachLoginEventListener();
@@ -76,23 +81,32 @@ export class LoginPage extends BasePage {
 
   private attachLoginEventListener(): void {
     const loginButton = document.querySelector('.btn-login') as HTMLButtonElement;
+    const eyeIcon = document.querySelector('.icon-eye') as HTMLImageElement;
+    const passwordInput = document.querySelector('.input-password') as HTMLInputElement;
+  
     if (loginButton) {
       loginButton.addEventListener('click', async () => {
         const emailInput = document.querySelector('.input-email') as HTMLInputElement;
-        const passwordInput = document.querySelector('.input-password') as HTMLInputElement;
-
+  
         if (emailInput && passwordInput) {
           const email = emailInput.value;
           const password = passwordInput.value;
-
-          // Update state with the values
+  
           this.setState({ email, password });
-
+  
           this.login();
         }
       });
     }
+  
+    if (eyeIcon && passwordInput) {
+      eyeIcon.addEventListener('click', () => {
+        const isPasswordVisible = passwordInput.type === 'text';
+        passwordInput.type = isPasswordVisible ? 'password' : 'text';
+      });
+    }
   }
+  
 
   private attachRegisterPopupEvents(): void {
     const registerLink = document.querySelector('.right-box--footer span') as HTMLElement;
@@ -155,3 +169,4 @@ export class LoginPage extends BasePage {
     }
   }
 }
+

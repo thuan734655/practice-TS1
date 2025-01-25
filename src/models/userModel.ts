@@ -1,7 +1,7 @@
 import axiosAPI from "@/api/configAxios";
+import { AxiosError } from "axios";
 import { IApiResponse, ILoginResponse, IRegisterResponse } from "../types/apiResponse";
 import { dataLogin, dataRegister } from "../types/login";
-import { AxiosError } from "axios";
 
 export default class UserModel {
   public static async login(dataLogin: dataLogin): Promise<IApiResponse<ILoginResponse>> {
