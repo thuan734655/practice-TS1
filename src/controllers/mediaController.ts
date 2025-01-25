@@ -106,3 +106,4 @@ class MovieController {
 }
 
 export default new MovieController();
+
