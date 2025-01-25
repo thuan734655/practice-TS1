@@ -51,3 +51,9 @@ export interface IState {
       name?: string;
       [key: string]: string | number | boolean | IMedia[] | IMedia | null | undefined ;
 }
+
+
+export interface Route {
+  path: string;
+  title: string;
+}
