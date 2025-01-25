@@ -1,101 +1,179 @@
-import axiosAPI from '../api/configAxios';
-import { IMedia } from "../models/mediaForm";
-import { IApiResponse } from '../types/apiResponse';
+import axiosAPI from "@/api/configAxios"
+import type { IMedia } from "@/models/mediaForm"
+import type { IApiResponse } from "@/types/apiResponse"
+import { AxiosError } from "axios"
 
 class MediaModel {
-    static async getAllMovies(page: number, limit: number): Promise<IApiResponse> {
-        try {
-            const response = await axiosAPI.get('/media', {
-                params: {
-                    page: page || 1, 
-                    limit: limit || 8
-                }
-            });
-            console.log(response);
-            return response.data;
-        } catch (error) {
-            console.error('Error fetching movies:', error);
-            throw error;
+  static async getAllMovies(page = 1, limit = 8): Promise<IApiResponse<IMedia[]>> {
+    try {
+      const response = await axiosAPI.get<IApiResponse<IMedia[]>>("/media", {
+        params: { page, limit },
+      })
+      return response.data
+    } catch (error:unknown) {
+      if (error instanceof AxiosError && error.response) {
+        return {
+          success: false,
+          message: error.response.data?.message || "Failed to fetch movies",
+          data: [],
         }
+      }
+      return {
+        success: false,
+        message: "An unexpected error occurred while fetching movies",
+        data: [],
+      }
     }
-    
-    static async getMovieById(id: number): Promise<IMedia> {
-        try {
-            const response = await axiosAPI.get(`/media/${id}`);
-            return response.data;
-        } catch (error) {
-            console.error(`Error fetching movie with id ${id}:`, error);
-            throw error;
-        }
-    }
+  }
 
-    static async getMovieByType(type: string, page: number, limit: number): Promise<IApiResponse> {
-        try {
-            const response = await axiosAPI.get(`/media/type/${type}`, {
-                params: {
-                    page: page || 1,
-                    limit: limit || 8
-                }
-            });
-            console.log(response);
-            return response.data;
-        } catch (error) {
-            console.error(`Error fetching movies with type ${type}:`, error);
-            throw error;
+  static async getMovieById(id: number): Promise<IApiResponse<IMedia>> {
+    try {
+      const response = await axiosAPI.get<IApiResponse<IMedia>>(`/media/${id}`)
+      return response.data
+    } catch (error:unknown) {
+      if (error instanceof AxiosError && error.response) {
+        return {
+          success: false,
+          message: error.response.data?.message || `Failed to fetch movie with id ${id}`,
+          data: undefined,
         }
+      }
+      return {
+        success: false,
+        message: `An unexpected error occurred while fetching movie with id ${id}`,
+        data: undefined,
+      }
     }
+  }
 
-    static async searchMovies(query: string): Promise<IMedia[]> {
-        try {
-            const response = await axiosAPI.get(`/media/search?query=${encodeURIComponent(query)}`);
-            return response.data;
-        } catch (error) {
-            console.error('Error searching movies:', error);
-            throw error;
+  static async getMovieByType(type: string, page = 1, limit = 8): Promise<IApiResponse<IMedia[]>> {
+    try {
+      const response = await axiosAPI.get<IApiResponse<IMedia[]>>(`/media/type/${type}`, {
+        params: { page, limit },
+      })
+      return response.data
+    } catch (error:unknown) {
+      if (error instanceof AxiosError && error.response) {
+        return {
+          success: false,
+          message: error.response.data?.message || `Failed to fetch movies with type ${type}`,
+          data: [],
         }
+      }
+      return {
+        success: false,
+        message: `An unexpected error occurred while fetching movies with type ${type}`,
+        data: [],
+      }
     }
+  }
 
-    static async deleteMovie(id: number): Promise<boolean> {
-        try {
-            await axiosAPI.delete(`/media/${id}`);
-            return true;
-        } catch (error) {
-            console.error('Error deleting movie:', error);
-            throw error;
+  static async updateMovieById(id: string, data: FormData): Promise<IApiResponse<boolean>> {
+    try {
+      const response = await axiosAPI.put<IApiResponse<boolean>>(`/media/${id}`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      return response.data
+    } catch (error:unknown) {
+      if (error instanceof AxiosError && error.response) {
+        return {
+          success: false,
+          message: error.response.data?.message || `Failed to update movie with id ${id}`,
+          data: false,
         }
+      }
+      return {
+        success: false,
+        message: `An unexpected error occurred while updating movie with id ${id}`,
+        data: false,
+      }
     }
+  }
 
-    static async addMovie(newMovie: FormData): Promise<IMedia> {
-        try {
-            const response = await axiosAPI.post('/media-add', newMovie,{
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            console.log('Movie added successfully:', response.data);
-            return response.data.data;
-        } catch (error) {
-            console.error('Error adding movie:', error);
-            throw error;
+  static async searchMovies(query: string): Promise<IApiResponse<IMedia[]>> {
+    try {
+      const response = await axiosAPI.get<IApiResponse<IMedia[]>>(`/media/search?query=${encodeURIComponent(query)}`)
+      return response.data
+    } catch (error:unknown) {
+      if (error instanceof AxiosError && error.response) {
+        return {
+          success: false,
+          message: error.response.data?.message || "Failed to search movies",
+          data: [],
         }
+      }
+      return {
+        success: false,
+        message: "An unexpected error occurred while searching movies",
+        data: [],
+      }
     }
+  }
 
-    static async getMediaByAuthor(authorName: string, page: number, limit: number): Promise<IApiResponse> {
-        try {
-            const response = await axiosAPI.get(`media-author`, {
-                params: {
-                    page: page || 1,
-                    limit: limit || 8,
-                    username: authorName
-                }
-            });
-            console.log(response);
-            return response.data;
-        } catch (error) {
-            console.error(`Error fetching movies for author ${authorName}:`, error);
-            throw error;
+  static async deleteMovie(id: number): Promise<IApiResponse<boolean>> {
+    try {
+      const response = await axiosAPI.delete<IApiResponse<boolean>>(`/media/${id}`)
+      return response.data
+    } catch (error:unknown) {
+      if (error instanceof AxiosError && error.response) {
+        return {
+          success: false,
+          message: error.response.data?.message || `Failed to delete movie with id ${id}`,
+          data: false,
         }
+      }
+      return {
+        success: false,
+        message: `An unexpected error occurred while deleting movie with id ${id}`,
+        data: false,
+      }
     }
+  }
+
+  static async addMovie(newMovie: FormData): Promise<IApiResponse<IMedia>> {
+    try {
+      const response = await axiosAPI.post<IApiResponse<IMedia>>("/media-add", newMovie, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      return response.data
+    } catch (error:unknown) {
+      if (error instanceof AxiosError && error.response) {
+        return {
+          success: false,
+          message: error.response.data?.message || "Failed to add movie",
+          data: undefined,
+        }
+      }
+      return {
+        success: false,
+        message: "An unexpected error occurred while adding movie",
+        data: undefined,
+      }
+    }
+  }
+
+  static async getMediaByAuthor(authorName: string, page = 1, limit = 8): Promise<IApiResponse<IMedia[]>> {
+    try {
+      const response = await axiosAPI.get<IApiResponse<IMedia[]>>(`/media-author`, {
+        params: { page, limit, username: authorName },
+      })
+      return response.data
+    } catch (error:unknown) {
+      if (error instanceof AxiosError && error.response) {
+        return {
+          success: false,
+          message: error.response.data?.message || `Failed to fetch movies for author ${authorName}`,
+          data: [],
+        }
+      }
+      return {
+        success: false,
+        message: `An unexpected error occurred while fetching movies for author ${authorName}`,
+        data: [],
+      }
+    }
+  }
 }
 
-export default MediaModel;
+export default MediaModel
+

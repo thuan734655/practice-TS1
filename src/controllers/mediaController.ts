@@ -1,48 +1,66 @@
 import MediaModel from '../models/mediaModel';
 import { IMedia } from '../models/mediaForm';
 import { IApiResponse } from '@/types/apiResponse';
+import { Toast } from '@/utils/toast';
 
 class MovieController {
-    async getMovies(page: number, limit: number): Promise<IApiResponse> {
+    async getMovies(page: number, limit: number): Promise<IApiResponse<IMedia[]>> {
         try {
-          return  await MediaModel.getAllMovies(page,limit);
+          const result =   await MediaModel.getAllMovies(page,limit);
+            if(!result.success) {
+                Toast.showError(result.message);
+            }
+            return result as IApiResponse<IMedia[]>;
         } catch (error) {
             console.error('Controller error getting movies:', error);
             throw error;
         }
     }
-    async getMoviesByFilter(filter: string, page: number, limit: number ): Promise<IApiResponse> {
+    async getMoviesByFilter(filter: string, page: number, limit: number ): Promise<IApiResponse<IMedia[]>> {
         try {
-            return  await MediaModel.getMovieByType(filter,page,limit);
+            const result =   await MediaModel.getMovieByType(filter,page,limit);
+            if(!result.success) {
+                Toast.showError(result.message);
+            }
+            return result as IApiResponse<IMedia[]>;
         } catch (error) {
             console.error('Controller error getting movies:', error);
             throw error;
         }
     }
-    async searchMovies(query: string): Promise<IMedia[]> {
+    async searchMovies(query: string): Promise<IApiResponse<IMedia[]>> {
         try {
-            return await MediaModel.searchMovies(query);
+            const result =  await MediaModel.searchMovies(query);
+            if(!result.success) {
+                Toast.showError(result.message );
+            }
+            return result as IApiResponse<IMedia[]>;
         } catch (error) {
             console.error('Controller error searching movies:', error);
             throw error;
         }
     }
 
-    async getMovieByAuthor( page: number, limit: number): Promise<IApiResponse> {
+    async getMovieByAuthor(author:string, page: number, limit: number): Promise<IApiResponse<IMedia[]>> {
         try {
-            const userData = localStorage.getItem('user');
-            const author = userData ? JSON.parse(userData).name : null;
-
-            return await MediaModel.getMediaByAuthor(author, page, limit);
+            const result =  await MediaModel.getMediaByAuthor(author, page, limit);
+            if(!result.success) {
+                Toast.showError(result.message);
+            }
+            return result as IApiResponse<IMedia[]>;
         } catch (error) {
             console.error('Controller error getting movies by author:', error);
             throw error;
-        }
+        }   
     }
 
     async deleteMovie(id: number): Promise<boolean> {
         try {
-            return await MediaModel.deleteMovie(id);
+            const result =  await MediaModel.deleteMovie(id);
+            if(!result.success ) {
+                Toast.showError(result.message);
+            }
+            return result.success as boolean;
         } catch (error) {
             console.error(`Controller error deleting movie ${id}:`, error);
             throw error;
@@ -50,32 +68,11 @@ class MovieController {
     }
     async addMovie(formData: FormData): Promise<IMedia> {
         try {
-            let parsedUser : string = "";
-            const authorName = localStorage.getItem('user');
-            if(authorName) {
-                 parsedUser = JSON.parse(authorName).name;
+            const result =  await MediaModel.addMovie(formData);
+            if(!result.success) {
+                Toast.showError(result.message );
             }
-      
-            const newFormData = new FormData();
-            newFormData.append('description', formData.get('description') as string);
-            newFormData.append('rating', formData.get('rating') as string);
-            newFormData.append('type', formData.get('type') as string);
-            newFormData.append('status', formData.get('status') as string);
-            newFormData.append('release_date', formData.get('release_date') as string);
-            newFormData.append('last_air_date', formData.get('last_air_date') as string);
-            newFormData.append('first_air_date', formData.get('first_air_date') as string);
-            newFormData.append('number_of_episodes', formData.get('number_of_episodes') as string);
-            newFormData.append('number_of_seasons', formData.get('number_of_seasons') as string);
-            newFormData.append('episode_run_time', formData.get('episode_run_time') as string);
-            newFormData.append('genres', (formData.get('genres') as string));
-            newFormData.append('movie_name', formData.get('movie-name') as string);
-            newFormData.append('author', parsedUser as string);
-            newFormData.append('background', formData.get('background') as string);
-            newFormData.append('avatar', formData.get('avatar') as string)
-
-            const result =  await MediaModel.addMovie(newFormData);
-            
-            return result;
+            return result.data as IMedia;
         } catch (error) {
             console.error('Controller error adding movie:', error);
             throw error;
@@ -84,8 +81,11 @@ class MovieController {
     async getMovieById(id: number): Promise<IMedia> {
         try {
             const result = await MediaModel.getMovieById(id);
+            if(!result.success) {
+                Toast.showError(result.message);
+            }
+            return result.data as IMedia;
             
-            return result;
         } catch (error) {
             console.error(`Controller error getting movie ${id}:`, error);
             throw error;
@@ -94,8 +94,10 @@ class MovieController {
     async updateMovie(id: string, formData: FormData): Promise<boolean> {
         try {
             const result = await MediaModel.updateMovieById(id, formData);
-            
-            return result;
+            if(!result.success) {
+                Toast.showError(result.message);
+            }
+            return result.success as boolean;
         } catch (error) {
             console.error(`Controller error updating movie ${id}:`, error);
             throw error;
