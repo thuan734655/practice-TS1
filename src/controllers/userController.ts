@@ -65,11 +65,10 @@ export default class UserController {
     if (emailValidationError || passwordValidationError || nameValidationError) {
       return;
     }
-    
 
     const result: IApiResponse<IRegisterResponse> = await UserModel.register(dataRegister);
 
-    if (result.success && result.data) {
+    if (result.success) {
       Router.getInstance().navigateTo('/login');
       this.clearError("register-email");
       this.clearError("register-password");
