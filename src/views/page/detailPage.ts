@@ -1,9 +1,9 @@
-import header from '../components/header';
+import header from '../components/Header';
 import { ContentRender } from "@/types/general";
 import { BasePage } from "./basePage";
 import { IcStar } from '../../resources/assets/icons';
-import loadBoxTVShow from '../components/boxTVShow';
-import loadBoxMovie from '../components/boxMovie';
+import loadBoxTVShow from '../components/BoxTVShow';
+import loadBoxMovie from '../components/BoxMovie';
 
 class TvShowsDetailsPage extends BasePage {
   constructor() {
@@ -15,7 +15,7 @@ class TvShowsDetailsPage extends BasePage {
   }
 
   public async renderContent(content: ContentRender): Promise<string> {
-    this.setState({ mediaRes: content.mediaRes, idMedia: content.idMedia });
+    this.setState({ mediaRes: content?.mediaRes, idMedia: content?.idMedia });
     return `
       ${header.render()}
      <section class="section-main-tvshow"  id= "rootApp"> 

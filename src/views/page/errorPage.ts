@@ -1,5 +1,5 @@
-import { BasePage } from './BasePage';
-import header from '../components/header';
+import { BasePage } from './basePage';
+import header from '../components/Header.js';
 import { IcError } from '../../resources/assets/icons/index.js';
 import { Router } from '@/router/router.js';
 
