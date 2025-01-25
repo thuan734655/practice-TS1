@@ -21,7 +21,7 @@ export class TvShowPage extends BasePage {
   }
 
   public async renderContent(content:ContentRender): Promise<string> {
-    this.setState({ media: content.mediaRes, totalItems: content.totalItems});
+    this.setState({ media: content?.mediaRes, totalItems: content?.totalItems});
     return `
       ${Header.render()}
       <div class="home-page" id="rootApp">
@@ -106,7 +106,7 @@ export class TvShowPage extends BasePage {
 
       const response = await movieController.getMoviesByFilter('tv-shows',this.getState("currentPage"), this.getState("itemsPerPage"));
 
-      const mediaRes: IMedia[] = response.data;
+      const mediaRes: IMedia[] = response.data as IMedia[];
       const totalItemsRes = response.totalItems;
 
       if (Array.isArray(mediaRes)) {
@@ -124,8 +124,8 @@ export class TvShowPage extends BasePage {
   private async updateSearchContent(query: string): Promise<void> {
     try {
       const searchContent = await movieController.searchMovies(query);
-      const filteredContent = searchContent.filter((item) => item.type === this.getState("currentFilter") || this.getState("currentFilter") === 'all');
-      this.setState({ mediaSearch: filteredContent, totalItems: filteredContent.length });
+      const filteredContent = searchContent.data?.filter((item) => item.type === this.getState("currentFilter") || this.getState("currentFilter") === 'all');
+      this.setState({ mediaSearch: filteredContent, totalItems: filteredContent?.length });
       this.renderMovieList(true);
     } catch (error) {
       console.error('Error during search:', error);

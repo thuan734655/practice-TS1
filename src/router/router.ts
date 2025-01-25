@@ -1,8 +1,7 @@
-import { BasePage } from '../views/page/BasePage.ts';
+import { BaseController } from '../controllers/baseController';
 
 interface Route {
   path: string;
-  component: new () => BasePage;
   title: string;
 }
 
@@ -19,11 +18,10 @@ export class Router {
     window.addEventListener('popstate', () => this.handleRoute());
     document.addEventListener('DOMContentLoaded', () => this.handleRoute());
 
-    // Intercept all clicks on anchor tags
     document.addEventListener('click', (e: Event) => {
       const target = e.target as HTMLElement;
       const anchor = target.closest('a');
-      
+
       if (anchor) {
         const href = anchor.getAttribute('href');
         if (href && href.startsWith('/')) {
@@ -45,8 +43,8 @@ export class Router {
     this.root = element;
   }
 
-  public addRoute(path: string, component: new () => BasePage, title: string): void {
-    this.routes.push({ path, component, title });
+  public addRoute(path: string, title: string): void {
+    this.routes.push({ path, title });
   }
 
   public navigateTo(path: string): void {
@@ -59,27 +57,16 @@ export class Router {
     const route = this.findMatchingRoute(path);
 
     if (route && this.root) {
-      document.title = route.title;
-
-      // Create and render new componen
-      const component = new route.component();
-
       try {
-        const content = await component.render();
-        this.root.innerHTML = content;
-        component.afterRender();
-
-        // Scroll to top on page change
-        window.scrollTo(0, 0);
-
-        // Update active navigation state
-        this.updateActiveNavigation(path);
+        const params = this.extractParams(route.path, path);
+        const controller = new BaseController();
+        await controller.handleRoute(this.root, route.path, params, route.title);
       } catch (error) {
-        console.error('Error rendering page:', error);
-        this.handleError();
+        console.error('Error in controller:', error);
+        this.navigateTo('/error');
       }
     } else {
-      this.handle404();
+      this.navigateTo('/error');
     }
   }
 
@@ -88,9 +75,9 @@ export class Router {
       if (route.path.includes(':')) {
         const routeParts = route.path.split('/');
         const pathParts = path.split('/');
-        
+
         if (routeParts.length !== pathParts.length) return false;
-        
+
         return routeParts.every((part, i) => {
           if (part.startsWith(':')) return true;
           return part === pathParts[i];
@@ -100,53 +87,18 @@ export class Router {
     });
   }
 
-  private updateActiveNavigation(currentPath: string): void {
-    // Remove active class from all nav links
-    document.querySelectorAll('nav a').forEach(link => {
-      link.classList.remove('active');
-      if (link.getAttribute('href') === currentPath) {
-        link.classList.add('active');
+  private extractParams(routePath: string, actualPath: string): { [key: string]: string } {
+    const params: { [key: string]: string } = {};
+    const routeParts = routePath.split('/');
+    const pathParts = actualPath.split('/');
+
+    routeParts.forEach((part, i) => {
+      if (part.startsWith(':')) {
+        params[part.substring(1)] = pathParts[i];
       }
     });
-  }
 
-  public getParam(param: string): string | null {
-    const path = window.location.pathname;
-    const route = this.findMatchingRoute(path);
-
-    if (route) {
-      const routeParts = route.path.split('/');
-      const pathParts = path.split('/');
-      const paramIndex = routeParts.findIndex(part => part === `:${param}`);
-      
-      if (paramIndex !== -1) {
-        return pathParts[paramIndex];
-      }
-    }
-    return null;
-  }
-
-  private handle404(): void {
-    if (this.root) {
-      this.root.innerHTML = `
-        <div class="error-page">
-          <h1>404 - Page Not Found</h1>
-          <p>The page you're looking for doesn't exist.</p>
-          <a href="/" class="back-home">Go Home</a>
-        </div>
-      `;
-    }
-  }
-
-  private handleError(): void {
-    if (this.root) {
-      this.root.innerHTML = `
-        <div class="error-page">
-          <h1>Oops! Something went wrong</h1>
-          <p>Please try again later.</p>
-          <a href="/" class="back-home">Go Home</a>
-        </div>
-      `;
-    }
+    return params;
   }
 }
+ 

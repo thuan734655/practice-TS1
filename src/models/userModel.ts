@@ -1,29 +1,42 @@
 import axiosAPI from "@/api/configAxios";
+import { AxiosError } from "axios";
+import { IApiResponse, ILoginResponse, IRegisterResponse } from "../types/apiResponse";
 import { dataLogin, dataRegister } from "../types/login";
-import { Toast } from "@/utils/toast";
 
-class UserModel {
-    public static async login(dataLogin: dataLogin) {
-     try {
-        const response = await  axiosAPI.post("/login", {email: dataLogin.email, password: dataLogin.password});
-        if(response) {
-          return response.data;
-        }
-     }catch (err) {
-         console.error('Error during login:', err);
-         throw err; 
-     }
-    }
-    public static async register(dataRegister: dataRegister) {
-      try {
-        const response = await axiosAPI.post('/register', dataRegister);
-        return response.data;
-      } catch (err: any) {
-        if (err.response) {
-          Toast.showError(err.response.data.message)
-        }
+export default class UserModel {
+  public static async login(dataLogin: dataLogin): Promise<IApiResponse<ILoginResponse>> {
+    try {
+      const response = await axiosAPI.post<IApiResponse<ILoginResponse>>('/login', dataLogin);
+      return response.data;
+    } catch (error:unknown) {
+      if (error instanceof AxiosError && error.response) {
+        return {
+          success: false,
+          message: error.response.data?.message || "An unexpected error occurred.", 
+        };
       }
-}
-}
+      return {
+        success: false,
+        message: "An unexpected error occurred.",
+      };
+    }
+  }
 
-export default UserModel;
+  public static async register(dataRegister: dataRegister): Promise<IApiResponse<IRegisterResponse>> {
+    try {
+      const response = await axiosAPI.post<IApiResponse<IRegisterResponse>>('/register', dataRegister);
+      return response.data;
+    } catch (error: unknown) {
+      if (error instanceof AxiosError && error.response) {
+        return {
+          success: false,
+          message: error.response.data?.message || "An unexpected error occurred.",
+        };
+      }
+      return {
+        success: false,
+        message: "An unexpected error occurred.",
+      };
+    }
+  }
+}

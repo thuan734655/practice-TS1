@@ -1,7 +1,6 @@
 import { BasePage } from './basePage';
 import Header from '../components/Header';
 import movieController from '../../controllers/mediaController';
-import { IMedia } from '../../models/mediaForm';
 import LoadMovies from '../components/ListMovie';
 import { ICSearch } from '../../resources/assets/icons';
 import pagination from '../components/Pagination';
@@ -107,7 +106,7 @@ export class MoviePage extends BasePage {
 
       const response = await movieController.getMoviesByFilter('movies',this.getState("currentPage"), this.getState("itemsPerPage"));
 
-      const mediaRes: IMedia[] = response.data;
+      const mediaRes = response.data;
       const totalItemsRes = response.totalItems;
 
       if (Array.isArray(mediaRes)) {
@@ -125,8 +124,8 @@ export class MoviePage extends BasePage {
   private async updateSearchContent(query: string): Promise<void> {
     try {
       const searchContent = await movieController.searchMovies(query);
-      const filteredContent = searchContent.filter((item) => item.type === this.getState("currentFilter") || this.getState("currentFilter") === 'all');
-      this.setState({ mediaSearch: filteredContent, totalItems: filteredContent.length });
+      const filteredContent = searchContent.data?.filter((item) => item.type === this.getState("currentFilter") || this.getState("currentFilter") === 'all');
+      this.setState({ mediaSearch: filteredContent, totalItems: filteredContent?.length });
       this.renderMovieList(true);
     } catch (error) {
       console.error('Error during search:', error);
