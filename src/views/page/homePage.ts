@@ -22,7 +22,7 @@ export class HomePage extends BasePage {
     };
   }
 
-  public async renderContent(content:ContentRender): Promise<string> {
+  public  renderContent(content:ContentRender): string {
     this.setState({ media: content.mediaRes, totalItems: content.totalItems});
     return `
       ${Header.render()}

@@ -3,7 +3,7 @@ import { ContentRender } from "@/types/general";
 export abstract class BasePage {
     protected state: Record<string, any> = {};
   
-    public abstract renderContent(content: ContentRender): string | Promise<string>;
+    public abstract renderContent(content: ContentRender): string ;
     protected abstract attachEventListeners(): void;
   
     public afterRender(): void {

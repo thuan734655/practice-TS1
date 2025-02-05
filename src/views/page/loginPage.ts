@@ -15,7 +15,7 @@ export class LoginPage extends BasePage {
     };
   }
 
-  public async renderContent(): Promise<string> {
+  public  renderContent(): string {
     return `
       ${headerLogin()}
       <section class="section-main-login" id="rootLogin">

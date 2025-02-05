@@ -4,7 +4,7 @@ import UserModel from "../models/userModel";
 import { Router } from "../router/router";
 import { dataLogin, dataRegister } from "../types/login";
 import { IApiResponse, ILoginResponse, IRegisterResponse } from "../types/apiResponse";
-import { setDataLocalStorage } from "./localStorage";
+import { setDataLocalStorage } from "../utils/localStorage";
 
 export default class UserController {
   public static async login(dataLogin: dataLogin) {

@@ -18,59 +18,58 @@ export class BaseController {
       '/home': async () => {
         const homePage = new HomePage();
         const result = await mediaController.getMovies(page, limit);
-        console.log(result);
         const data: ContentRender = { mediaRes: result.data, totalItems: result.totalItems };
-        root.innerHTML = await homePage.renderContent(data);
+        root.innerHTML = homePage.renderContent(data);
         homePage.afterRender();
       },
       '/': async () => {
         const loginPage = new LoginPage();
-        root.innerHTML = await loginPage.renderContent();
+        root.innerHTML =  loginPage.renderContent();
         loginPage.afterRender();
       },
       '/login': async () => {
         const loginPage = new LoginPage();
-        root.innerHTML = await loginPage.renderContent();
+        root.innerHTML = loginPage.renderContent();
         loginPage.afterRender();
       },
       '/add/:author': async () => {
         const addPage = new AddPage();
         const result = await mediaController.getMovieByAuthor(params.author, page, limit);
         const data: ContentRender = { mediaRes: result.data, totalItems: result.totalItems, author: params.author };
-        root.innerHTML = await addPage.renderContent(data);
+        root.innerHTML =  addPage.renderContent(data);
         addPage.afterRender();
       },
       '/update/:id': async () => {
         const updatePage = new UpdatePage();
         const result = await mediaController.getMovieById(parseInt(params.id, 10));
         const data: ContentRender = { mediaRes: result, idMedia: params.id };
-        root.innerHTML = await updatePage.renderContent(data);
+        root.innerHTML =  updatePage.renderContent(data);
         updatePage.afterRender();
       },
       '/detail/:id': async () => {
         const detailPage = new TvShowsDetailsPage();
         const result = await mediaController.getMovieById(parseInt(params.id, 10));
         const data: ContentRender = { mediaRes: result, idMedia: params.id };
-        root.innerHTML = await detailPage.renderContent(data);
+        root.innerHTML =  detailPage.renderContent(data);
         detailPage.afterRender();
       },
       '/movies': async () => {
         const moviePage = new MoviePage();
         const result = await mediaController.getMoviesByFilter('movies', page, limit);
         const data: ContentRender = { mediaRes: result.data, totalItems: result.totalItems };
-        root.innerHTML = await moviePage.renderContent(data);
+        root.innerHTML =  moviePage.renderContent(data);
         moviePage.afterRender();
       },
       '/tvshows': async () => {
         const tvShowPage = new TvShowPage();
         const result = await mediaController.getMoviesByFilter('tv-shows', page, limit);
         const data: ContentRender = { mediaRes: result.data, totalItems: result.totalItems };
-        root.innerHTML = await tvShowPage.renderContent(data);
+        root.innerHTML =  tvShowPage.renderContent(data);
         tvShowPage.afterRender();
       },
       '/error': async () => {
         const errorPage = new ErrorPage();
-        root.innerHTML = await errorPage.renderContent();
+        root.innerHTML =  errorPage.renderContent();
         errorPage.afterRender();
       },
     };

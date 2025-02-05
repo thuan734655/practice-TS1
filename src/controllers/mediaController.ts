@@ -5,28 +5,18 @@ import { Toast } from '@/utils/toast';
 
 class MovieController {
     async getMovies(page: number, limit: number): Promise<IApiResponse<IMedia[]>> {
-        try {
-          const result =   await MediaModel.getAllMovies(page,limit);
+          const result = await MediaModel.getAllMovies(page,limit);
             if(!result.success) {
                 Toast.showError(result.message);
             }
-            return result as IApiResponse<IMedia[]>;
-        } catch (error) {
-            console.error('Controller error getting movies:', error);
-            throw error;
-        }
+            return result;   
     }
     async getMoviesByFilter(filter: string, page: number, limit: number ): Promise<IApiResponse<IMedia[]>> {
-        try {
-            const result =   await MediaModel.getMovieByType(filter,page,limit);
+            const result = await MediaModel.getMovieByType(filter,page,limit);
             if(!result.success) {
                 Toast.showError(result.message);
             }
-            return result as IApiResponse<IMedia[]>;
-        } catch (error) {
-            console.error('Controller error getting movies:', error);
-            throw error;
-        }
+            return result;
     }
     async searchMovies(query: string): Promise<IApiResponse<IMedia[]>> {
         try {
@@ -34,7 +24,7 @@ class MovieController {
             if(!result.success) {
                 Toast.showError(result.message );
             }
-            return result as IApiResponse<IMedia[]>;
+            return result;
         } catch (error) {
             console.error('Controller error searching movies:', error);
             throw error;
@@ -47,7 +37,7 @@ class MovieController {
             if(!result.success) {
                 Toast.showError(result.message);
             }
-            return result as IApiResponse<IMedia[]>;
+            return result;
         } catch (error) {
             console.error('Controller error getting movies by author:', error);
             throw error;

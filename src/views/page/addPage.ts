@@ -24,7 +24,7 @@ export class AddPage extends BasePage {
     };
   }
 
-  public async renderContent(content:ContentRender): Promise<string> {
+  public  renderContent(content:ContentRender): string {
     this.setState({ media: content.mediaRes, totalItems: content.totalItems, author: content.author});
     return `
       ${ Header.render()}
