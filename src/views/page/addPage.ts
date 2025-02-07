@@ -3,7 +3,7 @@ import Header from '../components/Header';
 import { ICSearch } from '../../resources/assets/icons';
 import LoadMovies from '../components/ListMovie';
 import mediaController from '../../controllers/mediaController';
-import { IMedia } from '../../models/mediaForm';
+import { IMedia } from '../../types/mediaForm';
 import AddForm from '../components/AddForm';
 import Pagination from '../components/Pagination';
 import { ContentRender } from '@/types/general';

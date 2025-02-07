@@ -9,7 +9,7 @@ export class UpdatePage extends BasePage {
         super();
         this.state = {
             mediaRes: [],
-            idMedia: "", 
+            idMedia: 0, 
         };
     }
 

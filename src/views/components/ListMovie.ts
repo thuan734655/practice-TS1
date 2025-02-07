@@ -1,5 +1,5 @@
 import { Router } from '@/router/router';
-import { IMedia } from '../../models/mediaForm';
+import { IMedia } from '../../types/mediaForm';
 import { IcStar } from '../../resources/assets/icons';
 import mediaController from '@/controllers/mediaController';
 import { Toast } from '@/utils/toast';

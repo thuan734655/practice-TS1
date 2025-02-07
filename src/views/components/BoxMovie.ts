@@ -1,4 +1,4 @@
-import { IMedia } from "@/models/mediaForm";
+import { IMedia } from "@/types/mediaForm";
 import formatDate from "@/utils/formatDate";
 const loadBoxMovie = (data: IMedia) => {
 

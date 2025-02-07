@@ -23,7 +23,10 @@ export class HomePage extends BasePage {
   }
 
   public  renderContent(content:ContentRender): string {
-    this.setState({ media: content.mediaRes, totalItems: content.totalItems});
+    alert(content);
+    if(content) {
+      this.setState({ media: content.mediaRes, totalItems: content.totalItems});
+    }
     return `
       ${Header.render()}
       <div class="home-page" id="rootApp">

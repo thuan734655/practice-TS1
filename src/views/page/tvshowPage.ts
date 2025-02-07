@@ -1,7 +1,7 @@
 import { BasePage } from './basePage';
 import Header from '../components/Header';
 import movieController from '../../controllers/mediaController';
-import { IMedia } from '../../models/mediaForm';
+import { IMedia } from '../../types/mediaForm';
 import LoadMovies from '../components/ListMovie';
 import { ICSearch } from '../../resources/assets/icons';
 import pagination from '../components/Pagination';
