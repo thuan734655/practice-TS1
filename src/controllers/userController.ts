@@ -3,7 +3,7 @@ import UserModel from "../models/userModel";
 import { Router } from "../router/router";
 import { dataLogin, dataRegister } from "../types/authTypes.ts";
 import { setDataLocalStorage } from "../utils/localStorage";
-import { clearError, showError } from "@/views/components/formErrorHandler.ts";
+import { clearError, showError } from "@/helper/formErrorHandler.ts";
 import { IAuthResponse } from "@/types/apiResponseTypes.ts";
 
 export default class UserController {
