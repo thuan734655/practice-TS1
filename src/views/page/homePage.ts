@@ -4,29 +4,25 @@ import movieController from '../../controllers/mediaController';
 import LoadMovies from '../components/ListMovie';
 import { ICSearch } from '../../resources/assets/icons';
 import pagination from '../components/Pagination';
-import { ContentRender } from '@/types/general';
+import { ContentRender } from '@/types/basePageTypes';
+import { IMedia } from '@/types/mediaForm';
+import { Toast } from '@/utils/toast';
 
 export class HomePage extends BasePage {
   constructor() {
     super();
-    this.state = {
-      currentFilter: 'all',
-      searchQuery: '',
-      media: [],
-      mediaSearch: [],
-      itemsPerPage: 8,
-      currentPage: 1,
-      pageMovies: 1,
-      pageTvShow: 1,
-      totalItems: 0,
-    };
+    this.setState<string>("currentFilter", 'All');
+    this.setState<number>("currentPage", 1);
+    this.setState<number>("pageMovies", 1);
+    this.setState<number>("pageTvShow", 1);
+    this.setState<number>("itemsPerPage", 8);
+
   }
 
   public  renderContent(content:ContentRender): string {
-    alert(content);
-    if(content) {
-      this.setState({ media: content.mediaRes, totalItems: content.totalItems});
-    }
+      this.setState<IMedia[]>("media", content.mediaRes as IMedia[]);
+      this.setState<number>("totalItems", content.totalItems as number);
+
     return `
       ${Header.render()}
       <div class="home-page" id="rootApp">
@@ -39,10 +35,10 @@ export class HomePage extends BasePage {
         ${this.renderSearchBox()}
         ${this.renderFilterButtons()}
         <p class="section-main--desc-subNav quantity-videos">
-          ${this.getState("currentFilter").toUpperCase()} <span>(${this.getState("totalItems")})</span>
+         ${this.renderQuantity()}
         </p>
         <div class="section-main--list-movies" id="movieList">
-          ${LoadMovies.render(this.getState("media"))}
+            ${this.getState<IMedia[]>("media")?.length ? LoadMovies.render(this.getState<IMedia[]>("media")!) : "<p>Empty</p>"}
         </div>
         <div class="pagination"></div>
       </div>
@@ -58,13 +54,13 @@ export class HomePage extends BasePage {
   }
 
   private attachFilterEventListeners(): void {
-    const filters: ('all' | 'movies' | 'tv-shows')[] = ['all', 'movies', 'tv-shows'];
+    const filters: ('All' | 'movies' | 'tv-shows')[] = ['All', 'movies', 'tv-shows'];
     filters.forEach((filter) => {
       const button = document.getElementById(filter);
       if (button) {
         button.addEventListener('click', async () => {
           if (this.getState("currentFilter") !== filter) {
-            this.setState({ currentFilter: filter });
+            this.setState<string>("currentFilter", filter)
             console.log("Filter", filter);
             this.updateActiveFilterButton();
             await this.updateFilteredContent(); 
@@ -80,7 +76,7 @@ export class HomePage extends BasePage {
     if (searchInput) {
       searchInput.addEventListener('input', async (e) => {
         const query = (e.target as HTMLInputElement).value;
-        this.setState({ searchQuery: query });
+        this.setState<string>("searchQuery", query)
         if (query === "") {
           this.renderMovieList();
         } else {
@@ -119,9 +115,21 @@ export class HomePage extends BasePage {
       </div>
     `;
   }
-
+  private renderQuantity(): string {
+    const currentFilter = this.getState<string>("currentFilter");
+    const totalItems = this.getState<number>("totalItems");
+    if(currentFilter && currentFilter) {
+      return ` 
+        ${currentFilter} <span>(${totalItems})</span>}
+   `
+    }
+    else {
+      return "";
+    }
+  }
+ 
   private renderFilterButtons(): string {
-    const filters: ('all' | 'movies' | 'tv-shows')[] = ['all', 'movies', 'tv-shows'];
+    const filters: ('All' | 'movies' | 'tv-shows')[] = ['All', 'movies', 'tv-shows'];
     return `
       <div class="section-main--subNav">
         <div class="subNav-container">
@@ -139,33 +147,35 @@ export class HomePage extends BasePage {
   }
 
   private async fetchMedia(): Promise<void> {
-    const filter = this.getState("currentFilter");
-    try {
-      const page = this.getPage();
-      
-      const response = filter !== 'all'
-        ? await movieController.getMoviesByFilter(filter, page, this.getState("itemsPerPage"))
-        : await movieController.getMovies(page, this.getState("itemsPerPage"));
+    const filter = this.getState<string>("currentFilter");
+    const page = this.getPage();
+    const limit = this.getState<number>("itemsPerPage");
+
+    if(filter && page && limit) {
+      const response = filter !== 'All'
+        ? await movieController.getMoviesByFilter(filter,  { page, limit })
+        : await movieController.getMovies({ page, limit });
       const mediaRes = response.data;
       const totalItemsRes = response.totalItems;
 
-      if (Array.isArray(mediaRes)) {
-        this.setState({ media: mediaRes, totalItems: totalItemsRes || 0 });
+      if (mediaRes) {
+        this.setState<IMedia[]>("media", mediaRes);
+        this.setState<number>("totalItems", totalItemsRes || 0);
       } else {
         console.error('Unexpected response format:', mediaRes);
-        this.setState({ media: [] });
+        this.setState<IMedia[]>("media",[]);
       }
-    } catch (error) {
-      console.error('Error fetching movies:', error);
-      this.setState({ media: [] });
+       Toast.showError("Error occurred while performing this action!")
     }
   }
 
   private updateActiveFilterButton(): void {
-    const filter = this.getState("currentFilter");
-    document.querySelectorAll('.subNav-container button').forEach((btn) => btn.classList.remove('button-active'));
-    const button = document.getElementById(filter);
-    button?.classList.add('button-active');
+    const filter = this.getState<string>("currentFilter");
+    if (filter) {
+      document.querySelectorAll('.subNav-container button').forEach((btn) => btn.classList.remove('button-active'));
+      const button = document.getElementById(filter);
+      button?.classList.add('button-active');
+    }
   }
 
   private async updateFilteredContent(): Promise<void> {
@@ -176,28 +186,31 @@ export class HomePage extends BasePage {
   }
 
   private async updateSearchContent(query: string): Promise<void> {
-    try {
       const searchContent = await movieController.searchMovies(query);
-      const filteredContent = searchContent.data?.filter((item) => item.type === this.getState("currentFilter") || this.getState("currentFilter") === 'all');
-      this.setState({ mediaSearch: filteredContent, totalItems: filteredContent?.length });
-      this.renderMovieList(true);
-    } catch (error) {
-      console.error('Error during search:', error);
-      this.setState({ media: [] });
-    }
+      if(searchContent) {
+        const filteredContent = searchContent.data?.filter((item) => item.type === this.getState("currentFilter") || this.getState("currentFilter") === 'all');
+        this.setState<IMedia[]>("mediaSearch", filteredContent);
+        this.setState<number>("totalItems", filteredContent?.length || 0);
+
+        this.renderMovieList(true);
+      }
   }
 
   private renderMovieList(isSearch?: Boolean): void {
     const listMoviesElement = document.querySelector('.section-main--list-movies');
-    if (isSearch) {
+    const mediaSearch = this.getState<IMedia[]>("mediaSearch");
+    const media = this.getState<IMedia[]>("media");
+    if (isSearch && mediaSearch ) {
       if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies.render(this.getState("mediaSearch"));
+        listMoviesElement.innerHTML = LoadMovies.render(mediaSearch);
         LoadMovies.event();
         this.scrollToTop();
       }
-    } else {
+
+    } else if(media) {
+
       if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies.render(this.getState("media"));
+        listMoviesElement.innerHTML = LoadMovies.render(media);
         LoadMovies.event();
         this.scrollToTop();
       }
@@ -206,27 +219,43 @@ export class HomePage extends BasePage {
 
   private updateQuantityVideos(): void {
     const quantityVideosElement = document.querySelector('.quantity-videos');
-    if (quantityVideosElement) {
-      quantityVideosElement.innerHTML = `${this.getState("currentFilter").toUpperCase()} <span>(${this.getState("totalItems")})</span>`;
+    const currentFilter = this.getState<string>("currentFilter");
+    const totalItems = this.getState<number>("totalItems");
+
+    if (quantityVideosElement && currentFilter && totalItems) {
+      quantityVideosElement.innerHTML = `${currentFilter} <span>(${totalItems})</span>`;
     }
   }
 
   private setPage(page: number): void {
     const currentFilter = this.getState("currentFilter");
-    currentFilter === 'all' 
-      ? this.setState({ currentPage: page }) 
+    currentFilter === 'All' 
+      ? this.setState<number>( "currentPage", page ) 
       : currentFilter === 'movies' 
-      ? this.setState({ pageMovies: page }) 
-      : this.setState({ pageTvShow: page });
+      ? this.setState<number>( "pageMovies", page ) 
+      : this.setState<number>( "pageTvShow", page );
   }
 
   private getPage(): number {
-    return this.getState("currentFilter") === 'all' 
-          ? this.getState("currentPage") 
-          : this.getState("currentFilter") === 'movies' 
-            ? this.getState("pageMovies") 
-            : this.getState("pageTvShow");
-  }
+    const currentFilter = this.getState<string>("currentFilter");
+
+    if (currentFilter) {
+        if (currentFilter === 'All') {
+            const currentPage = this.getState<number>("currentPage");
+            return currentPage !== null ? currentPage : 1;
+        } 
+        
+        if (currentFilter === 'movies') {
+            const pageMovies = this.getState<number>("pageMovies");
+            return pageMovies !== null ? pageMovies : 1;
+        } 
+        
+        const pageTvShow = this.getState<number>("pageTvShow");
+        return pageTvShow !== null ? pageTvShow : 1;
+    }
+
+    return 1; 
+}
 
   private scrollToTop(): void {
     document.querySelector('.section-main--list-movies')?.scrollIntoView({ behavior: 'smooth' });

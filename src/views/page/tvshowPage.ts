@@ -5,7 +5,7 @@ import { IMedia } from '../../types/mediaForm';
 import LoadMovies from '../components/ListMovie';
 import { ICSearch } from '../../resources/assets/icons';
 import pagination from '../components/Pagination';
-import { ContentRender } from '@/types/general';
+import { ContentRender } from '@/types/basePageTypes';
 
 export class TvShowPage extends BasePage {
   constructor() {

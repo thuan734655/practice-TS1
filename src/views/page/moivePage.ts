@@ -4,7 +4,7 @@ import movieController from '../../controllers/mediaController';
 import LoadMovies from '../components/ListMovie';
 import { ICSearch } from '../../resources/assets/icons';
 import pagination from '../components/Pagination';
-import { ContentRender } from '@/types/general';
+import { ContentRender } from '@/types/basePageTypes';
 
 export class MoviePage extends BasePage {
   constructor() {
