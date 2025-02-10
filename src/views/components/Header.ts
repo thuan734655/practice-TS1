@@ -1,6 +1,6 @@
 import { NavChild } from './NavChild';
 import { IcLogout, IcLogo } from '../../resources/assets/icons/index.js';
-import { NavItem } from '../../types/general.js';
+import { NavItem } from '../../types/basePageTypes.js';
 import { getDataLocalStorage } from '@/utils/localStorage.js';
 
 export default class Header {

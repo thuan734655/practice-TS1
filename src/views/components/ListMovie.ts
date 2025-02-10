@@ -4,6 +4,7 @@ import { IcStar } from '../../resources/assets/icons';
 import mediaController from '@/controllers/mediaController';
 import { Toast } from '@/utils/toast';
 import { getDataLocalStorage } from '@/utils/localStorage';
+import { BASE_URL } from '@/constants/baseURL';
 
 class LoadMovies {
   public static render(media: IMedia[]): string {
@@ -18,7 +19,7 @@ class LoadMovies {
               </div>
             </div>
             <div class="list-movies-container--body">
-              <img src="http://localhost:5001/${data.avatar}" alt="avatar">
+              <img src="${BASE_URL}${data.avatar}" alt="avatar">
             </div>
             <div class="list-movies-container--footer">
               <p>${data.movie_name}</p>

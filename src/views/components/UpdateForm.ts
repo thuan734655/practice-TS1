@@ -1,6 +1,6 @@
 import { IMedia } from "@/types/mediaForm";
 import { fieldConfigs } from "@/constants/formFieldConfig";
-import { FieldConfig } from "@/types/general";
+import { FieldConfig } from "@/types/basePageTypes";
 
 class UpdateForm {
   public static render(video: Partial<IMedia>): string {

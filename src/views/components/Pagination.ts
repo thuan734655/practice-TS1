@@ -1,7 +1,7 @@
 export default class Pagination {
-    public static render(state: Record<string, any>): void {
+    public static render(state: Record<string, string>): void {
         const paginationElement = document.querySelector('.pagination');
-        const totalPages = Math.ceil(state.totalItems / state.itemsPerPage);
+        const totalPages = Math.ceil(state.totalItems / state);
         
         const createPageButton = (pageNum: number): string => `
             <button class="pagination-btn ${pageNum === this.getPage(state) ? 'active' : ''}" data-page="${pageNum}">
