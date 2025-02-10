@@ -1,6 +1,6 @@
 import { IcLogo, IcLogout } from '../../resources/assets/icons/index.js';
 import {NavChild} from './NavChild.js';
-import { NavItem } from '../../types/general.js';
+import { NavItem } from '../../types/basePageTypes.js';
 
 const listNav: NavItem[] = [
   { text: 'Dashboard', href: '/dashboard' },

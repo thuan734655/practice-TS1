@@ -1,7 +1,7 @@
 import { NavChild } from './NavChild';
 import { IcLogout, IcLogo } from '../../resources/assets/icons/index.js';
-import { NavItem } from '../../types/general.js';
-import { getDataLocalStorage } from '@/controllers/localStorage.js';
+import { NavItem } from '../../types/basePageTypes.js';
+import { getDataLocalStorage } from '@/utils/localStorage.js';
 
 export default class Header {
   private static listNav: NavItem[] = [
