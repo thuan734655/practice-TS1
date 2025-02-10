@@ -3,7 +3,6 @@ import headerLogin from '../components/HeaderLogin';
 import { IcEmail, IcEye, IcKeySquare, IcSaly } from '../../resources/assets/icons';
 import { dataRegister } from '../../types/authTypes.ts';
 import UserController from '../../controllers/userController';
-import { RegisterComponent } from '../components/Register';
 import { Toast } from '@/utils/toast.ts';
 
 export class LoginPage extends BasePage {
@@ -49,26 +48,30 @@ export class LoginPage extends BasePage {
         </div>
       </section>
       
-      <!-- Register Popup -->
-      <div class="register-popup hidden">
-        <div class="register-container">
-          <p class="close-button">X</p>
-          <h1>Register</h1>
-          <form id="registerForm">
-            <input type="email" id="register_email" placeholder="Email" required>
-            <p id="error-register-email" class="error-message"></p>
-            <input type="password" id="register_password" placeholder="Password" required>
-            <p id="error-register-password" class="error-message"></p>
-            <input type="text" id="full-name" placeholder="Full Name" required>
-            <p id="error-register-name" class="error-message"></p>
-            <button class="submit-register">Register</button>
-          </form>
-          <div class="footer">Already have an account? <span class="back-to-login">Log in</span></div>
-        </div>
-      </div>
+      <!-- Register  -->
+      ${this.RenderRegisterComponent()}
     `;
 }
-
+ private RenderRegisterComponent() {
+  return `
+    <div class="register-popup hidden">
+      <div class="register-container">
+        <p class="close-button">X</p>
+        <h1>Register</h1>
+        <form id="registerForm">
+          <input type="email" id="register_email" placeholder="Email" required>
+          <p id="error-register-email" class="error-message">Invalid email format</p>
+          <input type="password" id="register_password" placeholder="Password" required>
+          <p id="error-register-password" class="error-message">Password must be at least 6 characters</p>
+          <input type="text" id="full-name" placeholder="Full Name" required>
+          <p id="error-register-name" class="error-message">Name is </p>
+          <button class="submit-register">Register</button>
+        </form>
+        <div class="footer">Already have an account? <span class="back-to-login">Log in</span></div>
+      </div>
+    </div>
+  `;
+}
 
   protected attachEventListeners(): void {
     this.attachLoginEventListener();
@@ -108,14 +111,14 @@ export class LoginPage extends BasePage {
     const popup = document.querySelector('.register-popup') as HTMLElement;
     const closeButton = document.querySelector('.close-button') as HTMLElement;
     const backToLogin = document.querySelector('.back-to-login') as HTMLElement;
-    const submit_register = document.querySelector('.submit-register') as HTMLInputElement;
+    const registerForm = document.querySelector('#registerForm') as HTMLFormElement;
     const input_email = document.querySelector('#register_email') as HTMLInputElement;
     const input_pass = document.querySelector('#register_password') as HTMLInputElement;
     const input_name = document.querySelector('#full-name') as HTMLInputElement;
 
-
-    if(submit_register && popup) {
-      submit_register.addEventListener('click', async (e) => {
+    //submit action
+    if(registerForm && popup) {
+      registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = input_email.value;
         const password = input_pass.value;
