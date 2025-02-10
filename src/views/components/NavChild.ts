@@ -1,4 +1,4 @@
-import { NavItem } from "../../types/general";
+import { NavItem } from "../../types/basePageTypes";
 
 export class NavChild {
   public static render(items: NavItem[]): string {

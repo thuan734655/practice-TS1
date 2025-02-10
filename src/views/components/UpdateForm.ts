@@ -1,6 +1,6 @@
-import { IMedia } from "@/models/mediaForm";
+import { IMedia } from "@/types/mediaForm";
 import { fieldConfigs } from "@/constants/formFieldConfig";
-import { FieldConfig } from "@/types/general";
+import { FieldConfig } from "@/types/basePageTypes";
 
 class UpdateForm {
   public static render(video: Partial<IMedia>): string {
@@ -28,7 +28,6 @@ class UpdateForm {
   private static generateFieldHTML(key: string, config: FieldConfig, formattedValue: string): string {
     const { label, type, required, placeholder, maxlength, accept, step, max, min, multiple, options } = config;
   
-    // Nếu trường là "select"
     if (type === "select") {
       return `
         <div class="form-group">
@@ -42,8 +41,7 @@ class UpdateForm {
         </div>
       `;
     }
-  
-    // Nếu trường là "textarea"
+
     if (type === "textarea") {
       return `
         <div class="form-group">
@@ -56,7 +54,6 @@ class UpdateForm {
       `;
     }
   
-    // Các trường còn lại (input)
     return `
       <div class="form-group">
         <label for="${key}">${label}:</label>

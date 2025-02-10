@@ -1,21 +1,17 @@
 import { BasePage } from './basePage';
 import headerLogin from '../components/HeaderLogin';
 import { IcEmail, IcEye, IcKeySquare, IcSaly } from '../../resources/assets/icons';
-import { dataLogin, dataRegister } from '../../types/login';
+import { dataRegister } from '../../types/authTypes.ts';
 import UserController from '../../controllers/userController';
+import { RegisterComponent } from '../components/Register';
+import { Toast } from '@/utils/toast.ts';
 
 export class LoginPage extends BasePage {
   constructor() {
     super();
-    this.state = {
-      email: '',
-      password: '',
-      errorMessage: '',
-      name: ""
-    };
   }
 
-  public async renderContent(): Promise<string> {
+  public  renderContent(): string {
     return `
       ${headerLogin()}
       <section class="section-main-login" id="rootLogin">
@@ -36,12 +32,12 @@ export class LoginPage extends BasePage {
               <div class="input-login">
                 <img src="${IcEmail}" alt="icon email">
                 <input class="input-email" type="email" placeholder="Email" required>
-                <p id="error-email" class="error-message"></p> 
+                <p id="error-email" class="error-message">Invalid email format</p> 
               </div>
               <div class="input-login">
                 <img class="icon-key" src="${IcKeySquare}" alt="icon key">
                 <input class="input-password" type="password" placeholder="Password" required>
-                <p id="error-password" class="error-message"></p> 
+                <p id="error-password" class="error-message">Password must be at least 6 characters</p> 
                 <img select="false" class="icon-eye" src="${IcEye}" alt="icon eye">
               </div>
               <button class="btn-login" type="button">Login</button>
@@ -53,23 +49,8 @@ export class LoginPage extends BasePage {
         </div>
       </section>
       
-      <!-- Register Popup -->
-      <div class="register-popup hidden">
-        <div class="register-container">
-          <p class="close-button">X</p>
-          <h1>Register</h1>
-          <form id="registerForm">
-            <input type="email" id="register_email" placeholder="Email" required>
-            <p id="error-register-email" class="error-message"></p>
-            <input type="password" id="register_password" placeholder="Password" required>
-            <p id="error-register-password" class="error-message"></p>
-            <input type="text" id="full-name" placeholder="Full Name" required>
-            <p id="error-register-name" class="error-message"></p>
-            <button class="submit-register">Register</button>
-          </form>
-          <div class="footer">Already have an account? <span class="back-to-login">Log in</span></div>
-        </div>
-      </div>
+      <!-- Register  -->
+      ${RegisterComponent()}
     `;
 }
 
@@ -92,9 +73,7 @@ export class LoginPage extends BasePage {
           const email = emailInput.value;
           const password = passwordInput.value;
   
-          this.setState({ email, password });
-  
-          this.login();
+          this.login(email,password);
         }
       });
     }
@@ -106,6 +85,7 @@ export class LoginPage extends BasePage {
       });
     }
   }
+  
   
 
   private attachRegisterPopupEvents(): void {
@@ -125,8 +105,7 @@ export class LoginPage extends BasePage {
         const email = input_email.value;
         const password = input_pass.value;
         const name = input_name.value;
-        this.setState({email,password,name});
-        this.register();
+        this.register(email, password, name);
       })
     }
 
@@ -149,24 +128,28 @@ export class LoginPage extends BasePage {
     }
   }
 
-  private async login(): Promise<void> {
-    try {
-      const dataLogin: dataLogin = { email: this.getState("email"), password: this.getState("password") };
-      await UserController.login(dataLogin);
-    } catch (error) {
-      console.error('Login failed:', error);
-      this.setState({ errorMessage: 'An error occurred during login. Please try again.' });
-    }
+  private async login(email:string, password: string): Promise<void> {
+      const dataLogin = { email: email, password: password };
+      const result = await UserController.login(dataLogin);
+      if(result.success) {
+        Toast.showSuccess("Login Success");
+      }
+      else {
+        Toast.showError(result.message);
+      }
   }
-  private async register(): Promise<void> {
-    try {
-      const dataRegister : dataRegister = { email: this.getState("email"), password: this.getState("password"), name: this.getState("name") };
-      await UserController.register(dataRegister);
+  private async register(email:string,password: string,name:string): Promise<void> {
+      const dataRegister : dataRegister = { email: email , password: password, name: name};
+      const result = await UserController.register(dataRegister);
+      if(result.success) {
+        const popup = document.querySelector(".register-popup") as HTMLElement; 
+        popup.classList.add('hidden');
+        Toast.showSuccess("Register Success");
+      }
+      else {
+        Toast.showError(result.message);
+      }
       
-    } catch (error) {
-      console.error('Register failed:', error);
-      this.setState({ errorMessage: 'An error occurred during registration. Please try again.' });   
-    }
   }
 }
 

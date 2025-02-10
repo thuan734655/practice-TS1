@@ -1,7 +1,7 @@
 import axios from "axios";
-
+import { BASE_URL } from "@/constants/baseURL";
 const configAxios = {
-  baseURL: "https://practice-ts-server.onrender.com/api",
+  baseURL: `${BASE_URL}api`,
   headers: {
     "Content-Type": "application/json",
   },

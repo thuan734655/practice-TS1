@@ -1,9 +1,10 @@
 import { Router } from '@/router/router';
-import { IMedia } from '../../models/mediaForm';
+import { IMedia } from '../../types/mediaForm';
 import { IcStar } from '../../resources/assets/icons';
 import mediaController from '@/controllers/mediaController';
 import { Toast } from '@/utils/toast';
-import { getDataLocalStorage } from '@/controllers/localStorage';
+import { getDataLocalStorage } from '@/utils/localStorage';
+import { BASE_URL } from '@/constants/baseURL';
 
 class LoadMovies {
   public static render(media: IMedia[]): string {
@@ -18,7 +19,7 @@ class LoadMovies {
               </div>
             </div>
             <div class="list-movies-container--body">
-              <img src="https://practice-ts-server.onrender.com/${data.avatar}" alt="avatar">
+              <img src="${BASE_URL}${data.avatar}" alt="avatar">
             </div>
             <div class="list-movies-container--footer">
               <p>${data.movie_name}</p>
@@ -63,34 +64,20 @@ class LoadMovies {
       viewButton?.addEventListener('click', () => {
         Router.getInstance().navigateTo(`/detail/${mediaId}`);
       });
-
       
       updateButton?.addEventListener('click', () => {
         Router.getInstance().navigateTo(`/update/${mediaId}`);
       });
 
-      let removedElement: HTMLElement | null = null;
-
       deleteButton?.addEventListener('click', async () => {
         const result: boolean = await mediaController.deleteMovie(mediaId);
-      
-        removedElement = container.cloneNode(true) as HTMLElement;
-      
         container.remove();
         if(result) {
           Toast.showSuccess("Media has been deleted successfully")
         } else {
           Toast.showError("Failed to delete media")
-          restoreRemovedElement();
         }
       });
-      
-      function restoreRemovedElement() {
-        if (removedElement) {
-          document.body.appendChild(removedElement);
-          removedElement = null;
-        }
-      }
       
     });
   }

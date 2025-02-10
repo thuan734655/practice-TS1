@@ -1,11 +1,11 @@
 import { BasePage } from './basePage';
 import Header from '../components/Header';
 import movieController from '../../controllers/mediaController';
-import { IMedia } from '../../models/mediaForm';
+import { IMedia } from '../../types/mediaForm';
 import LoadMovies from '../components/ListMovie';
 import { ICSearch } from '../../resources/assets/icons';
 import pagination from '../components/Pagination';
-import { ContentRender } from '@/types/general';
+import { ContentRender } from '@/types/basePageTypes';
 
 export class TvShowPage extends BasePage {
   constructor() {
@@ -20,7 +20,7 @@ export class TvShowPage extends BasePage {
     };
   }
 
-  public async renderContent(content:ContentRender): Promise<string> {
+  public  renderContent(content:ContentRender): string {
     this.setState({ media: content?.mediaRes, totalItems: content?.totalItems});
     return `
       ${Header.render()}

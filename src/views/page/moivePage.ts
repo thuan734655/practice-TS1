@@ -4,23 +4,22 @@ import movieController from '../../controllers/mediaController';
 import LoadMovies from '../components/ListMovie';
 import { ICSearch } from '../../resources/assets/icons';
 import pagination from '../components/Pagination';
-import { ContentRender } from '@/types/general';
+import { ContentRender } from '@/types/basePageTypes';
+import { IMedia } from '@/types/mediaForm';
 
 export class MoviePage extends BasePage {
   constructor() {
     super();
-    this.state = {
-      searchQuery: '',
-      media: [],
-      mediaSearch: [],
-      itemsPerPage: 8,
-      currentPage: 1,
-      totalItems: 0,
-    };
+    this.setState<string>("currentFilter", 'All');
+    this.setState<number>("currentPage", 1);
+    this.setState<number>("pageMovies", 1);
+    this.setState<number>("pageTvShow", 1);
+    this.setState<number>("itemsPerPage", 8);
   }
 
-  public async renderContent(content:ContentRender): Promise<string> {
-    this.setState({ media: content.mediaRes, totalItems: content.totalItems});
+  public  renderContent(content:ContentRender): string {
+    this.setState<IMedia[]>("media", content.mediaRes as IMedia[]);
+    this.setState<number>("totalItems", content.totalItems as number);
     return `
       ${Header.render()}
       <div class="home-page" id="rootApp">
