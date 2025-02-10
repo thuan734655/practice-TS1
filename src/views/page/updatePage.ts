@@ -1,8 +1,9 @@
 import { BasePage } from './basePage.ts';
 import UpdateForm from '../components/UpdateForm.ts';
-import { ContentRender } from '@/types/general.ts';
+import { ContentRender } from '@/types/basePageTypes.ts';
 import Header from '../components/Header.ts';
 import mediaController from '@/controllers/mediaController.ts';
+import { BASE_URL } from '@/constants/baseURL.ts';
 
 export class UpdatePage extends BasePage {
     constructor() {
@@ -28,11 +29,11 @@ export class UpdatePage extends BasePage {
             <section class="update-page">
                 <section class="box-image">
                     <figure class="image-container">
-                      <img src="https://practice-ts-server.onrender.com/${avatar}" alt="media avatar" class="image-preview" />
+                      <img src="${BASE_URL}${avatar}" alt="media avatar" class="image-preview" />
                       <figcaption>Avatar</figcaption>
                     </figure>
                     <figure class="image-container">
-                      <img src="https://practice-ts-server.onrender.com/${background}" alt="media background" class="image-preview" />
+                      <img src="${BASE_URL}${background}" alt="media background" class="image-preview" />
                       <figcaption>Background</figcaption>
                     </figure>
                 </section>
