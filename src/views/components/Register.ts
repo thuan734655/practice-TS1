@@ -17,5 +17,5 @@ export function RegisterComponent() {
         </div>
       </div>
     `;
-  }
+  }  
   

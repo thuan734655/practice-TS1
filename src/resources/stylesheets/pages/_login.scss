@@ -50,7 +50,7 @@ body {
         @include flex(
           $direction: column,
           $align: flex-start,
-          $gap: pxToRem(16)
+          $gap: pxToRem(8)
         );
         .input-login {
           position: relative;
@@ -128,5 +128,5 @@ body {
   color: red;
   font-size: 12px;
   margin-top: 5px;
-  display: none; 
+  visibility: hidden;
 }
