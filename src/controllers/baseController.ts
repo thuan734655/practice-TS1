@@ -107,20 +107,20 @@ export class BaseController {
   
         '/movies': async () => {
           const moviePage = new MoviePage();
-          const result = await mediaController.getMoviesByFilter('movies', { page, limit });
-  
+          const result = await mediaController.getMoviesByFilter('Movies', { page, limit });
           if (result.data && result.totalItems) {
             const data: ContentRender = { mediaRes: result.data, totalItems: result.totalItems };
             root.innerHTML = moviePage.renderContent(data);
             moviePage.afterRender();
           } else {
+            console.log(result)
             Router.getInstance().navigateTo('/error');
           }
         },
   
         '/tvshows': async () => {
           const tvShowPage = new TvShowPage();
-          const result = await mediaController.getMoviesByFilter('tv-shows', { page, limit });
+          const result = await mediaController.getMoviesByFilter('TV Show', { page, limit });
   
           if (result.data && result.totalItems) {
             const data: ContentRender = { mediaRes: result.data, totalItems: result.totalItems };

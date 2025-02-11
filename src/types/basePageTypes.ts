@@ -7,8 +7,4 @@ export type ContentRender = {
       idMedia?: number;
    }
 
-export interface StateValue {
-      type: string;
-      value: unknown;
-    }
     
