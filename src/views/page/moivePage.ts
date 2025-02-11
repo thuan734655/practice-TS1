@@ -5,22 +5,20 @@ import LoadMovies from '../components/ListMovie';
 import { ICSearch } from '../../resources/assets/icons';
 import pagination from '../components/Pagination';
 import { ContentRender } from '@/types/basePageTypes';
+import { IMedia } from '@/types/mediaForm';
+import { Toast } from '@/utils/toast';
 
 export class MoviePage extends BasePage {
   constructor() {
     super();
-    this.state = {
-      searchQuery: '',
-      media: [],
-      mediaSearch: [],
-      itemsPerPage: 8,
-      currentPage: 1,
-      totalItems: 0,
-    };
+    this.setState<number>("currentPage", 1);
+    this.setState<number>("itemsPerPage", 8);
   }
 
   public  renderContent(content:ContentRender): string {
-    this.setState({ media: content.mediaRes, totalItems: content.totalItems});
+    this.setState<IMedia[]>("media", content.mediaRes as IMedia[]);
+    this.setState<number>("totalItems", content.totalItems as number);
+
     return `
       ${Header.render()}
       <div class="home-page" id="rootApp">
@@ -35,7 +33,7 @@ export class MoviePage extends BasePage {
         <span>${this.getState("totalItems")} items</span>
         </p>
         <div class="section-main--list-movies" id="movieList">
-          ${LoadMovies.render(this.getState("media"))}
+          ${this.getState<IMedia[]>("media")?.length ? LoadMovies.render(this.getState<IMedia[]>("media")!) : "<p>Empty</p>"}
         </div>
         <div class="pagination"></div>
       </div>
@@ -55,7 +53,8 @@ export class MoviePage extends BasePage {
     if (searchInput) {
       searchInput.addEventListener('input', async (e) => {
         const query = (e.target as HTMLInputElement).value;
-        this.setState({ searchQuery: query });
+        this.setState<string>( "searchQuery", query );
+        //no more searching
         if (query === "") {
           this.renderMovieList();
         } else {
@@ -77,7 +76,7 @@ export class MoviePage extends BasePage {
             btn.classList.remove('active');
           });
           target.classList.add('active');
-          this.setState({currentPage: page});
+          this.setState<number>("currentPage", page);
           this.updateFilteredContent();
         }
       }
@@ -102,53 +101,56 @@ export class MoviePage extends BasePage {
 
 
   private async fetchMedia(): Promise<void> {
-    try {
+    const limit = this.getState<number>("itemsPerPage");
+    const currentPage = this.getState<number>("currentPage");
 
-      const response = await movieController.getMoviesByFilter('movies',this.getState("currentPage"), this.getState("itemsPerPage"));
+    if(limit && currentPage) {
+      const response = await movieController.getMoviesByFilter('movies',{limit, page: currentPage});
 
       const mediaRes = response.data;
       const totalItemsRes = response.totalItems;
-
-      if (Array.isArray(mediaRes)) {
-        this.setState({ media: mediaRes, totalItems: totalItemsRes || 0 });
-      } else {
-        console.error('Unexpected response format:', mediaRes);
-        this.setState({ media: [] });
-      }
-    } catch (error) {
-      console.error('Error fetching movies:', error);
-      this.setState({ media: [] });
+     
+        if (mediaRes) {
+                this.setState<IMedia[]>("media", mediaRes);
+                this.setState<number>("totalItems", totalItemsRes || 0);
+        } else {
+          Toast.showError("Error occurred while performing this action!")
+        }
+          
+    }  else {
+      Toast.showError("Error occurred while performing this action!")
     }
   }
 
   private async updateSearchContent(query: string): Promise<void> {
-    try {
       const searchContent = await movieController.searchMovies(query);
-      const filteredContent = searchContent.data?.filter((item) => item.type === this.getState("currentFilter") || this.getState("currentFilter") === 'all');
-      this.setState({ mediaSearch: filteredContent, totalItems: filteredContent?.length });
+
+      this.setState<IMedia[]>("mediaSearch", searchContent.data);
+      this.setState<number>("totalItems", searchContent.data?.length);
       this.renderMovieList(true);
-    } catch (error) {
-      console.error('Error during search:', error);
-      this.setState({ media: [] });
-    }
   }
 
   private renderMovieList(isSearch?: Boolean): void {
     const listMoviesElement = document.querySelector('.section-main--list-movies');
-    if (isSearch) {
+    const mediaSearch = this.getState<IMedia[]>("mediaSearch");
+    const media = this.getState<IMedia[]>("media");
+    if (isSearch && mediaSearch ) {
       if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies.render(this.getState("mediaSearch"));
+        listMoviesElement.innerHTML = LoadMovies.render(mediaSearch);
         LoadMovies.event();
         this.scrollToTop();
       }
-    } else {
+
+    } else if(media) {
+
       if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies.render(this.getState("media"));
+        listMoviesElement.innerHTML = LoadMovies.render(media);
         LoadMovies.event();
         this.scrollToTop();
       }
     }
   }
+
   private scrollToTop(): void {
     document.querySelector('.section-main--list-movies')?.scrollIntoView({ behavior: 'smooth' });
   }

@@ -3,10 +3,11 @@ import Header from '../components/Header';
 import movieController from '../../controllers/mediaController';
 import LoadMovies from '../components/ListMovie';
 import { ICSearch } from '../../resources/assets/icons';
-import pagination from '../components/Pagination';
 import { ContentRender } from '@/types/basePageTypes';
 import { IMedia } from '@/types/mediaForm';
 import { Toast } from '@/utils/toast';
+import { RenderPaginationData } from '@/types/componentTypes';
+import Pagination from '../components/Pagination';
 
 export class HomePage extends BasePage {
   constructor() {
@@ -16,7 +17,6 @@ export class HomePage extends BasePage {
     this.setState<number>("pageMovies", 1);
     this.setState<number>("pageTvShow", 1);
     this.setState<number>("itemsPerPage", 8);
-
   }
 
   public  renderContent(content:ContentRender): string {
@@ -44,67 +44,6 @@ export class HomePage extends BasePage {
       </div>
     `;
   }
-
-  protected attachEventListeners(): void {
-    this.attachFilterEventListeners();
-    this.attachSearchEventListener();
-    this.attachPaginationEventListener();
-    LoadMovies.event();
-    pagination.render(this.state);
-  }
-
-  private attachFilterEventListeners(): void {
-    const filters: ('All' | 'movies' | 'tv-shows')[] = ['All', 'movies', 'tv-shows'];
-    filters.forEach((filter) => {
-      const button = document.getElementById(filter);
-      if (button) {
-        button.addEventListener('click', async () => {
-          if (this.getState("currentFilter") !== filter) {
-            this.setState<string>("currentFilter", filter)
-            console.log("Filter", filter);
-            this.updateActiveFilterButton();
-            await this.updateFilteredContent(); 
-            pagination.render(this.state);
-          }
-        });
-      }
-    });
-  }
-
-  private attachSearchEventListener(): void {
-    const searchInput = document.getElementById('searchInput') as HTMLInputElement;
-    if (searchInput) {
-      searchInput.addEventListener('input', async (e) => {
-        const query = (e.target as HTMLInputElement).value;
-        this.setState<string>("searchQuery", query)
-        if (query === "") {
-          this.renderMovieList();
-        } else {
-          await this.updateSearchContent(query);
-        }
-      });
-    }
-  }
-
-  private attachPaginationEventListener(): void {
-    document.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-      if (target.classList.contains('pagination-btn')) {
-        const page = parseInt(target.dataset.page || '1', 10);
-        const currentPage = this.getPage();
-        console.log(currentPage);
-        if (page !== currentPage) {
-          document.querySelectorAll('.pagination-btn').forEach((btn) => {
-            btn.classList.remove('active');
-          });
-          target.classList.add('active');
-          this.setPage(page);
-          this.updateFilteredContent();
-        }
-      }
-    });
-  }
-
   private renderSearchBox(): string {
     return `
       <div class="section-main--search">
@@ -120,7 +59,7 @@ export class HomePage extends BasePage {
     const totalItems = this.getState<number>("totalItems");
     if(currentFilter && currentFilter) {
       return ` 
-        ${currentFilter} <span>(${totalItems})</span>}
+        ${currentFilter} <span>(${totalItems})</span>
    `
     }
     else {
@@ -129,21 +68,112 @@ export class HomePage extends BasePage {
   }
  
   private renderFilterButtons(): string {
-    const filters: ('All' | 'movies' | 'tv-shows')[] = ['All', 'movies', 'tv-shows'];
-    return `
+    const filters = ['All', 'Movies', 'TV Show'];
+    const currentFilter = this.getState<string>("currentFilter");
+    if(currentFilter) {
+      return `
       <div class="section-main--subNav">
         <div class="subNav-container">
           ${filters
             .map(
-              (filter) => `
-              <button id="${filter}" class="subNav-container--btn-${filter} ${this.getState("currentFilter") === filter ? 'button-active' : ''}">
-                ${filter === 'tv-shows' ? 'TV Shows' : filter.charAt(0).toUpperCase() + filter.slice(1)}
-              </button>`
+              (filter) => {
+                if(filter == "TV Show") {
+                  return `
+                  <button id="${filter}" class="subNav-container--btn-tv-shows ${currentFilter === filter ? 'button-active' : ''}">
+                  TV Shows
+                  </button>`
+                }else {
+                  return`
+                  <button id="${filter}" class="subNav-container--btn-${filter} ${currentFilter === filter ? 'button-active' : ''}">
+                    ${filter === 'tv-shows' ? 'TV Shows' : filter.charAt(0).toUpperCase() + filter.slice(1)}
+                  </button>`
+                }
+              }
             )
             .join('')}
         </div>
       </div>
     `;
+    }
+    return ""
+  }
+  private renderPagination(): void {
+    const totalItems = this.getState<number>("totalItems");
+    const itemsPerPage = this.getState<number>("itemsPerPage"); 
+    const currentPage = this.getPage();
+    const pageMovies = this.getState<number>("pageMovies");
+    const pageTvShow = this.getState<number>("pageTvShow");
+    const currentFilter = this.getState<number>("currentFilter");
+    if(totalItems && itemsPerPage && currentFilter && pageMovies && pageTvShow && currentPage) {
+      const statePagination:RenderPaginationData = {totalItems, itemsPerPage, currentPage, pageMovies, pageTvShow}
+      Pagination.render(statePagination);
+    } 
+  }
+
+
+  protected attachEventListeners(): void {
+    this.attachFilterEventListeners();
+    this.attachSearchEventListener();
+    this.attachPaginationEventListener();
+    LoadMovies.event();
+    this.renderPagination();
+  }
+
+  private attachFilterEventListeners(): void {
+    const filters = ['All', 'Movies', 'TV Show'];
+    filters.forEach((filter) => {
+      const button = document.getElementById(filter);
+      if (button ) {
+          button.addEventListener('click', async () => {
+            const currentFilter = this.getState<string>("currentFilter");
+        
+            if(currentFilter) {
+            if (currentFilter != filter) {
+              console.log(currentFilter, filter)
+              this.setState<string>("currentFilter", filter)
+              this.updateActiveFilterButton();
+              await this.updateFilteredContent();
+            }
+          }
+          });
+      }
+    });
+  }
+
+  private attachSearchEventListener(): void {
+    const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+    if (searchInput) {
+      searchInput.addEventListener('input', async (e) => {
+        const query = (e.target as HTMLInputElement).value;
+        console.log(query);
+        if (query == "") {
+          this.renderMovieList();
+        } else {
+          await this.updateSearchContent(query);
+        }
+      });
+    }
+  }
+
+  private attachPaginationEventListener(): void {
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.classList.contains('pagination-btn')) {
+
+        const page = parseInt(target.dataset.page || '1', 10);
+        const currentPage = this.getPage();
+        console.log(currentPage);
+        
+        if (page !== currentPage) {
+          document.querySelectorAll('.pagination-btn').forEach((btn) => {
+            btn.classList.remove('active');
+          });
+          target.classList.add('active');
+          this.setPage(page);
+          this.updateFilteredContent();
+        }
+      }
+    });
   }
 
   private async fetchMedia(): Promise<void> {
@@ -152,7 +182,7 @@ export class HomePage extends BasePage {
     const limit = this.getState<number>("itemsPerPage");
 
     if(filter && page && limit) {
-      const response = filter !== 'All'
+      const response = filter != 'All'
         ? await movieController.getMoviesByFilter(filter,  { page, limit })
         : await movieController.getMovies({ page, limit });
       const mediaRes = response.data;
@@ -162,10 +192,11 @@ export class HomePage extends BasePage {
         this.setState<IMedia[]>("media", mediaRes);
         this.setState<number>("totalItems", totalItemsRes || 0);
       } else {
-        console.error('Unexpected response format:', mediaRes);
-        this.setState<IMedia[]>("media",[]);
+        Toast.showError("Error occurred while performing this action!")
       }
-       Toast.showError("Error occurred while performing this action!")
+
+    }  else {
+      Toast.showError("Error occurred while performing this action!")
     }
   }
 
@@ -180,15 +211,18 @@ export class HomePage extends BasePage {
 
   private async updateFilteredContent(): Promise<void> {
     await this.fetchMedia();
-    pagination.render(this.state);
+    this.renderPagination();
     this.renderMovieList();
     this.updateQuantityVideos();
   }
 
   private async updateSearchContent(query: string): Promise<void> {
       const searchContent = await movieController.searchMovies(query);
-      if(searchContent) {
-        const filteredContent = searchContent.data?.filter((item) => item.type === this.getState("currentFilter") || this.getState("currentFilter") === 'all');
+      const currentFilter = this.getState<string>("currentFilter");
+
+      if(searchContent && currentFilter) {
+        console.log(currentFilter)
+        const filteredContent = searchContent.data?.filter((item) => item.type == currentFilter || currentFilter == 'All');
         this.setState<IMedia[]>("mediaSearch", filteredContent);
         this.setState<number>("totalItems", filteredContent?.length || 0);
 
@@ -228,12 +262,17 @@ export class HomePage extends BasePage {
   }
 
   private setPage(page: number): void {
-    const currentFilter = this.getState("currentFilter");
-    currentFilter === 'All' 
+    const currentFilter = this.getState<string>("currentFilter");
+    if(currentFilter) {
+      currentFilter === 'All' 
       ? this.setState<number>( "currentPage", page ) 
-      : currentFilter === 'movies' 
+      : currentFilter === 'Movies' 
       ? this.setState<number>( "pageMovies", page ) 
       : this.setState<number>( "pageTvShow", page );
+    }
+    else {
+      console.error("Error setting page");
+    }
   }
 
   private getPage(): number {
@@ -245,7 +284,7 @@ export class HomePage extends BasePage {
             return currentPage !== null ? currentPage : 1;
         } 
         
-        if (currentFilter === 'movies') {
+        if (currentFilter === 'Movies') {
             const pageMovies = this.getState<number>("pageMovies");
             return pageMovies !== null ? pageMovies : 1;
         } 

@@ -9,59 +9,71 @@ import Pagination from '../components/Pagination';
 import { ContentRender } from '@/types/basePageTypes';
 import { buildFormData } from '@/helper/formHelper';
 import { Toast } from '@/utils/toast';
+import { RenderPaginationData } from '@/types/componentTypes';
 
 export class AddPage extends BasePage {
-  constructor() {
-    super();
-  }
+constructor() {
+  super();
+  this.setState<boolean>("isFormVisible", false);
+}
 
-  public  renderContent(content:ContentRender): string {
-    this.setState("media", content.mediaRes);
-    this.setState("totalItems", content.totalItems);
-    this.setState("author", content.author);
-    return `
-      ${ Header.render()}
-      <section class="section-main" id="rootApp">
-        <div class="section-main--title">
-          <h3>Add new item</h3>
-        </div>
-        <div class="section-main__box-search-and-mylist">
-          <div class="section-main__box-search-and-mylist--search">
-            ${this.renderSearchBox()}
-          </div>
-          <div class="section-main__box-search-and-mylist--mylist">
-            <p id="add-new-item">Add new item</p>
-          </div>
-        </div>
-        <div class="section-main--list-movies">
-          ${this.getState<IMedia[]>("media")?.length ? LoadMovies.render(this.getState<IMedia[]>("media")!) : "<p>Empty</p>"}
-        </div>
-         <div class="pagination"></div> 
-      </section>
-      <section class="form-add">
-      ${AddForm.render()}
-      </section>
-    `;
-  }
-  protected attachEventListeners(): void {
-    this.attachSearchEventListener(); 
-    this.attachPaginationEventListener();  
-    this.attachSubmitEventListener();
-    this.attachCloseFormEventListener();
-    this.attachAddNewItemEventListener();
-    Pagination.render(this.state);  
-    LoadMovies.event();
-  }
+public  renderContent(content:ContentRender): string {
+  this.setState<IMedia[]>("media", content.mediaRes as IMedia[]);
+  this.setState<number>("totalItems", content.totalItems as number); 
+  this.setState<string>("author", content.author as string);
 
-  private renderSearchBox(): string {
-    return `
-      <div class="search-container">
-        <input id="searchInput" class="search-container--input" type="text" placeholder="Search Movies or TV Shows">
-        <img class="search-container--icon" src="${ICSearch}" alt="icon search">
+  return `
+    ${ Header.render()}
+    <section class="section-main" id="rootApp">
+      <div class="section-main--title">
+        <h3>Add new item</h3>
       </div>
-      <button>search</button>
-    `;
+      <div class="section-main__box-search-and-mylist">
+        <div class="section-main__box-search-and-mylist--search">
+          ${this.renderSearchBox()}
+        </div>
+        <div class="section-main__box-search-and-mylist--mylist">
+          <p id="add-new-item">Add new item</p>
+        </div>
+      </div>
+      <div class="section-main--list-movies">
+        ${LoadMovies.render(content.mediaRes as IMedia[])}
+      </div>
+        <div class="pagination"></div> 
+        </section>
+        <section class="form-add">
+        ${AddForm.render()}
+        </section>
+        `;
+}
+private renderSearchBox(): string {
+  return `
+    <div class="search-container">
+      <input id="searchInput" class="search-container--input" type="text" placeholder="Search Movies or TV Shows">
+      <img class="search-container--icon" src="${ICSearch}" alt="icon search">
+    </div>
+    <button>search</button>
+  `;
+}
+  private renderPagination(): void {
+    const totalItems = this.getState<number>("totalItems");
+    if(totalItems) {
+      const currentPage = 1;
+      const itemsPerPage = 8;
+      const statePagination:RenderPaginationData = {totalItems, itemsPerPage , currentPage}
+      Pagination.render(statePagination);
+    } 
   }
+protected attachEventListeners(): void {
+  this.attachSearchEventListener(); 
+  this.attachPaginationEventListener();  
+  this.attachSubmitEventListener();
+  this.attachCloseFormEventListener();
+  this.attachAddNewItemEventListener();
+  this.renderPagination(); 
+  LoadMovies.event();
+}
+
 
   private async fetchMedia(): Promise<void> {
       const author = this.getState<string>("author");

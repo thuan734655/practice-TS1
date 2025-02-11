@@ -4,41 +4,37 @@ import { ContentRender } from '@/types/basePageTypes.ts';
 import Header from '../components/Header.ts';
 import mediaController from '@/controllers/mediaController.ts';
 import { BASE_URL } from '@/constants/baseURL.ts';
+import { IMedia } from '@/types/mediaForm.ts';
 
 export class UpdatePage extends BasePage {
     constructor() {
         super();
-        this.state = {
-            mediaRes: [],
-            idMedia: 0, 
-        };
+        this.setState<string[]>("array", []);
+        this.setState<Date[]>("Date", []);
+        this.setState<File[]>("File",[]);
+        this.setState<number[]>("number",[]);
+
     }
 
     public  renderContent(data: ContentRender): string {
-        this.setState({ mediaRes: data.mediaRes, idMedia: data.idMedia });
-        console.log(data);
-        if (!this.getState("mediaRes")) {
-            return '<div>No media found to update</div>';
-        }
-
-        const avatar = this.getState('mediaRes').avatar || '';
-        const background = this.getState('mediaRes').background || '';
-
+        this.setState<IMedia>("mediaRes", data.mediaRes as IMedia);
+        this.setState<number>("idMedia", data.idMedia as number);
+        const media = data.mediaRes as IMedia;
         return `
             ${Header.render()}
             <section class="update-page">
                 <section class="box-image">
                     <figure class="image-container">
-                      <img src="${BASE_URL}${avatar}" alt="media avatar" class="image-preview" />
+                      <img src="${BASE_URL}${media.avatar}" alt="media avatar" class="image-preview" />
                       <figcaption>Avatar</figcaption>
                     </figure>
                     <figure class="image-container">
-                      <img src="${BASE_URL}${background}" alt="media background" class="image-preview" />
+                      <img src="${BASE_URL}${media.background}" alt="media background" class="image-preview" />
                       <figcaption>Background</figcaption>
                     </figure>
                 </section>
                 <div class="update-form-container">
-                    ${UpdateForm.render(this.getState("mediaRes"))}
+                    ${UpdateForm.render(media)}
                 </div>
             </section>
         `;
@@ -60,35 +56,31 @@ export class UpdatePage extends BasePage {
             form.addEventListener('submit', async (event) => {
                 event.preventDefault(); 
     
-                const updatedData = this.getState('updatedData');
-                const oldData = this.getState('mediaRes');
-    
+                const updatedData = this.getState<IMedia>('updatedData');
+                const oldData = this.getState<IMedia>('mediaRes');
+                
                 const formData = new FormData();
-    
-                for (const key in updatedData) {
-                    if (updatedData[key] !== oldData[key]) {
-                        const value = updatedData[key];
-    
-                        if (value instanceof FileList) {
-                            for (let i = 0; i < value.length; i++) {
-                                formData.append(key, value[i]);
-                            }
-                        } else {
-                            formData.append(key, value);
-                        }
+                
+                if (updatedData && oldData) {
+                  Object.entries(updatedData).forEach(([key, newValue]) => {
+                    const typedKey = key as keyof IMedia;
+                    const oldValue = oldData[typedKey];
+                
+                    if (newValue !== undefined && JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
+                      if ( newValue instanceof File) {
+                          formData.append(key, newValue);
+                      } else {
+                          formData.append(key, newValue.toString());
+                      }
+                      
                     }
+                  });
+
+                  formData.forEach((value, key) => {
+                    console.log(`FormData - ${key}:`, value);
+                  });
                 }
-    
-                if (formData.entries().next().done) {
-                    console.log('No changes to update.');
-                    return;
-                }
-    
-                try {
                     this.updateMediaData(formData);
-                } catch (error) {
-                    console.error('Error updating media:', error);
-                }
             });
         }
     }
@@ -103,7 +95,7 @@ export class UpdatePage extends BasePage {
                     const key = target.name;
                     const value = target.type === 'file' ? target.files : target.value;
 
-                    const updatedData = { ...this.getState('updatedData') };
+                    const updatedData = { ...this.getState<IMedia>('updatedData') };
                     updatedData[key] = value;
                     this.setState({ updatedData });
 

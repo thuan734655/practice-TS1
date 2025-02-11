@@ -157,13 +157,13 @@ export class LoginPage extends BasePage {
       }
   }
   private async register(email:string,password: string,name:string): Promise<void> {
-    try {
-      const dataRegister : dataRegister = { email: email , password: password, name: name};
-      await UserController.register(dataRegister);
-      
-    } catch (error) {
-      console.error('Register failed:', error);
+     const dataRegister : dataRegister = { email: email , password: password, name: name};
+    const result =  await UserController.register(dataRegister);
+    if(result.success) {
+      Toast.showSuccess("Login Success");
+    }
+    else {
+      Toast.showError(result.message);
     }
   }
 }
-
