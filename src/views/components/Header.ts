@@ -1,12 +1,13 @@
 import { NavChild } from './NavChild';
 import { IcLogout, IcLogo } from '../../resources/assets/icons/index.js';
-import { NavItem } from '../../types/basePageTypes.js';
+import { NavItem } from '../../types/componentTypes.js';
 import { getDataLocalStorage } from '@/utils/localStorage.js';
 
 export default class Header {
   private static listNav: NavItem[] = [
     { text: 'Movies', href: '/movies' },
     { text: 'TV Shows', href: '/tvshows' },
+    { text: 'Add', href: `/add/${getDataLocalStorage('name')}`}
   ];
   
   private static readonly listNavIcon: NavItem[] = [
@@ -17,11 +18,6 @@ export default class Header {
   ];
 
   public static render(): string {
-    const author = getDataLocalStorage("name");
-    if (author && !this.listNav.some(item => item.href === `/add/${author}`)) {
-      this.listNav.push({ text: 'Add', href: `/add/${author}` });
-    }
-
     return `
       <header id="rootApp">
         <div class="header--logo">

@@ -1,7 +1,9 @@
+import { RenderPaginationData } from "@/types/componentTypes";
+
 export default class Pagination {
-    public static render(state: Record<string, string>): void {
+    public static render(state:RenderPaginationData ): void {
         const paginationElement = document.querySelector('.pagination');
-        const totalPages = Math.ceil(state.totalItems / state);
+        const totalPages = Math.ceil(state.totalItems / state.itemsPerPage);
         
         const createPageButton = (pageNum: number): string => `
             <button class="pagination-btn ${pageNum === this.getPage(state) ? 'active' : ''}" data-page="${pageNum}">
@@ -26,7 +28,7 @@ export default class Pagination {
         }
     }
 
-    private static getPage(state: Record<string, any>): number {
+    private static getPage(state:RenderPaginationData ): number {
         const { currentFilter, currentPage, pageMovies, pageTvShow } = state;
 
         if (!currentFilter) {
@@ -37,10 +39,9 @@ export default class Pagination {
             return currentPage;
         } else if (currentFilter === 'movies') {
             return pageMovies ?? currentPage;  
-        } else if (currentFilter === 'tv-shows') {
+        } else {
             return pageTvShow ?? currentPage;
         }
 
-        return currentPage;
     }
 }
