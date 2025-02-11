@@ -28,4 +28,12 @@ export interface ImageLink  {
     page: number;
     limit: number;
   }
+  export interface RenderPaginationData {
+     totalItems: number;
+     itemsPerPage: number;
+     currentPage: number;
+     currentFilter?: string;
+     pageMovies?: number;
+     pageTvShow?: number;
+  }
   
