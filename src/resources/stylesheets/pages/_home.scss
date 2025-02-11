@@ -91,10 +91,10 @@
           color: #ffffff;
         }
       }
-      .subNav-container--btn-all {
+      .subNav-container--btn-All {
         @include set-size($w: pxToRem(85), $h: pxToRem(40));
       }
-      .subNav-container--btn-movies {
+      .subNav-container--btn-Movies {
         @include set-size($w: pxToRem(132), $h: pxToRem(40));
       }
       .subNav-container--btn-tv-shows {
