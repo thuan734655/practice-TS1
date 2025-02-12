@@ -35,9 +35,9 @@ class MovieController {
         return result.data;
     }
 
-    async updateMovie(id: number, formData: FormData): Promise<boolean> {
+    async updateMovie(id: number, formData: FormData): Promise<IMedia> {
         const result = await MediaModel.updateMovieById(id, formData);
-        return result;
+        return result.data;
     }
 }
 

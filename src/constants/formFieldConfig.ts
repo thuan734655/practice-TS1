@@ -1,4 +1,4 @@
-import { FieldConfig } from "@/types/basePageTypes";
+import { FieldConfig } from "@/types/componentTypes";
 
 export const fieldConfigs: Record<string, FieldConfig> = {
   movie_name: { label: "Movie Name", type: "text", placeholder: "Enter movie name", maxlength: 255, required: true },
