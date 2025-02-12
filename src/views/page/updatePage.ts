@@ -1,39 +1,41 @@
-import { BasePage } from './basePage.ts';
-import UpdateForm from '../components/UpdateForm.ts';
-import { ContentRender } from '@/types/basePageTypes.ts';
-import Header from '../components/Header.ts';
-import mediaController from '@/controllers/mediaController.ts';
-import { BASE_URL } from '@/constants/baseURL.ts';
+import { BasePage } from "./basePage.ts";
+import UpdateForm from "../components/UpdateForm.ts";
+import { ContentRender } from "@/types/basePageTypes.ts";
+import Header from "../components/Header.ts";
+import mediaController from "@/controllers/mediaController.ts";
+import { BASE_URL } from "@/constants/baseURL.ts";
+import { IMedia } from "@/types/mediaForm.ts";
+import { buildFormData } from "@/helper/formHelper.ts";
+import { Toast } from "@/utils/toast.ts";
 
 export class UpdatePage extends BasePage {
-    constructor() {
-        super();
-        this.state = {
-            mediaRes: [],
-            idMedia: "", 
-        };
-    }
+  constructor() {
+    super();
+  }
 
-    public async renderContent(data: ContentRender): Promise<string> {
-        this.setState({ mediaRes: data.mediaRes, idMedia: data.idMedia });
-        console.log(data);
-        if (!this.getState("mediaRes")) {
-            return '<div>No media found to update</div>';
-        }
+  public renderContent(data: ContentRender): string {
+    this.setState<IMedia>("mediaRes", data.mediaRes as IMedia);
+    this.setState<number>("idMedia", data.idMedia as number);
+    const media = data.mediaRes as IMedia;
 
-        const avatar = this.getState('mediaRes').avatar || '';
-        const background = this.getState('mediaRes').background || '';
+    Object.keys(media).forEach((key) => {
+      this.setState(key, media[key as keyof IMedia]);
+    });
 
-        return `
+    return `
             ${Header.render()}
             <section class="update-page">
                 <section class="box-image">
                     <figure class="image-container">
-                      <img src="${BASE_URL}${avatar}" alt="media avatar" class="image-preview" />
+                      <img src="${BASE_URL}${
+      media.avatar
+    }" alt="media avatar" class="image-preview" />
                       <figcaption>Avatar</figcaption>
                     </figure>
                     <figure class="image-container">
-                      <img src="${BASE_URL}${background}" alt="media background" class="image-preview" />
+                      <img src="${BASE_URL}${
+      media.background
+    }" alt="media background" class="image-preview" />
                       <figcaption>Background</figcaption>
                     </figure>
                 </section>
@@ -42,89 +44,69 @@ export class UpdatePage extends BasePage {
                 </div>
             </section>
         `;
-    }
+  }
 
-    public afterRender(): void {
-        this.attachEventListeners();
-    }
+  public afterRender(): void {
+    this.attachEventListeners();
+  }
 
-    public attachEventListeners(): void {
-        this.attachSubmitEventListener();
-        this.attachOnChangeEventListener();
-    }
+  public attachEventListeners(): void {
+    this.attachSubmitEventListener();
+  }
 
-    public attachSubmitEventListener(): void {
-        const form = document.getElementById('update-feature-form') as HTMLFormElement;
-        
-        if (form) {
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault(); 
-    
-                const updatedData = this.getState('updatedData');
-                const oldData = this.getState('mediaRes');
-    
-                const formData = new FormData();
-    
-                for (const key in updatedData) {
-                    if (updatedData[key] !== oldData[key]) {
-                        const value = updatedData[key];
-    
-                        if (value instanceof FileList) {
-                            for (let i = 0; i < value.length; i++) {
-                                formData.append(key, value[i]);
-                            }
-                        } else {
-                            formData.append(key, value);
-                        }
-                    }
+  public attachSubmitEventListener(): void {
+    const form = document.getElementById(
+      "update-feature-form"
+    ) as HTMLFormElement;
+    const media = this.getState<IMedia>("mediaRes");
+    if (form && media) {
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const formData = buildFormData(form);
+
+        Object.keys(media).forEach((key) => {
+          if (this.getState(key) == formData.get(key)) {
+            formData.delete(key);
+          }
+        });
+        this.updateMediaData(formData);
+      });
+    }
+  }
+
+  private async updateMediaData(formData: FormData): Promise<any> {
+    const idMedia = this.getState<number>("idMedia");
+    const mediaRes = this.getState<IMedia>("mediaRes");
+    if(idMedia && mediaRes) {
+        const result = await mediaController.updateMovie(idMedia, formData);
+
+        if (!result) {
+          const resetData: ContentRender = {
+            mediaRes: mediaRes,
+          };
+          this.renderContent(resetData);
+          return;
+        }
+        else {
+            Toast.showSuccess("Updated successfully");
+            const dataUpdate = result; 
+            formData.forEach((value, key) => { 
+                if ( key == "avatar") {
+                const imageElement = document.querySelector<HTMLImageElement>('img[alt="media avatar"]');
+                
+                if(imageElement) {
+                    imageElement.src = `${BASE_URL}${dataUpdate.avatar}`;
                 }
-    
-                if (formData.entries().next().done) {
-                    console.log('No changes to update.');
-                    return;
+              } else if(key == "background") {
+                const imageElement = document.querySelector<HTMLImageElement>('img[alt="media background"]');
+                
+                if(imageElement) {
+                    imageElement.src = `${BASE_URL}${dataUpdate.background}`;
                 }
-    
-                try {
-                    this.updateMediaData(formData);
-                } catch (error) {
-                    console.error('Error updating media:', error);
-                }
+              }
             });
-        }
+          }
     }
-
-    public attachOnChangeEventListener(): void {
-        const form = document.getElementById('update-feature-form') as HTMLFormElement;
-        
-        if (form) {
-            form.querySelectorAll('input, textarea, select').forEach((input) => {
-                input.addEventListener('change', (event) => {
-                    const target = event.target as HTMLInputElement;
-                    const key = target.name;
-                    const value = target.type === 'file' ? target.files : target.value;
-
-                    const updatedData = { ...this.getState('updatedData') };
-                    updatedData[key] = value;
-                    this.setState({ updatedData });
-
-                    console.log('Updated data:', updatedData);
-                });
-            });
-        }
-    }
-
-    private async updateMediaData(formData: FormData): Promise<any> {
-        try {
-           const result = await mediaController.updateMovie(this.getState("idMedia"), formData);
-
-           if (!result) {
-            const resetData: ContentRender = { mediaRes: this.getState("mediaRes") }
-             this.renderContent(resetData);
-             return;
-           }
-           
-        } catch (error) {
-            console.error('Error updating media data:', error);
-        }
-    }
+  }
 }
