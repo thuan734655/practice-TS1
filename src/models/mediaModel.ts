@@ -48,45 +48,21 @@
 
     static async getMovieByType(type: string, page = 1, limit = 8): Promise<IApiResponse<IMedia[]>> {
         try {
-        const response = await axiosAPI.get<IApiResponse<IMedia[]>>(`/media/type/${type}`, {
-            params: { page, limit },
-        })
-        return response.data
-        } catch (error:unknown) {
-        if (error instanceof AxiosError && error.response) {
-            return {
-            success: false,
-            message: error.response.data?.message || `Failed to fetch movies with type ${type}`,
-            data: [],
-            }
-        }
-        return {
-            success: false,
-            message: `An unexpected error occurred while fetching movies with type ${type}`,
-            data: [],
-        }
+            const response = await axiosAPI.get<IApiResponse<IMedia[]>>(`/media/type/${type}`, { params: paginationData });
+            return response.data;
+        } catch (error: unknown) {
+            return handleAxiosError(error, `Failed to fetch movies with type ${type}`, []);
         }
     }
 
-    static async updateMovieById(id: string, data: FormData): Promise<IApiResponse<boolean>> {
+    static async updateMovieById(id: number, data: FormData): Promise<IApiResponse<IMedia>> {
         try {
-        const response = await axiosAPI.put<IApiResponse<boolean>>(`/media/${id}`, data, {
-            headers: { "Content-Type": "multipart/form-data" },
-        })
-        return response.data
-        } catch (error:unknown) {
-        if (error instanceof AxiosError && error.response) {
-            return {
-            success: false,
-            message: error.response.data?.message || `Failed to update movie with id ${id}`,
-            data: false,
-            }
-        }
-        return {
-            success: false,
-            message: `An unexpected error occurred while updating movie with id ${id}`,
-            data: false,
-        }
+            const response = await axiosAPI.put<IApiResponse<IMedia>>(`/media/${id}`, data, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+            return response.data;
+        } catch (error: unknown) {
+            return handleAxiosError(error, `Failed to update movies `, {} as IMedia);
         }
     }
 

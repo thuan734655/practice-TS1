@@ -79,29 +79,13 @@ class MovieController {
         }
     }
     async getMovieById(id: number): Promise<IMedia> {
-        try {
-            const result = await MediaModel.getMovieById(id);
-            if(!result.success) {
-                Toast.showError(result.message);
-            }
-            return result.data as IMedia;
-            
-        } catch (error) {
-            console.error(`Controller error getting movie ${id}:`, error);
-            throw error;
-        }
+        const result = await MediaModel.getMovieById(id);
+        return result.data;
     }
-    async updateMovie(id: string, formData: FormData): Promise<boolean> {
-        try {
-            const result = await MediaModel.updateMovieById(id, formData);
-            if(!result.success) {
-                Toast.showError(result.message);
-            }
-            return result.success as boolean;
-        } catch (error) {
-            console.error(`Controller error updating movie ${id}:`, error);
-            throw error;
-        }
+
+    async updateMovie(id: number, formData: FormData): Promise<IMedia> {
+        const result = await MediaModel.updateMovieById(id, formData);
+        return result.data;
     }
 }
 
