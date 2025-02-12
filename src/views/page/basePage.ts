@@ -36,8 +36,12 @@ export abstract class BasePage {
                 return null;
             }
             const parsedData: unknown = JSON.parse(jsonString);
-            
-            if (parsedData as T) {
+
+            if(parsedData == false) {
+              return false as T;
+            }
+
+            if (parsedData as T ) {
                 return parsedData as T;
             } else {
                 throw new Error(`Invalid data type for key: ${key}`); 
