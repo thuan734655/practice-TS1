@@ -2,13 +2,13 @@ import { BasePage } from "./basePage";
 import Header from "../components/Header";
 import movieController from "../../controllers/mediaController";
 import LoadMovies from "../components/ListMovie";
-import { ICSearch } from "../../resources/assets/icons";
 import { ContentRender } from "@/types/basePageTypes";
 import { IMedia } from "@/types/mediaForm";
 import { Toast } from "@/utils/toast";
 import Pagination from "../components/Pagination";
 import { RenderPaginationData } from "@/types/componentTypes";
 import { scrollToTop } from "@/utils/scrollToTop";
+import { renderSearchBox } from "../components/Search";
 
 export class MoviePage extends BasePage {
   constructor() {
@@ -30,7 +30,7 @@ export class MoviePage extends BasePage {
         <div class="section-main--desc">
           <p>List of movies and TV Shows I have watched to date.<br>Explore what I have watched and also feel free to make a suggestion. 😉</p>
         </div>
-        ${this.renderSearchBox()}
+        ${renderSearchBox()}
         <p class="section-main--desc-subNav quantity-videos">
         <span>${this.getState("totalItems")} items</span>
         </p>
@@ -42,16 +42,6 @@ export class MoviePage extends BasePage {
           }
         </div>
         <div class="pagination"></div>
-      </div>
-    `;
-  }
-  private renderSearchBox(): string {
-    return `
-      <div class="section-main--search">
-        <div class="search-container">
-          <input id="searchInput" class="search-container--input" type="text" placeholder="Search Movies or TV Shows">
-          <img class="search-container--icon" src="${ICSearch}" alt="icon search">
-        </div>
       </div>
     `;
   }
@@ -71,21 +61,26 @@ export class MoviePage extends BasePage {
   }
 
   private renderMovieList(isSearch?: Boolean): void {
-    const listMoviesElement = document.querySelector(
-      ".section-main--list-movies"
-    );
+    const listMoviesElement = document.querySelector(".section-main--list-movies" );
     const mediaSearch = this.getState<IMedia[]>("mediaSearch");
     const media = this.getState<IMedia[]>("media");
-    if (isSearch && mediaSearch) {
+    if (!listMoviesElement) {
+      return;
+    }
+    if (isSearch) {
       if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies.render(mediaSearch);
+        (listMoviesElement as HTMLElement).innerHTML = mediaSearch
+          ? LoadMovies.render(mediaSearch)
+          : "<p class = 'empty'>Empty</p>";
         LoadMovies.attachEventListener();
         scrollToTop();
         Pagination.isVisiblePagination(false);
       }
     } else if (media) {
       if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies.render(media);
+        (listMoviesElement as HTMLElement).innerHTML = media
+          ? LoadMovies.render(media)
+          : "<p class = 'empty'>Empty</p>";
         LoadMovies.attachEventListener();
         scrollToTop();
         Pagination.isVisiblePagination(true);

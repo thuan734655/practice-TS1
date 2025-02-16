@@ -2,13 +2,13 @@ import { BasePage } from "./basePage";
 import Header from "../components/Header";
 import movieController from "../../controllers/mediaController";
 import LoadMovies from "../components/ListMovie";
-import { ICSearch } from "../../resources/assets/icons";
 import { ContentRender } from "@/types/basePageTypes";
 import { IMedia } from "@/types/mediaForm";
 import { Toast } from "@/utils/toast";
 import { RenderPaginationData } from "@/types/componentTypes";
 import Pagination from "../components/Pagination";
 import { scrollToTop } from "@/utils/scrollToTop";
+import { renderSearchBox } from "../components/Search";
 
 export class HomePage extends BasePage {
   constructor() {
@@ -33,29 +33,18 @@ export class HomePage extends BasePage {
         <div class="section-main--desc">
           <p>List of movies and TV Shows I have watched to date.<br>Explore what I have watched and also feel free to make a suggestion. 😉</p>
         </div>
-        ${this.renderSearchBox()}
+        ${renderSearchBox()}
         ${this.renderFilterButtons()}
         <p class="section-main--desc-subNav quantity-videos">
          ${this.renderQuantity()}
         </p>
         <div class="section-main--list-movies" id="movieList">
-            ${
-              this.getState<IMedia[]>("media")?.length
-                ? LoadMovies.render(this.getState<IMedia[]>("media")!)
-                : "<p>Empty</p>"
-            }
+            ${this.getState<IMedia[]>("media")?.length
+        ? LoadMovies.render(this.getState<IMedia[]>("media")!)
+        : "<p>Empty</p>"
+      }
         </div>
         <div class="pagination"></div>
-      </div>
-    `;
-  }
-  private renderSearchBox(): string {
-    return `
-      <div class="section-main--search">
-        <div class="search-container">
-          <input id="searchInput" class="search-container--input" type="text" placeholder="Search Movies or TV Shows">
-          <img class="search-container--icon" src="${ICSearch}" alt="icon search">
-        </div>
       </div>
     `;
   }
@@ -79,28 +68,24 @@ export class HomePage extends BasePage {
       <div class="section-main--subNav">
         <div class="subNav-container">
           ${filters
-            .map((filter) => {
-              if (filter == "TV Show") {
-                return `
-                  <button id="${filter}" class="subNav-container--btn-tv-shows ${
-                  currentFilter === filter ? "button-active" : ""
-                }">
+          .map((filter) => {
+            if (filter == "TV Show") {
+              return `
+                  <button id="${filter}" class="subNav-container--btn-tv-shows ${currentFilter === filter ? "button-active" : ""}">
                   TV Shows
                   </button>`;
-              } else {
-                return `
-                  <button id="${filter}" class="subNav-container--btn-${filter} ${
-                  currentFilter === filter ? "button-active" : ""
+            } else {
+              return `
+                  <button id="${filter}" class="subNav-container--btn-${filter} ${currentFilter === filter ? "button-active" : ""
                 }">
-                    ${
-                      filter === "tv-shows"
-                        ? "TV Shows"
-                        : filter.charAt(0).toUpperCase() + filter.slice(1)
-                    }
+                    ${filter === "tv-shows"
+                  ? "TV Shows"
+                  : filter.charAt(0).toUpperCase() + filter.slice(1)
+                }
                   </button>`;
-              }
-            })
-            .join("")}
+            }
+          })
+          .join("")}
         </div>
       </div>
     `;
@@ -120,7 +105,7 @@ export class HomePage extends BasePage {
       currentFilter &&
       pageMovies &&
       pageTvShow &&
-      currentPage 
+      currentPage
     ) {
       const statePagination: RenderPaginationData = {
         totalItems,
@@ -133,22 +118,29 @@ export class HomePage extends BasePage {
     }
   }
   private renderMovieList(isSearch?: Boolean): void {
-    const listMoviesElement = document.querySelector(".section-main--list-movies");
+    const listMoviesElement = document.querySelector(".section-main--list-movies" );
     const mediaSearch = this.getState<IMedia[]>("mediaSearch");
     const media = this.getState<IMedia[]>("media");
-    if (isSearch && mediaSearch) {
+    if (!listMoviesElement) {
+      return;
+    }
+    if (isSearch) {
       if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies.render(mediaSearch);
+        (listMoviesElement as HTMLElement).innerHTML = mediaSearch
+          ? LoadMovies.render(mediaSearch)
+          : "<p class = 'empty'>Empty</p>";
         LoadMovies.attachEventListener();
         scrollToTop();
-        Pagination.isVisiblePagination(false)
+        Pagination.isVisiblePagination(false);
       }
     } else if (media) {
       if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies.render(media);
+        (listMoviesElement as HTMLElement).innerHTML = media
+          ? LoadMovies.render(media)
+          : "<p class = 'empty'>Empty</p>";
         LoadMovies.attachEventListener();
         scrollToTop();
-        Pagination.isVisiblePagination(true)
+        Pagination.isVisiblePagination(true);
       }
     }
   }
@@ -169,12 +161,13 @@ export class HomePage extends BasePage {
         button.addEventListener("click", async () => {
           const currentFilter = this.getState<string>("currentFilter");
 
+          this.resetSearchInput();
+
           if (currentFilter) {
             if (currentFilter != filter) {
-              console.log(currentFilter, filter);
               this.setState<string>("currentFilter", filter);
               this.updateActiveFilterButton();
-              await this.updateFilteredContent();
+              this.updateFilteredContent();
             }
           }
         });
@@ -193,7 +186,7 @@ export class HomePage extends BasePage {
         if (query == "") {
           this.renderMovieList();
         } else {
-          await this.updateSearchContent(query);
+         this.updateSearchContent(query);
         }
       });
     }
@@ -202,7 +195,7 @@ export class HomePage extends BasePage {
   private attachPaginationEventListener(): void {
     const paginationElement = document.querySelector(".pagination");
 
-    if (!paginationElement) return; 
+    if (!paginationElement) return;
 
     paginationElement.addEventListener("click", (e) => {
       const target = e.target as HTMLElement;
@@ -211,9 +204,11 @@ export class HomePage extends BasePage {
         const currentPage = this.getPage();
 
         if (page !== currentPage) {
-          paginationElement.querySelectorAll(".pagination-btn").forEach((btn) => {
-            btn.classList.remove("active");
-          });
+          paginationElement
+            .querySelectorAll(".pagination-btn")
+            .forEach((btn) => {
+              btn.classList.remove("active");
+            });
           target.classList.add("active");
           this.setPage(page);
           this.updateFilteredContent();
@@ -266,17 +261,11 @@ export class HomePage extends BasePage {
 
   private async updateSearchContent(query: string): Promise<void> {
     const searchContent = await movieController.searchMovies(query);
-    const currentFilter = this.getState<string>("currentFilter");
 
-    if (searchContent && currentFilter) {
-      const filteredContent = searchContent.data?.filter(
-        (item) => item.type == currentFilter || currentFilter == "All"
-      );
-      this.setState<IMedia[]>("mediaSearch", filteredContent);
-      this.setState<number>("totalItems", filteredContent?.length || 0);
+      this.setState<IMedia[]>("mediaSearch", searchContent.data);
+      this.setState<number>("totalItems", searchContent?.totalItems || 0);
 
       this.renderMovieList(true);
-    }
   }
 
   private updateQuantityVideos(): void {
@@ -295,8 +284,8 @@ export class HomePage extends BasePage {
       currentFilter === "All"
         ? this.setState<number>("currentPage", page)
         : currentFilter === "Movies"
-        ? this.setState<number>("pageMovies", page)
-        : this.setState<number>("pageTvShow", page);
+          ? this.setState<number>("pageMovies", page)
+          : this.setState<number>("pageTvShow", page);
     } else {
       console.error("Error setting page");
     }
@@ -320,5 +309,11 @@ export class HomePage extends BasePage {
       return pageTvShow !== null ? pageTvShow : 1;
     }
     return 1;
+  }
+  private resetSearchInput ():void {
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) {
+      (searchInput  as HTMLInputElement).value = "";
+    }
   }
 }
