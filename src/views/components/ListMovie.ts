@@ -34,7 +34,7 @@ class LoadMovies {
       .join('');
   }
 
-  public static event(): void {
+  public static attachEventListener(): void {
     const movieContainers = document.querySelectorAll('.list-movies-container');
 
     movieContainers.forEach((container) => {
@@ -42,23 +42,23 @@ class LoadMovies {
       const mediaId : number = parseInt(container.id ,10);
       
       container.addEventListener('mouseenter', () => {
-        const actionButtons = container.querySelector('.action-buttons') as HTMLElement;
+        const actionButtons = container.querySelector('.action-buttons');
         if (actionButtons ) {
-          actionButtons.style.display = 'block';
+          (actionButtons as HTMLElement).style.display = 'block';
         }
       });
 
       container.addEventListener('mouseleave', () => {
-        const actionButtons = container.querySelector('.action-buttons') as HTMLElement;
+        const actionButtons = container.querySelector('.action-buttons');
         if (actionButtons) {
-          actionButtons.style.display = 'none'; 
+          (actionButtons as HTMLElement).style.display = 'none'; 
         }
       });
 
      
-      const viewButton = container.querySelector('.btn-view') as HTMLButtonElement;
-      const updateButton = container.querySelector('.btn-update') as HTMLButtonElement;
-      const deleteButton = container.querySelector('.btn-delete') as HTMLButtonElement;
+      const viewButton = container.querySelector('.btn-view');
+      const updateButton = container.querySelector('.btn-update');
+      const deleteButton = container.querySelector('.btn-delete');
 
      
       viewButton?.addEventListener('click', () => {

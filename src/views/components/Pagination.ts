@@ -29,10 +29,10 @@ export default class Pagination {
         if (totalPages <= 4) {
           startPage = 1;
           endPage = totalPages;
-        } else if (currentPage <= 2) {
+        } else if (currentPage == 1) {
           startPage = 1;
           endPage = 4;
-        } else if (currentPage >= totalPages - 1) {
+        } else if (currentPage >= totalPages -1) {
           startPage = totalPages - 3;
           endPage = totalPages;
         } else {
@@ -67,4 +67,15 @@ export default class Pagination {
       return currentPage;
     }
   }
+
+  public static isVisiblePagination(state: boolean): void {
+    const paginationElement = document.querySelector(".pagination");
+    if (paginationElement && state) {
+      (paginationElement as HTMLElement ).style.visibility = "visible";
+    }
+    if(paginationElement && !state) {
+      (paginationElement as HTMLElement ).style.visibility = "hidden";
+    }
+  }
+  
 }
