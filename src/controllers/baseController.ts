@@ -9,7 +9,6 @@ import { MoviePage } from "@/views/page/moivePage.ts";
 import { TvShowPage } from "@/views/page/tvshowPage.ts";
 import { ErrorPage } from "@/views/page/errorPage.ts";
 import { Router } from "@/router/router.ts";
-import { IMedia } from "@/types/mediaForm.ts";
 
 export class BaseController {
   /**
@@ -35,16 +34,12 @@ export class BaseController {
         const homePage = new HomePage();
         const result = await mediaController.getMovies({ page, limit });
 
-        if (result.data && result.totalItems) {
-          const data: ContentRender = {
-            mediaRes: result.data,
-            totalItems: result.totalItems,
-          };
-          root.innerHTML = homePage.renderContent(data);
-          homePage.afterRender();
-        } else {
-          Router.getInstance().navigateTo("/error");
-        }
+        const data: ContentRender = {
+          mediaRes: result.data,
+          totalItems: result.totalItems,
+        };
+        root.innerHTML = homePage.renderContent(data);
+        homePage.afterRender();
       },
 
       "/": async () => {
@@ -69,22 +64,15 @@ export class BaseController {
             limit,
           });
 
-          if (result.data && result.totalItems) {
-            const data: ContentRender = {
-              mediaRes: result.data,
-              totalItems: result.totalItems,
-              author,
-            };
-            root.innerHTML = addPage.renderContent(data);
-          } else {
-            const data: ContentRender = {
-              mediaRes: [] as IMedia[],
-              totalItems: 0,
-              author,
-            };
-            root.innerHTML = addPage.renderContent(data);
-          }
+          const data: ContentRender = {
+            mediaRes: result.data,
+            totalItems: result.totalItems,
+            author,
+          };
+          root.innerHTML = addPage.renderContent(data);
+
           addPage.afterRender();
+
         } else {
           Router.getInstance().navigateTo("/error");
         }
@@ -97,13 +85,10 @@ export class BaseController {
         if (id) {
           const result = await mediaController.getMovieById(id);
 
-          if (result) {
             const data: ContentRender = { mediaRes: result, idMedia: id };
             root.innerHTML = updatePage.renderContent(data);
             updatePage.afterRender();
-          } else {
-            Router.getInstance().navigateTo("/error");
-          }
+
         } else {
           Router.getInstance().navigateTo("/error");
         }
@@ -116,13 +101,10 @@ export class BaseController {
         if (id) {
           const result = await mediaController.getMovieById(id);
 
-          if (result) {
             const data: ContentRender = { mediaRes: result, idMedia: id };
             root.innerHTML = detailPage.renderContent(data);
             detailPage.afterRender();
-          } else {
-            Router.getInstance().navigateTo("/error");
-          }
+
         } else {
           Router.getInstance().navigateTo("/error");
         }
@@ -134,16 +116,12 @@ export class BaseController {
           page,
           limit,
         });
-        if (result.data && result.totalItems) {
           const data: ContentRender = {
             mediaRes: result.data,
             totalItems: result.totalItems,
           };
           root.innerHTML = moviePage.renderContent(data);
           moviePage.afterRender();
-        } else {
-          Router.getInstance().navigateTo("/error");
-        }
       },
 
       "/tvshows": async () => {
@@ -153,16 +131,13 @@ export class BaseController {
           limit,
         });
 
-        if (result.data && result.totalItems) {
           const data: ContentRender = {
             mediaRes: result.data,
             totalItems: result.totalItems,
           };
           root.innerHTML = tvShowPage.renderContent(data);
           tvShowPage.afterRender();
-        } else {
-          Router.getInstance().navigateTo("/error");
-        }
+
       },
 
       "/error": async () => {
