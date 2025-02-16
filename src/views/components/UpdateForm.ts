@@ -21,6 +21,7 @@ class UpdateForm {
       <form id="update-feature-form" enctype="multipart/form-data">
         ${formFields}
         <button type="submit" class="btn-update-video">Update Video</button>
+        <button type="button" class="btn-back">Back</button>
       </form>
     `;
   }
