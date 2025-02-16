@@ -66,7 +66,7 @@ export class BaseController {
 
           const data: ContentRender = {
             mediaRes: result.data,
-            totalItems: result.totalItems,
+            totalItems: result.totalItems ?? 0,
             author,
           };
           root.innerHTML = addPage.renderContent(data);
