@@ -31,10 +31,8 @@ export default class UserController {
 
     if (result.success && result.data) {
       Router.getInstance().navigateTo("/home");
-      setDataLocalStorage("name", result.data.user.name);
-      this.clearError("email");
-      this.clearError("password");
-      Toast.showSuccess("Login successful!");
+      setDataLocalStorage("name", result.data.user?.name ?? "");
+      return { success: true, message: "Login successful"};
     } else {
       Toast.showError(result.message || "Login failed. Please try again!");
     }
