@@ -1,6 +1,6 @@
 import { getDataLocalStorage } from '@/utils/localStorage';
 import { BaseController } from '../controllers/baseController';
-import { Route } from '../types/general';
+import { Route } from '../types/routeTypes';
 
 export class Router {
   private static instance: Router;
@@ -60,16 +60,16 @@ export class Router {
     console.log(path);
 
     if (route && this.root) {
-
       try {
+        const params = this.extractParams(route.path, path);
         const controller = new BaseController();
-        await controller.handleRoute(this.root, path,route.title);
-
+        await controller.handleRoute(this.root, route.path, params, route.title);
       } catch (error) {
         console.error('Error in controller:', error);
+        this.navigateTo('/error');
       }
     } else {
-      this.navigateTo("/error");
+      this.navigateTo('/error');
     }
   }
 
@@ -89,4 +89,19 @@ export class Router {
       return route.path === path;
     });
   }
+
+  private extractParams(routePath: string, actualPath: string): { [key: string]: string } {
+    const params: { [key: string]: string } = {};
+    const routeParts = routePath.split('/');
+    const pathParts = actualPath.split('/');
+
+    routeParts.forEach((part, i) => {
+      if (part.startsWith(':')) {
+        params[part.substring(1)] = pathParts[i];
+      }
+    });
+
+    return params;
+  }
 }
+ 

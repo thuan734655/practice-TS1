@@ -14,7 +14,7 @@ export class UpdatePage extends BasePage {
     }
 
     public async renderContent(data: ContentRender): Promise<string> {
-        this.setState({ mediaRes: data?.mediaRes, idMedia: data?.idMedia });
+        this.setState({ mediaRes: data.mediaRes, idMedia: data.idMedia });
         console.log(data);
         if (!this.getState("mediaRes")) {
             return '<div>No media found to update</div>';
