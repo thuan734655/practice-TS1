@@ -1,5 +1,5 @@
 import { BaseController } from '../controllers/baseController';
-import { Route } from '../types/general';
+import { Route } from '../types/routeTypes';
 
 export class Router {
   private static instance: Router;
