@@ -8,6 +8,7 @@ import { IMedia } from "@/types/mediaForm";
 import { Toast } from "@/utils/toast";
 import Pagination from "../components/Pagination";
 import { RenderPaginationData } from "@/types/componentTypes";
+import { scrollToTop } from "@/utils/scrollToTop";
 
 export class MoviePage extends BasePage {
   constructor() {
@@ -78,22 +79,24 @@ export class MoviePage extends BasePage {
     if (isSearch && mediaSearch) {
       if (listMoviesElement) {
         listMoviesElement.innerHTML = LoadMovies.render(mediaSearch);
-        LoadMovies.event();
-        this.scrollToTop();
+        LoadMovies.attachEventListener();
+        scrollToTop();
+        Pagination.isVisiblePagination(false);
       }
     } else if (media) {
       if (listMoviesElement) {
         listMoviesElement.innerHTML = LoadMovies.render(media);
-        LoadMovies.event();
-        this.scrollToTop();
+        LoadMovies.attachEventListener();
+        scrollToTop();
+        Pagination.isVisiblePagination(true);
       }
     }
   }
 
-  protected attachEventListeners(): void {
+  public afterRender(): void {
     this.attachSearchEventListener();
     this.attachPaginationEventListener();
-    LoadMovies.event();
+    LoadMovies.attachEventListener();
     this.renderPagination();
   }
 
@@ -177,11 +180,5 @@ export class MoviePage extends BasePage {
     this.setState<IMedia[]>("mediaSearch", searchContent.data);
     this.setState<number>("totalItems", searchContent.data?.length);
     this.renderMovieList(true);
-  }
-
-  private scrollToTop(): void {
-    document
-      .querySelector(".section-main--list-movies")
-      ?.scrollIntoView({ behavior: "smooth" });
   }
 }

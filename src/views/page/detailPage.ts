@@ -66,7 +66,7 @@ class TvShowsDetailsPage extends BasePage {
     `;
   }
 
-  public attachEventListeners(): void {
+  public afterRender(): void {
     const navLinks = document.querySelectorAll('.link');
     navLinks.forEach((link) => {
       link.addEventListener('click', (event) => {
@@ -88,11 +88,6 @@ class TvShowsDetailsPage extends BasePage {
       }
     }
     return "";
-  }
-
-  public afterRender(): void {
-    super.afterRender();
-    console.log('TvShowsDetailsPage rendered successfully.');
   }
 }
 

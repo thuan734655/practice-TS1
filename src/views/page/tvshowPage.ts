@@ -8,6 +8,7 @@ import { ContentRender } from "@/types/basePageTypes";
 import { Toast } from "@/utils/toast";
 import Pagination from "../components/Pagination";
 import { RenderPaginationData } from "@/types/componentTypes";
+import { scrollToTop } from "@/utils/scrollToTop";
 
 export class TvShowPage extends BasePage {
   constructor() {
@@ -55,6 +56,7 @@ export class TvShowPage extends BasePage {
     `;
   }
 
+
   private renderPagination(): void {
     const totalItems = this.getState<number>("totalItems");
     const currentPage = this.getState<number>("currentPage");
@@ -70,17 +72,38 @@ export class TvShowPage extends BasePage {
     }
   }
 
-  protected attachEventListeners(): void {
+  private renderMovieList(isSearch?: Boolean): void {
+    const listMoviesElement = document.querySelector(
+      ".section-main--list-movies"
+    );
+    const mediaSearch = this.getState<IMedia[]>("mediaSearch");
+    const media = this.getState<IMedia[]>("media");
+    if (isSearch && mediaSearch) {
+      if (listMoviesElement) {
+        listMoviesElement.innerHTML = LoadMovies.render(mediaSearch);
+        LoadMovies.attachEventListener();
+        scrollToTop();
+        Pagination.isVisiblePagination(false);
+      }
+    } else if (media) {
+      if (listMoviesElement) {
+        listMoviesElement.innerHTML = LoadMovies.render(media);
+        LoadMovies.attachEventListener();
+        scrollToTop();
+        Pagination.isVisiblePagination(true);
+      }
+    }
+  }
+
+  public afterRender(): void {
     this.attachSearchEventListener();
     this.attachPaginationEventListener();
-    LoadMovies.event();
+    LoadMovies.attachEventListener();
     this.renderPagination();
   }
 
   private attachSearchEventListener(): void {
-    const searchInput = document.getElementById(
-      "searchInput"
-    ) as HTMLInputElement;
+    const searchInput = document.getElementById("searchInput");
     if (searchInput) {
       searchInput.addEventListener("input", async (e) => {
         const query = (e.target as HTMLInputElement).value;
@@ -155,32 +178,5 @@ export class TvShowPage extends BasePage {
     this.setState<IMedia[]>("mediaSearch", searchContent.data);
     this.setState<number>("totalItems", searchContent.data?.length);
     this.renderMovieList(true);
-  }
-
-  private renderMovieList(isSearch?: Boolean): void {
-    const listMoviesElement = document.querySelector(
-      ".section-main--list-movies"
-    );
-    const mediaSearch = this.getState<IMedia[]>("mediaSearch");
-    const media = this.getState<IMedia[]>("media");
-    if (isSearch && mediaSearch) {
-      if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies.render(mediaSearch);
-        LoadMovies.event();
-        this.scrollToTop();
-      }
-    } else if (media) {
-      if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies.render(media);
-        LoadMovies.event();
-        this.scrollToTop();
-      }
-    }
-  }
-
-  private scrollToTop(): void {
-    document
-      .querySelector(".section-main--list-movies")
-      ?.scrollIntoView({ behavior: "smooth" });
   }
 }

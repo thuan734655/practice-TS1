@@ -8,6 +8,7 @@ import { IMedia } from "@/types/mediaForm";
 import { Toast } from "@/utils/toast";
 import { RenderPaginationData } from "@/types/componentTypes";
 import Pagination from "../components/Pagination";
+import { scrollToTop } from "@/utils/scrollToTop";
 
 export class HomePage extends BasePage {
   constructor() {
@@ -131,12 +132,32 @@ export class HomePage extends BasePage {
       Pagination.render(statePagination);
     }
   }
+  private renderMovieList(isSearch?: Boolean): void {
+    const listMoviesElement = document.querySelector(".section-main--list-movies");
+    const mediaSearch = this.getState<IMedia[]>("mediaSearch");
+    const media = this.getState<IMedia[]>("media");
+    if (isSearch && mediaSearch) {
+      if (listMoviesElement) {
+        listMoviesElement.innerHTML = LoadMovies.render(mediaSearch);
+        LoadMovies.attachEventListener();
+        scrollToTop();
+        Pagination.isVisiblePagination(false)
+      }
+    } else if (media) {
+      if (listMoviesElement) {
+        listMoviesElement.innerHTML = LoadMovies.render(media);
+        LoadMovies.attachEventListener();
+        scrollToTop();
+        Pagination.isVisiblePagination(true)
+      }
+    }
+  }
 
-  protected attachEventListeners(): void {
+  public afterRender(): void {
     this.attachFilterEventListeners();
     this.attachSearchEventListener();
     this.attachPaginationEventListener();
-    LoadMovies.event();
+    LoadMovies.attachEventListener();
     this.renderPagination();
   }
 
@@ -248,7 +269,6 @@ export class HomePage extends BasePage {
     const currentFilter = this.getState<string>("currentFilter");
 
     if (searchContent && currentFilter) {
-      console.log(currentFilter);
       const filteredContent = searchContent.data?.filter(
         (item) => item.type == currentFilter || currentFilter == "All"
       );
@@ -256,27 +276,6 @@ export class HomePage extends BasePage {
       this.setState<number>("totalItems", filteredContent?.length || 0);
 
       this.renderMovieList(true);
-    }
-  }
-
-  private renderMovieList(isSearch?: Boolean): void {
-    const listMoviesElement = document.querySelector(
-      ".section-main--list-movies"
-    );
-    const mediaSearch = this.getState<IMedia[]>("mediaSearch");
-    const media = this.getState<IMedia[]>("media");
-    if (isSearch && mediaSearch) {
-      if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies.render(mediaSearch);
-        LoadMovies.event();
-        this.scrollToTop();
-      }
-    } else if (media) {
-      if (listMoviesElement) {
-        listMoviesElement.innerHTML = LoadMovies.render(media);
-        LoadMovies.event();
-        this.scrollToTop();
-      }
     }
   }
 
@@ -321,11 +320,5 @@ export class HomePage extends BasePage {
       return pageTvShow !== null ? pageTvShow : 1;
     }
     return 1;
-  }
-
-  private scrollToTop(): void {
-    document
-      .querySelector(".section-main--list-movies")
-      ?.scrollIntoView({ behavior: "smooth" });
   }
 }
