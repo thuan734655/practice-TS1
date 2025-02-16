@@ -7,6 +7,8 @@ import { BASE_URL } from "@/constants/baseURL.ts";
 import { IMedia } from "@/types/mediaForm.ts";
 import { buildFormData } from "@/helper/formHelper.ts";
 import { Toast } from "@/utils/toast.ts";
+import { Router } from "@/router/router.ts";
+import { getDataLocalStorage } from "@/utils/localStorage.ts";
 
 export class UpdatePage extends BasePage {
   constructor() {
@@ -41,11 +43,12 @@ export class UpdatePage extends BasePage {
             </section>
         `;
   }
+
   public afterRender(): void {
     this.attachSubmitEventListener();
+    this.attachBackEventListener();
   }
-
-  public attachSubmitEventListener(): void {
+  private attachSubmitEventListener(): void {
     const form = document.getElementById(
       "update-feature-form"
     ) as HTMLFormElement;
@@ -65,7 +68,14 @@ export class UpdatePage extends BasePage {
       });
     }
   }
-
+  private attachBackEventListener(): void {
+    const backButton = document.querySelector('.btn-back');
+    if (backButton) {
+      backButton.addEventListener("click", () => {
+        Router.getInstance().navigateTo(`/add/${getDataLocalStorage('name')}`)
+      });
+    }
+  }
   private async updateMediaData(formData: FormData): Promise<void> {
     const idMedia = this.getState<number>("idMedia");
     const mediaRes = this.getState<IMedia>("mediaRes");
