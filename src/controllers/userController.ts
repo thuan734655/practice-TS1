@@ -30,8 +30,8 @@ export default class UserController {
     const result = await UserModel.login(dataLogin);
 
     if (result.success && result.data) {
-      Router.getInstance().navigateTo("/home");
       setDataLocalStorage("name", result.data.user?.name ?? "");
+      Router.getInstance().navigateTo("/home");
       return { success: true, message: "Login successful"};
     } else {
       return { success: false, message: result.message || "Login failed. Please try again!"};
