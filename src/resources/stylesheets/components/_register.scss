@@ -41,7 +41,7 @@
     }
 
     form {
-      @include flex($direction: column, $gap: pxToRem(15));
+      @include flex($direction: column, $gap: pxToRem(8));
 
       input {
         @include set-size($w: 100%, $h: pxToRem(40));
@@ -72,7 +72,7 @@
 
     .error-message {
       @include font($font-size: pxToRem(14), $color: $error-color);
-      margin-top: pxToRem(10);
+      margin-top: unset;
     }
 
     .footer {

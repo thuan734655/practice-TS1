@@ -1,42 +1,26 @@
 import axiosAPI from "@/api/configAxios";
-import { IApiResponse, ILoginResponse, IRegisterResponse } from "../types/apiResponse";
-import { dataLogin, dataRegister } from "../types/login";
-import { AxiosError } from "axios";
+import { IApiResponse, IUserResponse } from "../types/apiResponseTypes.ts";
+import { dataLogin, dataRegister } from "../types/authTypes.ts";
+import handleAxiosError from "@/helper/handleAxiosError";
 
 export default class UserModel {
-  public static async login(dataLogin: dataLogin): Promise<IApiResponse<ILoginResponse>> {
+  public static async login(dataLogin: dataLogin): Promise<IApiResponse<IUserResponse>> {
     try {
-      const response = await axiosAPI.post<IApiResponse<ILoginResponse>>('/login', dataLogin);
+      const response = await axiosAPI.post<IApiResponse<IUserResponse>>('/login', dataLogin);
       return response.data;
     } catch (error:unknown) {
-      if (error instanceof AxiosError && error.response) {
-        return {
-          success: false,
-          message: error.response.data?.message || "An unexpected error occurred.", 
-        };
-      }
-      return {
-        success: false,
-        message: "An unexpected error occurred.",
-      };
+      console.log(error);
+      return handleAxiosError(error, `Failed to login`, { user: null });
     }
   }
 
-  public static async register(dataRegister: dataRegister): Promise<IApiResponse<IRegisterResponse>> {
+  public static async register(dataRegister: dataRegister): Promise<IApiResponse<boolean>> {
     try {
-      const response = await axiosAPI.post<IApiResponse<IRegisterResponse>>('/register', dataRegister);
+      const response = await axiosAPI.post<IApiResponse<boolean>>('/register', dataRegister);
       return response.data;
     } catch (error: unknown) {
-      if (error instanceof AxiosError && error.response) {
-        return {
-          success: false,
-          message: error.response.data?.message || "An unexpected error occurred.",
-        };
-      }
-      return {
-        success: false,
-        message: "An unexpected error occurred.",
-      };
-    }
+      return handleAxiosError(error, `Failed to register`, false);
   }
 }
+}
+

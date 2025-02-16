@@ -1,7 +1,6 @@
 import { BasePage } from './basePage';
 import Header from '../components/Header';
 import movieController from '../../controllers/mediaController';
-import { IMedia } from '../../models/mediaForm';
 import LoadMovies from '../components/ListMovie';
 import { ICSearch } from '../../resources/assets/icons';
 import pagination from '../components/Pagination';
@@ -24,7 +23,7 @@ export class HomePage extends BasePage {
   }
 
   public async renderContent(content:ContentRender): Promise<string> {
-    this.setState({ media: content?.mediaRes, totalItems: content?.totalItems});
+    this.setState({ media: content.mediaRes, totalItems: content.totalItems});
     return `
       ${Header.render()}
       <div class="home-page" id="rootApp">
@@ -144,8 +143,7 @@ export class HomePage extends BasePage {
       const response = filter !== 'all'
         ? await movieController.getMoviesByFilter(filter, page, this.getState("itemsPerPage"))
         : await movieController.getMovies(page, this.getState("itemsPerPage"));
-
-      const mediaRes: IMedia[] = response.data;
+      const mediaRes = response.data;
       const totalItemsRes = response.totalItems;
 
       if (Array.isArray(mediaRes)) {
@@ -177,8 +175,8 @@ export class HomePage extends BasePage {
   private async updateSearchContent(query: string): Promise<void> {
     try {
       const searchContent = await movieController.searchMovies(query);
-      const filteredContent = searchContent.filter((item) => item.type === this.getState("currentFilter") || this.getState("currentFilter") === 'all');
-      this.setState({ mediaSearch: filteredContent, totalItems: filteredContent.length });
+      const filteredContent = searchContent.data?.filter((item) => item.type === this.getState("currentFilter") || this.getState("currentFilter") === 'all');
+      this.setState({ mediaSearch: filteredContent, totalItems: filteredContent?.length });
       this.renderMovieList(true);
     } catch (error) {
       console.error('Error during search:', error);

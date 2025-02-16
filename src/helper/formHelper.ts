@@ -1,4 +1,4 @@
-import { getDataLocalStorage } from "@/controllers/localStorage";
+import { getDataLocalStorage } from "@/utils/localStorage";
 
   export const buildFormData = (form: HTMLFormElement): FormData => {
     const formData = new FormData(form);
