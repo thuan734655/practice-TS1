@@ -27,15 +27,11 @@ export class UpdatePage extends BasePage {
             <section class="update-page">
                 <section class="box-image">
                     <figure class="image-container">
-                      <img src="${BASE_URL}${
-      media.avatar
-    }" alt="media avatar" class="image-preview" />
+                      <img src="${BASE_URL}${media.avatar}" alt="media avatar" class="image-preview" />
                       <figcaption>Avatar</figcaption>
                     </figure>
                     <figure class="image-container">
-                      <img src="${BASE_URL}${
-      media.background
-    }" alt="media background" class="image-preview" />
+                      <img src="${BASE_URL}${media.background}" alt="media background" class="image-preview" />
                       <figcaption>Background</figcaption>
                     </figure>
                 </section>
@@ -45,12 +41,7 @@ export class UpdatePage extends BasePage {
             </section>
         `;
   }
-
   public afterRender(): void {
-    this.attachEventListeners();
-  }
-
-  public attachEventListeners(): void {
     this.attachSubmitEventListener();
   }
 
@@ -75,7 +66,7 @@ export class UpdatePage extends BasePage {
     }
   }
 
-  private async updateMediaData(formData: FormData): Promise<any> {
+  private async updateMediaData(formData: FormData): Promise<void> {
     const idMedia = this.getState<number>("idMedia");
     const mediaRes = this.getState<IMedia>("mediaRes");
     if(idMedia && mediaRes) {
@@ -91,7 +82,7 @@ export class UpdatePage extends BasePage {
         else {
             Toast.showSuccess("Updated successfully");
             const dataUpdate = result; 
-            formData.forEach((value, key) => { 
+            formData.forEach((_, key) => { 
                 if ( key == "avatar") {
                 const imageElement = document.querySelector<HTMLImageElement>('img[alt="media avatar"]');
                 

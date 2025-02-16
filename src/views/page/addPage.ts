@@ -10,6 +10,7 @@ import { ContentRender } from "@/types/basePageTypes";
 import { buildFormData } from "@/helper/formHelper";
 import { Toast } from "@/utils/toast";
 import { RenderPaginationData } from "@/types/componentTypes";
+import { scrollToTop } from "@/utils/scrollToTop";
 
 export class AddPage extends BasePage {
   constructor() {
@@ -69,14 +70,38 @@ export class AddPage extends BasePage {
       Pagination.render(statePagination);
     }
   }
-  protected attachEventListeners(): void {
+  private renderMovieList(isSearch?: Boolean): void {
+    const listMoviesElement = document.querySelector(".section-main--list-movies"  );
+    if (isSearch) {
+      if (listMoviesElement) {
+        listMoviesElement.innerHTML = this.getState<IMedia[]>("media")?.length
+          ? LoadMovies.render(this.getState<IMedia[]>("searchContent")!)
+          : "<p>Empty</p>";
+        this.renderPagination();
+
+        LoadMovies.attachEventListener();
+        scrollToTop();
+        Pagination.isVisiblePagination(false)
+      }
+    } else {
+      if (listMoviesElement) {
+        listMoviesElement.innerHTML = this.getState<IMedia[]>("media")?.length
+          ? LoadMovies.render(this.getState<IMedia[]>("media")!)
+          : "<p>Empty</p>";
+        LoadMovies.attachEventListener();
+        scrollToTop();
+        Pagination.isVisiblePagination(true)
+      }
+    }
+  }
+  public afterRender(): void {
     this.attachSearchEventListener();
     this.attachPaginationEventListener();
     this.attachSubmitEventListener();
     this.attachCloseFormEventListener();
     this.attachAddNewItemEventListener();
     this.renderPagination();
-    LoadMovies.event();
+    LoadMovies.attachEventListener();
   }
 
   private async fetchMedia(): Promise<void> {
@@ -172,6 +197,31 @@ export class AddPage extends BasePage {
       });
     }
   }
+  private attachAddNewItemEventListener(): void {
+    const addNewItemButton = document.getElementById("add-new-item");
+    if (addNewItemButton) {
+      addNewItemButton.addEventListener("click", () =>
+        this.toggleFormVisibility()
+      );
+    }
+  }
+  private async updateSearchContent(query: string): Promise<void> {
+    if (query.length > 0) {
+      const searchContent = await mediaController.searchMovies(query);
+
+      this.setState<IMedia[]>("searchContent", searchContent.data);
+      this.setState<number>("totalItems", searchContent.totalItems || 0);
+      
+      this.renderMovieList(true);
+    } else {
+      this.setState<IMedia[]>("searchContent", []);
+      this.renderMovieList();
+    }
+  }
+  private async updateContentPagination(): Promise<void> {
+    await this.fetchMedia();
+    this.renderMovieList();
+  }
 
   private onAddMedia(newMedia: IMedia): void {
     const media = this.getState<IMedia[]>("media");
@@ -179,6 +229,7 @@ export class AddPage extends BasePage {
     if (media) {
       const updatedMedia = [newMedia, ...media];
       this.setState<IMedia[]>("media", updatedMedia);
+      console.log(this.getState<IMedia[]>("media"))
       this.renderMovieList();
 
       this.onCloseForm();
@@ -192,58 +243,6 @@ export class AddPage extends BasePage {
     }
   }
 
-  private async updateSearchContent(query: string): Promise<void> {
-    if (query.length > 0) {
-      const searchContent = await mediaController.searchMovies(query);
-
-      this.setState<IMedia[]>("searchContent", searchContent.data);
-      this.setState<number>("totalItems", searchContent.totalItems || 0);
-      // search == true
-      this.renderMovieList(true);
-    } else {
-      this.setState<IMedia[]>("searchContent", []);
-      this.renderMovieList();
-    }
-  }
-  private async updateContentPagination(): Promise<void> {
-    await this.fetchMedia();
-    this.renderMovieList();
-  }
-
-  private renderMovieList(isSearch?: Boolean): void {
-    const listMoviesElement = document.querySelector(
-      ".section-main--list-movies"
-    );
-    if (isSearch) {
-      if (listMoviesElement) {
-        listMoviesElement.innerHTML = this.getState<IMedia[]>("media")?.length
-          ? LoadMovies.render(this.getState<IMedia[]>("searchContent")!)
-          : "<p>Empty</p>";
-        this.renderPagination();
-        console.log(listMoviesElement);
-        LoadMovies.event();
-        this.scrollToTop();
-      }
-    } else {
-      if (listMoviesElement) {
-        listMoviesElement.innerHTML = this.getState<IMedia[]>("media")?.length
-          ? LoadMovies.render(this.getState<IMedia[]>("media")!)
-          : "<p>Empty</p>";
-        LoadMovies.event();
-        this.scrollToTop();
-      }
-    }
-  }
-
-  private attachAddNewItemEventListener(): void {
-    const addNewItemButton = document.getElementById("add-new-item");
-    if (addNewItemButton) {
-      addNewItemButton.addEventListener("click", () =>
-        this.toggleFormVisibility()
-      );
-    }
-  }
-
   private toggleFormVisibility(): void {
     const isFormVisible = this.getState<boolean>("isFormVisible");
     if (isFormVisible != null) {
@@ -251,14 +250,9 @@ export class AddPage extends BasePage {
       const formSection = document.querySelector(".form-add") as HTMLElement;
       if (formSection) {
         formSection.style.display = isFormVisible ? "block" : "none";
-        4;
+
         this.setState<boolean>("isFormVisible", !isFormVisible);
       }
     }
-  }
-  private scrollToTop(): void {
-    document
-      .querySelector(".section-main--list-movies")
-      ?.scrollIntoView({ behavior: "smooth" });
   }
 }
