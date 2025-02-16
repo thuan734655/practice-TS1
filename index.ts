@@ -1,5 +1,6 @@
 import { HomePage } from './src/views/page/homePage';
 import { Router } from './src/router/router';
+import {getDataLocalStorage} from "./src/utils/localStorage";
 
 class App {
   private static instance: App;
@@ -19,7 +20,6 @@ class App {
   public async initialize(): Promise<void> {
     try {
       const rootElement = document.getElementById('app');
-      console.log(rootElement);
       if (!rootElement) {
         throw new Error('Root element not found! Please ensure an element with id "app" exists in your HTML.');
       }
@@ -36,21 +36,21 @@ class App {
       this.router.addRoute('/tvshows', 'TV Show');
       this.router.addRoute('/error', 'Error');
 
-      // Navigate to current path
-      await this.router.navigateTo(window.location.pathname);
-
-      // Set up navigation event listeners
-      this.setupNavigationListeners();
+      const isLogin = getDataLocalStorage('name');
+      if(isLogin) { 
+        // Navigate to home page
+        this.router.navigateTo('/home');
+      }
+      else {
+        // Navigate to current path
+        this.router.navigateTo(window.location.pathname);
+      }
+      
     } catch (error) {
       console.error('Failed to initialize application:', error);
     }
   }
 
-  private setupNavigationListeners(): void {
-    window.addEventListener('popstate', () => {
-      this.router.navigateTo(window.location.pathname);
-    });
-  }
 }
 
 // Initialize app when DOM is loaded
