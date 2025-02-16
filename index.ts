@@ -37,7 +37,8 @@ class App {
       this.router.addRoute('/error', 'Error');
 
       const isLogin = getDataLocalStorage('name');
-      if(isLogin) { 
+      const currentPath = window.location.pathname;
+      if(isLogin && currentPath == "/") { 
         // Navigate to home page
         this.router.navigateTo('/home');
       }
