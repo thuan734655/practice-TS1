@@ -1,3 +1,4 @@
+import { getDataLocalStorage } from '@/utils/localStorage';
 import { BaseController } from '../controllers/baseController';
 import { Route } from '../types/routeTypes';
 
@@ -7,13 +8,12 @@ export class Router {
   private root: HTMLElement | null = null;
 
   private constructor() {
-    this.setupEventListeners();
+    this.setupNavigationListeners();
   }
-
-  private setupEventListeners(): void {
-    window.addEventListener('popstate', () => this.handleRoute());
-    document.addEventListener('DOMContentLoaded', () => this.handleRoute());
-
+  private setupNavigationListeners(): void {
+    window.addEventListener('popstate', () => {
+      this.navigateTo(window.location.pathname);
+    });
     document.addEventListener('click', (e: Event) => {
       const target = e.target as HTMLElement;
       const anchor = target.closest('a');
@@ -22,7 +22,13 @@ export class Router {
         const href = anchor.getAttribute('href');
         if (href && href.startsWith('/')) {
           e.preventDefault();
+         const name = getDataLocalStorage('name');
+         if(name) {
           this.navigateTo(href);
+         }
+         else {
+          alert('Please login first');
+         }
         }
       }
     });
@@ -51,6 +57,7 @@ export class Router {
   private async handleRoute(): Promise<void> {
     const path = window.location.pathname;
     const route = this.findMatchingRoute(path);
+    console.log(path);
 
     if (route && this.root) {
       try {
