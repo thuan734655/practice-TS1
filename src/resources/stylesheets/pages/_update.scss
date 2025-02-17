@@ -101,7 +101,7 @@
 
   .btn-update-video {
     @include font($font-size: 1rem, $font-weight: 500, $color: $text-button);
-    @include set-size($w: 30%);
+    @include set-size($w: 20%);
     background: linear-gradient(135deg, $thirteenth-color, $fourteenth-color);
     border: none;
     border-radius: 8px;
@@ -110,7 +110,31 @@
     transition: all 0.3s ease;
     position: absolute;
     bottom: -75px;
-    left: 50%;
+    left: 40%;
+    transform: translate(-50%, 0%);
+
+    &:hover {
+      transform: translate(-50%, -3px);
+      box-shadow: 0 4px 12px rgba($thirteenth-color, 0.3);
+    }
+
+    &:active {
+      transform: translate(-50%, 0%);
+    }
+  }
+  
+  .btn-back{
+    @include font($font-size: 1rem, $font-weight: 500, $color: $text-button);
+    @include set-size($w: 10%);
+    background: linear-gradient(135deg, $thirteenth-color, $fourteenth-color);
+    border: none;
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: absolute;
+    bottom: -75px;
+    left: 60%;
     transform: translate(-50%, 0%);
 
     &:hover {

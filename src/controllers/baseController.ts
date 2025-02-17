@@ -58,56 +58,41 @@ export class BaseController {
         const addPage = new AddPage();
         const author = params.author;
 
-        if (author) {
-          const result = await mediaController.getMovieByAuthor(author, {
-            page,
-            limit,
-          });
+        const result = await mediaController.getMovieByAuthor(author, {
+          page,
+          limit,
+        });
 
-          const data: ContentRender = {
-            mediaRes: result.data,
-            totalItems: result.totalItems,
-            author,
-          };
-          root.innerHTML = addPage.renderContent(data);
+        const data: ContentRender = {
+          mediaRes: result.data,
+          totalItems: result.totalItems ?? 0,
+          author,
+        };
+        root.innerHTML = addPage.renderContent(data);
 
-          addPage.afterRender();
-
-        } else {
-          Router.getInstance().navigateTo("/error");
-        }
+        addPage.afterRender();
       },
 
       "/update/:id": async () => {
         const updatePage = new UpdatePage();
         const id = parseInt(params.id, 10);
+        const result = await mediaController.getMovieById(id);
 
-        if (id) {
-          const result = await mediaController.getMovieById(id);
+        const data: ContentRender = { mediaRes: result, idMedia: id };
+        root.innerHTML = updatePage.renderContent(data);
+        updatePage.afterRender();
 
-            const data: ContentRender = { mediaRes: result, idMedia: id };
-            root.innerHTML = updatePage.renderContent(data);
-            updatePage.afterRender();
-
-        } else {
-          Router.getInstance().navigateTo("/error");
-        }
       },
 
       "/detail/:id": async () => {
         const detailPage = new TvShowsDetailsPage();
         const id = parseInt(params.id, 10);
 
-        if (id) {
-          const result = await mediaController.getMovieById(id);
+        const result = await mediaController.getMovieById(id);
 
-            const data: ContentRender = { mediaRes: result, idMedia: id };
-            root.innerHTML = detailPage.renderContent(data);
-            detailPage.afterRender();
-
-        } else {
-          Router.getInstance().navigateTo("/error");
-        }
+        const data: ContentRender = { mediaRes: result, idMedia: id };
+        root.innerHTML = detailPage.renderContent(data);
+        detailPage.afterRender();
       },
 
       "/movies": async () => {
