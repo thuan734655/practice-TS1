@@ -8,6 +8,9 @@ import { BASE_URL } from '@/constants/baseURL';
 
 class LoadMovies {
   public static render(media: IMedia[]): string {
+    if(media.length == 0) {
+      return `<p class = "add-err-load-media">No media found.</p>`;
+    }
     return media
       .map((data) => {
         return `
@@ -74,11 +77,8 @@ class LoadMovies {
 
       deleteButton?.addEventListener('click', async () => {
         const result: boolean = await mediaController.deleteMovie(mediaId);
-      
-        removedElement = container.cloneNode(true) as HTMLElement;
-      
-        container.remove();
         if(result) {
+          container.remove();
           Toast.showSuccess("Media has been deleted successfully")
         } else {
           Toast.showError("Failed to delete media")

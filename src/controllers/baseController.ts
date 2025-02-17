@@ -1,17 +1,17 @@
-import { HomePage } from '@/views/page/homePage.ts';
-import mediaController from './mediaController.ts';
-import { LoginPage } from '@/views/page/loginPage.ts';
-import { AddPage } from '@/views/page/addPage.ts';
-import { ContentRender } from '@/types/basePageTypes.ts';
-import { UpdatePage } from '@/views/page/updatePage.ts';
-import TvShowsDetailsPage from '@/views/page/detailPage.ts';
-import { MoviePage } from '@/views/page/moivePage.ts';
-import { TvShowPage } from '@/views/page/tvshowPage.ts';
-import { ErrorPage } from '@/views/page/errorPage.ts';
-import { Router } from '@/router/router.ts';
+import { HomePage } from "@/views/page/homePage.ts";
+import mediaController from "./mediaController.ts";
+import { LoginPage } from "@/views/page/loginPage.ts";
+import { AddPage } from "@/views/page/addPage.ts";
+import { ContentRender } from "@/types/basePageTypes.ts";
+import { UpdatePage } from "@/views/page/updatePage.ts";
+import TvShowsDetailsPage from "@/views/page/detailPage.ts";
+import { MoviePage } from "@/views/page/moivePage.ts";
+import { TvShowPage } from "@/views/page/tvshowPage.ts";
+import { ErrorPage } from "@/views/page/errorPage.ts";
+import { Router } from "@/router/router.ts";
 
 export class BaseController {
-    /**
+  /**
    * @description Handles routing based on the given route.
    * @param root - The DOM element where content will be rendered.
    * @param route - The current path.
@@ -58,56 +58,41 @@ export class BaseController {
         const addPage = new AddPage();
         const author = params.author;
 
-        if (author) {
-          const result = await mediaController.getMovieByAuthor(author, {
-            page,
-            limit,
-          });
+        const result = await mediaController.getMovieByAuthor(author, {
+          page,
+          limit,
+        });
 
-          const data: ContentRender = {
-            mediaRes: result.data,
-            totalItems: result.totalItems ?? 0,
-            author,
-          };
-          root.innerHTML = addPage.renderContent(data);
+        const data: ContentRender = {
+          mediaRes: result.data,
+          totalItems: result.totalItems ?? 0,
+          author,
+        };
+        root.innerHTML = addPage.renderContent(data);
 
-          addPage.afterRender();
-
-        } else {
-          Router.getInstance().navigateTo("/error");
-        }
+        addPage.afterRender();
       },
 
       "/update/:id": async () => {
         const updatePage = new UpdatePage();
         const id = parseInt(params.id, 10);
+        const result = await mediaController.getMovieById(id);
 
-        if (id) {
-          const result = await mediaController.getMovieById(id);
+        const data: ContentRender = { mediaRes: result, idMedia: id };
+        root.innerHTML = updatePage.renderContent(data);
+        updatePage.afterRender();
 
-            const data: ContentRender = { mediaRes: result, idMedia: id };
-            root.innerHTML = updatePage.renderContent(data);
-            updatePage.afterRender();
-
-        } else {
-          Router.getInstance().navigateTo("/error");
-        }
       },
 
       "/detail/:id": async () => {
         const detailPage = new TvShowsDetailsPage();
         const id = parseInt(params.id, 10);
 
-        if (id) {
-          const result = await mediaController.getMovieById(id);
+        const result = await mediaController.getMovieById(id);
 
-            const data: ContentRender = { mediaRes: result, idMedia: id };
-            root.innerHTML = detailPage.renderContent(data);
-            detailPage.afterRender();
-
-        } else {
-          Router.getInstance().navigateTo("/error");
-        }
+        const data: ContentRender = { mediaRes: result, idMedia: id };
+        root.innerHTML = detailPage.renderContent(data);
+        detailPage.afterRender();
       },
 
       "/movies": async () => {
