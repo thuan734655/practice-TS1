@@ -1,5 +1,5 @@
 import { Router } from '@/router/router';
-import { IMedia } from '../../models/mediaForm';
+import { IMedia } from '../../types/mediaForm';
 import { IcStar } from '../../resources/assets/icons';
 import { getDataLocalStorage } from '@/utils/localStorage';
 import { BASE_URL } from '@/constants/baseURL';

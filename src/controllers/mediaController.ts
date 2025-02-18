@@ -29,16 +29,16 @@ class MovieController {
         const result = await MediaModel.addMedia(formData);
         return result.data;
     }
+
     async getMovieById(id: number): Promise<IMedia> {
         const result = await MediaModel.getMovieById(id);
         return result.data;
     }
 
-    async updateMovie(id: number, formData: FormData): Promise<boolean> {
+    async updateMovie(id: number, formData: FormData): Promise<IMedia> {
         const result = await MediaModel.updateMovieById(id, formData);
-        return result;
+        return result.data;
     }
 }
 
 export default new MovieController();
-
