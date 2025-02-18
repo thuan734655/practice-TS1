@@ -1,0 +1,9 @@
+@use '../Abstract/' as *;
+
+.truncate-see-more {
+  @include font($font-size: pxToRem(16), $line-height: 133%, $color: $fifth-color);
+  letter-spacing: -0.36px;
+  word-wrap: break-word;
+  cursor: pointer;
+  white-space: nowrap;
+}
