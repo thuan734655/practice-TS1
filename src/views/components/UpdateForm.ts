@@ -1,10 +1,10 @@
-import { IMedia } from "@/models/mediaForm";
-import { fieldConfigs } from "@/constants/formFieldConfig";
+import { IMedia } from "@/types/mediaForm";
+import { fieldConfigsUpdateAndTVShow } from "@/constants/formFieldConfig";
 import { FieldConfig } from "@/types/componentTypes";
 
 class UpdateForm {
   public static render(video: Partial<IMedia>): string {
-    const formFields = Object.entries(fieldConfigs).map(([key, config]) => {
+    const formFields = Object.entries(fieldConfigsUpdateAndTVShow).map(([key, config]) => {
       if (!(key in video)) return "";
 
       const value = video[key as keyof IMedia];

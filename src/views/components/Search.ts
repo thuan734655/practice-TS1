@@ -1,6 +1,7 @@
 import { ICSearch } from "@/resources/assets/icons";
 
-export const renderSearchBox = (): string => {
+class SearchComponent {
+   public static render (): string {
     return `
       <div class="section-main--search">
         <div class="search-container">
@@ -10,3 +11,6 @@ export const renderSearchBox = (): string => {
       </div>
     `;
   }
+}
+
+export default SearchComponent;
