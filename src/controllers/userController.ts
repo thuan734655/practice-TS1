@@ -1,9 +1,9 @@
-import { Validate } from "../helper/validate";
+import { Validate } from "../helper/validateAuth.ts";
 import UserModel from "../models/userModel";
 import { Router } from "../router/router";
 import { dataLogin, dataRegister } from "../types/authTypes.ts";
 import { setDataLocalStorage } from "../utils/localStorage";
-import { clearError, showError } from "@/helper/formErrorHandler.ts";
+import { clearError, showError } from "@/utils/formErrorHandler.ts";
 import { IAuthResponse } from "@/types/apiResponseTypes.ts";
 
 export default class UserController {
@@ -29,8 +29,7 @@ export default class UserController {
 
     const result = await UserModel.login(dataLogin);
 
-    if (result.success && result.data) {
-      Router.getInstance().navigateTo("/home");
+    if (result.success) {
       setDataLocalStorage("name", result.data.user?.name ?? "");
       return { success: true, message: "Login successful"};
     } else {

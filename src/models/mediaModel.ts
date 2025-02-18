@@ -75,7 +75,7 @@ class MediaModel {
     static async getMediaByAuthor(authorName: string, paginationData: paginationData): Promise<IApiResponse<IMedia[]>> {
         try {
             const response = await axiosAPI.get<IApiResponse<IMedia[]>>("/media-author", {
-                params: { paginationData, username: authorName },
+                params: { page: paginationData.page, limit: paginationData.limit, username: authorName },
             });
             return response.data;
         } catch (error: unknown) {

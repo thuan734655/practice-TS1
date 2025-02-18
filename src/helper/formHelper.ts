@@ -5,6 +5,7 @@ import { getDataLocalStorage } from "@/utils/localStorage";
     const newFormData = new FormData();
   
     [
+      'title',
       'description',
       'rating',
       'type',
