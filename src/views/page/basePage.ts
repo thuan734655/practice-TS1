@@ -1,29 +1,33 @@
-import { ContentRender } from "@/types/general";
+import { ContentRender } from "@/types/basePageTypes";
 
 export abstract class BasePage {
-    protected state: Record<string, any> = {};
-  
-    public abstract renderContent(content: ContentRender): string | Promise<string>;
-    protected abstract attachEventListeners(): void;
-  
-    public afterRender(): void {
-      this.attachEventListeners();
-    }
-  
-    protected setState(newState: Record<string, any>): void {
-      this.state = { ...this.state, ...newState };
-    }
-  
-    protected getState(key: string): any {
-      return this.state[key];
-    }
-    protected renderError(): string {
-      return `
-        <div class="error-page">
-          <h1>Oops! Something went wrong</h1>
-          <p>Unable to load the content. Please try again later.</p>
-        </div>
-      `;
+  protected state: Record<string, string> = {};
+
+  public abstract renderContent(content: ContentRender): string;
+
+  public abstract afterRender(): void;
+
+  protected setState<T>(key: string, value: T): void {
+    try {
+      if (value === undefined || value === null) {
+        throw new Error(`Invalid value for state key: ${key}`);
+      }
+      this.state[key] = JSON.stringify(value);
+    } catch (error) {
+      console.error(`Error setting state for key "${key}":`, error);
     }
   }
-  
+
+  protected getState<T>(key: string): T | null {
+    const jsonString = this.state[key];
+    if (!jsonString) {
+      return null;
+    }
+    const parsedData: unknown = JSON.parse(jsonString);
+
+    if (parsedData == false) {
+      return false as T;
+    }
+    return parsedData as T;
+  }
+}

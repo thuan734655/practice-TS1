@@ -3,10 +3,14 @@ import { IMedia } from '../../models/mediaForm';
 import { IcStar } from '../../resources/assets/icons';
 import mediaController from '@/controllers/mediaController';
 import { Toast } from '@/utils/toast';
-import { getDataLocalStorage } from '@/controllers/localStorage';
+import { getDataLocalStorage } from '@/utils/localStorage';
+import { BASE_URL } from '@/constants/baseURL';
 
 class LoadMovies {
   public static render(media: IMedia[]): string {
+    if(media.length == 0) {
+      return `<p class = "add-err-load-media">No media found.</p>`;
+    }
     return media
       .map((data) => {
         return `
@@ -18,7 +22,7 @@ class LoadMovies {
               </div>
             </div>
             <div class="list-movies-container--body">
-              <img src="https://practice-ts-server.onrender.com/${data.avatar}" alt="avatar">
+              <img src="${BASE_URL}${data.avatar}" alt="avatar">
             </div>
             <div class="list-movies-container--footer">
               <p>${data.movie_name}</p>
@@ -33,7 +37,7 @@ class LoadMovies {
       .join('');
   }
 
-  public static event(): void {
+  public static attachEventListener(): void {
     const movieContainers = document.querySelectorAll('.list-movies-container');
 
     movieContainers.forEach((container) => {
@@ -41,23 +45,23 @@ class LoadMovies {
       const mediaId : number = parseInt(container.id ,10);
       
       container.addEventListener('mouseenter', () => {
-        const actionButtons = container.querySelector('.action-buttons') as HTMLElement;
+        const actionButtons = container.querySelector('.action-buttons');
         if (actionButtons ) {
-          actionButtons.style.display = 'block';
+          (actionButtons as HTMLElement).style.display = 'block';
         }
       });
 
       container.addEventListener('mouseleave', () => {
-        const actionButtons = container.querySelector('.action-buttons') as HTMLElement;
+        const actionButtons = container.querySelector('.action-buttons');
         if (actionButtons) {
-          actionButtons.style.display = 'none'; 
+          (actionButtons as HTMLElement).style.display = 'none'; 
         }
       });
 
      
-      const viewButton = container.querySelector('.btn-view') as HTMLButtonElement;
-      const updateButton = container.querySelector('.btn-update') as HTMLButtonElement;
-      const deleteButton = container.querySelector('.btn-delete') as HTMLButtonElement;
+      const viewButton = container.querySelector('.btn-view');
+      const updateButton = container.querySelector('.btn-update');
+      const deleteButton = container.querySelector('.btn-delete');
 
      
       viewButton?.addEventListener('click', () => {
@@ -73,11 +77,8 @@ class LoadMovies {
 
       deleteButton?.addEventListener('click', async () => {
         const result: boolean = await mediaController.deleteMovie(mediaId);
-      
-        removedElement = container.cloneNode(true) as HTMLElement;
-      
-        container.remove();
         if(result) {
+          container.remove();
           Toast.showSuccess("Media has been deleted successfully")
         } else {
           Toast.showError("Failed to delete media")

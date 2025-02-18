@@ -1,4 +1,4 @@
-export interface IMedia {
+export type IMedia = {
   id: number;
   description: string;
   title: string;
