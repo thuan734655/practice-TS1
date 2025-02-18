@@ -1,6 +1,5 @@
 import { BasePage } from "./basePage";
 import Header from "../components/Header";
-import movieController from "../../controllers/mediaController";
 import { IMedia } from "../../types/mediaForm";
 import LoadMovies from "../components/ListMovie";
 import { ContentRender } from "@/types/basePageTypes";
@@ -8,7 +7,8 @@ import { Toast } from "@/utils/toast";
 import Pagination from "../components/Pagination";
 import { RenderPaginationData } from "@/types/componentTypes";
 import { scrollToTop } from "@/utils/scrollToTop";
-import { renderSearchBox } from "../components/Search";
+import SearchComponent from "../components/Search";
+import mediaController from "../../controllers/mediaController";
 
 export class TvShowPage extends BasePage {
   constructor() {
@@ -29,7 +29,7 @@ export class TvShowPage extends BasePage {
         <div class="section-main--desc">
           <p>List of movies and TV Shows I have watched to date.<br>Explore what I have watched and also feel free to make a suggestion. 😉</p>
         </div>
-        ${renderSearchBox()}
+        ${SearchComponent.render()}
         <p class="section-main--desc-subNav quantity-videos">
         <span>${this.getState("totalItems")} items</span>
         </p>
@@ -74,6 +74,7 @@ export class TvShowPage extends BasePage {
           ? LoadMovies.render(mediaSearch)
           : "<p class = 'empty'>Empty</p>";
         LoadMovies.attachEventListener();
+        this.attachDeleteEventListener();
         scrollToTop();
         Pagination.isVisiblePagination(false);
       }
@@ -83,6 +84,7 @@ export class TvShowPage extends BasePage {
           ? LoadMovies.render(media)
           : "<p class = 'empty'>Empty</p>";
         LoadMovies.attachEventListener();
+        this.attachDeleteEventListener();
         scrollToTop();
         Pagination.isVisiblePagination(true);
       }
@@ -93,9 +95,40 @@ export class TvShowPage extends BasePage {
     this.attachSearchEventListener();
     this.attachPaginationEventListener();
     LoadMovies.attachEventListener();
+    this.attachDeleteEventListener();
     this.renderPagination();
   }
+  public attachDeleteEventListener(): void {
+    const movieContainers = document.querySelectorAll('.list-movies-container');
 
+    movieContainers.forEach(container => {
+      const deleteButton = container.querySelector('.btn-delete');
+      const media = this.getState<IMedia[]>('media');
+
+      if (deleteButton && media) {
+        deleteButton.addEventListener('click', async () => {
+          const mediaId = deleteButton.getAttribute('data-id');
+          if (!mediaId) return;
+
+          const result: boolean = await mediaController.deleteMovie(parseInt(mediaId, 10));
+          if (result) {
+            container.remove(); // update view
+            // update state
+            this.setState<IMedia[]>(
+              'media',
+              media.filter(item => item.id != parseInt(mediaId, 10))
+            );
+
+            console.log(this.getState<IMedia[]>('media'));
+
+            Toast.showSuccess('Media has been deleted successfully');
+          } else {
+            Toast.showError('Failed to delete media');
+          }
+        });
+      }
+    });
+  }
   private attachSearchEventListener(): void {
     const searchInput = document.getElementById("searchInput");
     if (searchInput) {
@@ -147,7 +180,7 @@ export class TvShowPage extends BasePage {
     const currentPage = this.getState<number>("currentPage");
 
     if (limit && currentPage) {
-      const response = await movieController.getMoviesByFilter("TV Show", {
+      const response = await mediaController.getMoviesByFilter("TV Show", {
         limit,
         page: currentPage,
       });
@@ -167,7 +200,7 @@ export class TvShowPage extends BasePage {
   }
 
   private async updateSearchContent(query: string): Promise<void> {
-    const searchContent = await movieController.searchMovies(query);
+    const searchContent = await mediaController.searchMovies(query);
 
     this.setState<IMedia[]>("mediaSearch", searchContent.data);
     this.setState<number>("totalItems", searchContent.data?.length);
