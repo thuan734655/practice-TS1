@@ -1,17 +1,17 @@
-import { HomePage } from '@/views/page/homePage.ts';
-import mediaController from './mediaController.ts';
-import { LoginPage } from '@/views/page/loginPage.ts';
-import { AddPage } from '@/views/page/addPage.ts';
-import { ContentRender } from '@/types/basePageTypes.ts';
-import { UpdatePage } from '@/views/page/updatePage.ts';
-import TvShowsDetailsPage from '@/views/page/detailPage.ts';
-import { MoviePage } from '@/views/page/moivePage.ts';
-import { TvShowPage } from '@/views/page/tvshowPage.ts';
-import { ErrorPage } from '@/views/page/errorPage.ts';
-import { Router } from '@/router/router.ts';
+import { HomePage } from "@/views/page/homePage.ts";
+import mediaController from "./mediaController.ts";
+import { LoginPage } from "@/views/page/loginPage.ts";
+import { AddPage } from "@/views/page/addPage.ts";
+import { ContentRender } from "@/types/basePageTypes.ts";
+import { UpdatePage } from "@/views/page/updatePage.ts";
+import TvShowsDetailsPage from "@/views/page/detailPage.ts";
+import { MoviePage } from "@/views/page/moivePage.ts";
+import { TvShowPage } from "@/views/page/tvshowPage.ts";
+import { ErrorPage } from "@/views/page/errorPage.ts";
+import { Router } from "@/router/router.ts";
 
 export class BaseController {
-    /**
+  /**
    * @description Handles routing based on the given route.
    * @param root - The DOM element where content will be rendered.
    * @param route - The current path.

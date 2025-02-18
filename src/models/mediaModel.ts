@@ -32,14 +32,14 @@ class MediaModel {
         }
     }
 
-    static async updateMovieById(id: number, data: FormData): Promise<boolean> {
+    static async updateMovieById(id: number, data: FormData): Promise<IApiResponse<IMedia>> {
         try {
-            const response = await axiosAPI.put<IApiResponse<boolean>>(`/media/${id}`, data, {
+            const response = await axiosAPI.put<IApiResponse<IMedia>>(`/media/${id}`, data, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
-            return response.data.success;
+            return response.data;
         } catch (error: unknown) {
-            return false;
+            return handleAxiosError(error, `Failed to update movies `, {} as IMedia);
         }
     }
 

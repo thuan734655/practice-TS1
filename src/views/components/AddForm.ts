@@ -1,5 +1,5 @@
 import { fieldConfigs } from "@/constants/formFieldConfig";
-import { FieldConfig } from "@/types/general";
+import { FieldConfig } from "@/types/componentTypes";
 
 export default class AddForm {
   public static render(): string {
