@@ -90,6 +90,15 @@
     }
   }
   &--list-movies {
+    .add-err-load-media {
+      @include font(
+        $font-size: pxToRem(26),
+        $font-weight: 600,
+        $line-height: pxToRem(24),
+        $color: $fifth-color
+      );
+      margin-top: pxToRem(20);
+    }
     @include flex($gap: pxToRem(40), $justify: space-evenly);
     flex-wrap: wrap;
     padding: pxToRem(14) 0 pxToRem(44) 0;
@@ -213,4 +222,12 @@
     }
     
   }
+}
+.empty {
+  @include font(
+        $font-size: pxToRem(18),
+        $font-weight: 400,
+        $line-height: pxToRem(24),
+        $color: $first-button
+      );
 }

@@ -1,21 +1,21 @@
 import header from '../components/Header';
-import { ContentRender } from "@/types/general";
+import { ContentRender } from "@/types/basePageTypes";
 import { BasePage } from "./basePage";
 import { IcStar } from '../../resources/assets/icons';
-import loadBoxTVShow from '../components/BoxTVShow';
-import loadBoxMovie from '../components/BoxMovie';
+import { IMedia } from '@/types/mediaForm';
+import { BASE_URL } from '@/constants/baseURL';
+import BoxMovie from '../components/BoxMovie';
+import BoxTVShow from '../components/BoxTVShow';
 
 class TvShowsDetailsPage extends BasePage {
   constructor() {
     super();
-    this.state = {
-      mediaRes: null,
-      idMedia: ""
-    };
   }
 
-  public async renderContent(content: ContentRender): Promise<string> {
-    this.setState({ mediaRes: content?.mediaRes, idMedia: content?.idMedia });
+  public  renderContent(content: ContentRender): string {
+    this.setState<IMedia>("mediaRes", content.mediaRes as IMedia);
+    this.setState<number>("idMedia", content.idMedia as number );
+   
     return `
       ${header.render()}
      <section class="section-main-tvshow"  id= "rootApp"> 
@@ -23,7 +23,7 @@ class TvShowsDetailsPage extends BasePage {
         <div class="section-main-tvshow__container--top">
         <div class="top-container">
            <figure>
-           <img src="https://practice-ts-server.onrender.com/${this.getState("mediaRes").background}" alt="background">
+           <img src="${BASE_URL}${this.getState<IMedia>("mediaRes")?.background ?? ""}" alt="background">
            </figure>
          <div class="top-detail">
           <div class="top-detail-container">
@@ -32,7 +32,7 @@ class TvShowsDetailsPage extends BasePage {
             <p>/</p>
             <a class="nav-TVShows link" href="/tvshows">TV Shows</a>
            </div> 
-           <div class="top-detail-container--name-movie">${this.getState("mediaRes").movie_name}</div>
+           <div class="top-detail-container--name-movie">${this.getState<IMedia>("mediaRes")?.movie_name ?? "" }</div>
           </div>
          </div> <!-- end top-detail --> 
         </div>
@@ -41,22 +41,22 @@ class TvShowsDetailsPage extends BasePage {
         <div class="bottom-container">
          <div class="bottom-container--left">
         <figure>
-           <img src="https://practice-ts-server.onrender.com/${this.getState("mediaRes").avatar}" alt="Avatar">
+           <img src="${BASE_URL}${this.getState<IMedia>("mediaRes")?.avatar ?? ""}" alt="Avatar">
         </figure>
          </div>
          <div class="bottom-container--right">
           <div class="right--head">
-           <p class="head--title">${this.getState("mediaRes").title}</p>
-           <p class="head--desc">${this.getState("mediaRes").description}</p>
+           <p class="head--title">${this.getState<IMedia>("mediaRes")?.title ?? "" }</p>
+           <p class="head--desc">${this.getState<IMedia>("mediaRes")?.description ?? ""}</p>
            <figure>
            <img src="${IcStar}" alt="Star">
            <figcaption>
-           ${this.getState("mediaRes").rating}
+           ${this.getState<IMedia>("mediaRes")?.rating ?? "" }
            </figcaption>
            </figure>
            </div> <!-- end right--head --> 
           <div class="right--body">
-           ${this.getState("mediaRes").type === 'Movie' ? loadBoxMovie(this.getState("mediaRes")) :loadBoxTVShow(this.getState("mediaRes")) }
+           ${this.TvShowOrMovie()}
           </div>
          </div>
         </div>
@@ -66,7 +66,7 @@ class TvShowsDetailsPage extends BasePage {
     `;
   }
 
-  protected attachEventListeners(): void {
+  public afterRender(): void {
     const navLinks = document.querySelectorAll('.link');
     navLinks.forEach((link) => {
       link.addEventListener('click', (event) => {
@@ -78,10 +78,16 @@ class TvShowsDetailsPage extends BasePage {
       });
     });
   }
-
-  public afterRender(): void {
-    super.afterRender();
-    console.log('TvShowsDetailsPage rendered successfully.');
+  public TvShowOrMovie(): string {
+    const media = this.getState<IMedia>("mediaRes");
+    if(media != null) {
+      if ( media.type == "TV Show") {
+        return BoxMovie.render(media);
+      } else {
+        return BoxTVShow.render(media);
+      }
+    }
+    return "";
   }
 }
 

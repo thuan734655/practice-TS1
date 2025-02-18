@@ -1,23 +1,18 @@
 import { BasePage } from './basePage';
-import headerLogin from '../components/HeaderLogin';
 import { IcEmail, IcEye, IcKeySquare, IcSaly } from '../../resources/assets/icons';
-import { dataLogin, dataRegister } from '../../types/login';
+import { dataRegister } from '../../types/authTypes.ts';
 import UserController from '../../controllers/userController';
+import { Toast } from '@/utils/toast.ts';
+import Header from '../components/Header.ts';
 
 export class LoginPage extends BasePage {
   constructor() {
     super();
-    this.state = {
-      email: '',
-      password: '',
-      errorMessage: '',
-      name: ""
-    };
   }
 
-  public async renderContent(): Promise<string> {
+  public  renderContent(): string {
     return `
-      ${headerLogin()}
+      ${Header.render()}
       <section class="section-main-login" id="rootLogin">
         <div class="section-main-login__left">
           <div class="left-box">
@@ -36,12 +31,12 @@ export class LoginPage extends BasePage {
               <div class="input-login">
                 <img src="${IcEmail}" alt="icon email">
                 <input class="input-email" type="email" placeholder="Email" required>
-                <p id="error-email" class="error-message"></p> 
+                <p id="error-email" class="error-message">Invalid email format</p> 
               </div>
               <div class="input-login">
                 <img class="icon-key" src="${IcKeySquare}" alt="icon key">
                 <input class="input-password" type="password" placeholder="Password" required>
-                <p id="error-password" class="error-message"></p> 
+                <p id="error-password" class="error-message">Password must be at least 6 characters</p> 
                 <img select="false" class="icon-eye" src="${IcEye}" alt="icon eye">
               </div>
               <button class="btn-login" type="button">Login</button>
@@ -53,120 +48,112 @@ export class LoginPage extends BasePage {
         </div>
       </section>
       
-      <!-- Register Popup -->
-      <div class="register-popup hidden">
-        <div class="register-container">
-          <p class="close-button">X</p>
-          <h1>Register</h1>
-          <form id="registerForm">
-            <input type="email" id="register_email" placeholder="Email" required>
-            <p id="error-register-email" class="error-message"></p>
-            <input type="password" id="register_password" placeholder="Password" required>
-            <p id="error-register-password" class="error-message"></p>
-            <input type="text" id="full-name" placeholder="Full Name" required>
-            <p id="error-register-name" class="error-message"></p>
-            <button class="submit-register">Register</button>
-          </form>
-          <div class="footer">Already have an account? <span class="back-to-login">Log in</span></div>
-        </div>
-      </div>
+      <!-- Register  -->
+      ${this.RenderRegisterComponent()}
     `;
 }
+ private RenderRegisterComponent() {
+  return `
+    <div class="register-popup hidden">
+      <div class="register-container">
+        <p class="close-button">X</p>
+        <h1>Register</h1>
+        <form id="registerForm">
+          <input type="email" id="register_email" placeholder="Email" required>
+          <p id="error-register-email" class="error-message">Invalid email format</p>
+          <input type="password" id="register_password" placeholder="Password" required>
+          <p id="error-register-password" class="error-message">Password must be at least 6 characters</p>
+          <input type="text" id="full-name" placeholder="Full Name" required>
+          <p id="error-register-name" class="error-message">Name is </p>
+          <button class="submit-register">Register</button>
+        </form>
+        <div class="footer">Already have an account? <span class="back-to-login">Log in</span></div>
+      </div>
+    </div>
+  `;
+}
 
-
-  protected attachEventListeners(): void {
+  public afterRender(): void {
     this.attachLoginEventListener();
     this.attachRegisterPopupEvents();
   }
 
   private attachLoginEventListener(): void {
-    const loginButton = document.querySelector('.btn-login') as HTMLButtonElement;
-    const eyeIcon = document.querySelector('.icon-eye') as HTMLImageElement;
-    const passwordInput = document.querySelector('.input-password') as HTMLInputElement;
+    const loginButton = document.querySelector('.btn-login');
+    const eyeIcon = document.querySelector('.icon-eye');
+    const passwordInput = document.querySelector('.input-password');
+    const emailInput = document.querySelector('.input-email');
+
   
-    if (loginButton) {
+    if (loginButton && eyeIcon && passwordInput && emailInput && passwordInput) {
       loginButton.addEventListener('click', async () => {
-        const emailInput = document.querySelector('.input-email') as HTMLInputElement;
+          const email = (emailInput as HTMLInputElement).value; ;
+          const password = (passwordInput as HTMLInputElement).value;
   
-        if (emailInput && passwordInput) {
-          const email = emailInput.value;
-          const password = passwordInput.value;
-  
-          this.setState({ email, password });
-  
-          this.login();
-        }
+          this.login(email,password);
       });
-    }
-  
-    if (eyeIcon && passwordInput) {
+
       eyeIcon.addEventListener('click', () => {
-        const isPasswordVisible = passwordInput.type === 'text';
-        passwordInput.type = isPasswordVisible ? 'password' : 'text';
+        const isPasswordVisible = (passwordInput as HTMLInputElement).type === 'text';
+        (passwordInput as HTMLInputElement).type = isPasswordVisible ? 'password' : 'text';
       });
     }
+
   }
+  
   
 
   private attachRegisterPopupEvents(): void {
-    const registerLink = document.querySelector('.right-box--footer span') as HTMLElement;
-    const popup = document.querySelector('.register-popup') as HTMLElement;
-    const closeButton = document.querySelector('.close-button') as HTMLElement;
-    const backToLogin = document.querySelector('.back-to-login') as HTMLElement;
-    const submit_register = document.querySelector('.submit-register') as HTMLInputElement;
-    const input_email = document.querySelector('#register_email') as HTMLInputElement;
-    const input_pass = document.querySelector('#register_password') as HTMLInputElement;
-    const input_name = document.querySelector('#full-name') as HTMLInputElement;
+    const registerLink = document.querySelector('.right-box--footer span');
+    const popup = document.querySelector('.register-popup');
+    const closeButton = document.querySelector('.close-button');
+    const backToLogin = document.querySelector('.back-to-login');
+    const registerForm = document.querySelector('#registerForm');
+    const input_email = document.querySelector('#register_email');
+    const input_pass = document.querySelector('#register_password');
+    const input_name = document.querySelector('#full-name') 
 
-
-    if(submit_register && popup) {
-      submit_register.addEventListener('click', async (e) => {
+    if(registerForm && popup && registerLink && closeButton && backToLogin ) {
+      registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const email = input_email.value;
-        const password = input_pass.value;
-        const name = input_name.value;
-        this.setState({email,password,name});
-        this.register();
+        const email = (input_email as HTMLInputElement).value;
+        const password = (input_pass  as HTMLInputElement).value;
+        const name = (input_name  as HTMLInputElement).value;
+        this.register(email, password, name);
       })
-    }
 
-    if (registerLink && popup) {
       registerLink.addEventListener('click', () => {
         popup.classList.remove('hidden');
       });
-    }
 
-    if (closeButton && popup) {
       closeButton.addEventListener('click', () => {
         popup.classList.add('hidden');
       });
-    }
 
-    if (backToLogin && popup) {
       backToLogin.addEventListener('click', () => {
         popup.classList.add('hidden');
       });
     }
   }
 
-  private async login(): Promise<void> {
-    try {
-      const dataLogin: dataLogin = { email: this.getState("email"), password: this.getState("password") };
-      await UserController.login(dataLogin);
-    } catch (error) {
-      console.error('Login failed:', error);
-      this.setState({ errorMessage: 'An error occurred during login. Please try again.' });
-    }
+  private async login(email:string, password: string): Promise<void> {
+      const dataLogin = { email: email, password: password };
+      const result = await UserController.login(dataLogin);
+      if(result.success) {
+        Toast.showSuccess("Login Success");
+      }
+      else {
+        Toast.showError(result.message);
+      }
   }
-  private async register(): Promise<void> {
-    try {
-      const dataRegister : dataRegister = { email: this.getState("email"), password: this.getState("password"), name: this.getState("name") };
-      await UserController.register(dataRegister);
-      
-    } catch (error) {
-      console.error('Register failed:', error);
-      this.setState({ errorMessage: 'An error occurred during registration. Please try again.' });   
+  private async register(email:string,password: string,name:string): Promise<void> {
+     const dataRegister : dataRegister = { email: email , password: password, name: name};
+    const result =  await UserController.register(dataRegister);
+    if(result.success) {
+      Toast.showSuccess("Login Success");
+    }
+    else {
+      Toast.showError(result.message);
     }
   }
 }
-
