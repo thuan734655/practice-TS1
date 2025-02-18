@@ -1,5 +1,5 @@
 import { BasePage } from './basePage';
-import header from '../components/Header.js';
+import Header from '../components/Header.js';
 import { IcError } from '../../resources/assets/icons/index.js';
 import { Router } from '@/router/router.js';
 
@@ -7,7 +7,7 @@ export class ErrorPage extends BasePage {
 
   public renderContent(): string {
     return `
-      ${header.render()}
+      ${Header.render()}
       <section class="error-page">
        <div class="error-page__container">
         <div class="error-page__container--head">
@@ -26,10 +26,6 @@ export class ErrorPage extends BasePage {
   }
 
   public afterRender(): void {
-    this.attachEventListeners();
-  }
-
-  protected attachEventListeners(): void {
     document
       .querySelector('.body--button')
       ?.addEventListener('click', () => {

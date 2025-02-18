@@ -1,6 +1,6 @@
 import { IMedia } from "@/models/mediaForm";
 import { fieldConfigs } from "@/constants/formFieldConfig";
-import { FieldConfig } from "@/types/general";
+import { FieldConfig } from "@/types/componentTypes";
 
 class UpdateForm {
   public static render(video: Partial<IMedia>): string {
@@ -21,6 +21,7 @@ class UpdateForm {
       <form id="update-feature-form" enctype="multipart/form-data">
         ${formFields}
         <button type="submit" class="btn-update-video">Update Video</button>
+        <button type="button" class="btn-back">Back</button>
       </form>
     `;
   }

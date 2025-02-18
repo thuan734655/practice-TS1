@@ -1,27 +1,15 @@
-import { NavChild } from './NavChild';
-import { IcLogout, IcLogo } from '../../resources/assets/icons/index.js';
-import { NavItem } from '../../types/general.js';
-import { getDataLocalStorage } from '@/controllers/localStorage.js';
+import { NavChild } from "./NavChild";
+import {IcLogo } from "../../resources/assets/icons/index.js";
+import { listNav, listNavIcon } from "@/constants/header.js";
+import { getDataLocalStorage } from "@/utils/localStorage.js";
 
 export default class Header {
-  private static listNav: NavItem[] = [
-    { text: 'Movies', href: '/movies' },
-    { text: 'TV Shows', href: '/tvshows' },
-  ];
-  
-  private static readonly listNavIcon: NavItem[] = [
-    {
-      text: `<figure><img src="${IcLogout}" alt="logout"/><figcaption>Logout</figcaption></figure>`,
-      href: '/login'
-    },
-  ];
 
   public static render(): string {
-    const author = getDataLocalStorage("name");
-    if (author && !this.listNav.some(item => item.href === `/add/${author}`)) {
-      this.listNav.push({ text: 'Add', href: `/add/${author}` });
-    }
-
+   const hrefAdd = listNav.find(nav => nav.text == "Add");
+   if(hrefAdd != undefined) {
+     hrefAdd.href = `/add/${getDataLocalStorage("name")}`;
+   }
     return `
       <header id="rootApp">
         <div class="header--logo">
@@ -30,8 +18,8 @@ export default class Header {
           </figure>
         </div>
         <div class="header--nav">
-          <ul>${NavChild.render(this.listNav)}</ul>
-          <ul>${NavChild.render(this.listNavIcon)}</ul>
+          <ul>${NavChild.render(listNav)}</ul>
+          <ul>${NavChild.render(listNavIcon)}</ul>
         </div>
       </header>
     `;
