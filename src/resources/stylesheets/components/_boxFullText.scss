@@ -1,0 +1,40 @@
+@use '../Abstract/' as *;
+
+.box-full-text {
+    @include set-size($w: 450px);
+    background-color: rgb(49, 49, 119);
+    border-radius: 10px;
+    padding: 10px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+
+    .box-full-text--content {
+        @include font(
+            $font-size: pxToRem(16),
+            $line-height: 133%,
+            $color: $ninth-color
+          );
+          letter-spacing: -0.36px;
+          word-wrap: break-word;
+          padding: 15px;
+    }
+    .box-full-text--close {
+        @include font(
+            $font-size: pxToRem(20),
+            $font-weight: bold,
+            $color: $ninth-color
+          );
+        position: absolute;
+        top: 3px;
+        right: 10px;
+        cursor: pointer;
+
+        &:hover {
+            transform: scale(1.1);
+            color: rgb(229, 25, 25);
+        }
+    }
+}
