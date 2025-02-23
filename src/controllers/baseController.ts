@@ -1,14 +1,14 @@
-import { HomePage } from "@/views/page/homePage.ts";
-import mediaController from "./mediaController.ts";
-import { LoginPage } from "@/views/page/loginPage.ts";
-import { AddPage } from "@/views/page/addPage.ts";
-import { ContentRender } from "@/types/basePageTypes.ts";
-import { UpdatePage } from "@/views/page/updatePage.ts";
-import TvShowsDetailsPage from "@/views/page/detailPage.ts";
-import { MoviePage } from "@/views/page/moivePage.ts";
-import { TvShowPage } from "@/views/page/tvshowPage.ts";
-import { ErrorPage } from "@/views/page/errorPage.ts";
-import { Router } from "@/router/router.ts";
+import { HomePage } from '@/views/page/homePage.ts';
+import mediaController from './mediaController.ts';
+import { AuthPage } from '@/views/page/authPage.ts';
+import { AddPage } from '@/views/page/addPage.ts';
+import { ContentRender } from '@/types/basePageTypes.ts';
+import { UpdatePage } from '@/views/page/updatePage.ts';
+import TvShowsDetailsPage from '@/views/page/detailPage.ts';
+import { MoviePage } from '@/views/page/moivePage.ts';
+import { TvShowPage } from '@/views/page/tvshowPage.ts';
+import { ErrorPage } from '@/views/page/errorPage.ts';
+import { Router } from '@/router/router.ts';
 
 export class BaseController {
   /**
@@ -18,19 +18,14 @@ export class BaseController {
    * @param params - Dynamic parameters extracted from the URL.
    * @param title - The title of the page.
    */
-  public async handleRoute(
-    root: HTMLElement,
-    route: string,
-    params: { [key: string]: string },
-    title: string
-  ): Promise<void> {
+  public async handleRoute(root: HTMLElement, route: string, params: { [key: string]: string }, title: string): Promise<void> {
     const page = 1;
     const limit = 8;
 
     const routeHandlers: {
       [key: string]: (params: { [key: string]: string }) => Promise<void>;
     } = {
-      "/home": async () => {
+      '/home': async () => {
         const homePage = new HomePage();
         const result = await mediaController.getMovies({ page, limit });
 
@@ -42,19 +37,19 @@ export class BaseController {
         homePage.afterRender();
       },
 
-      "/": async () => {
-        const loginPage = new LoginPage();
-        root.innerHTML = loginPage.renderContent();
-        loginPage.afterRender();
+      '/': async () => {
+        const authPage = new AuthPage();
+        root.innerHTML = authPage.renderContent();
+        authPage.afterRender();
       },
 
-      "/login": async () => {
-        const loginPage = new LoginPage();
-        root.innerHTML = loginPage.renderContent();
-        loginPage.afterRender();
+      '/login': async () => {
+        const authPage = new AuthPage();
+        root.innerHTML = authPage.renderContent();
+        authPage.afterRender();
       },
 
-      "/add/:author": async () => {
+      '/add/:author': async () => {
         const addPage = new AddPage();
         const author = params.author;
 
@@ -73,7 +68,7 @@ export class BaseController {
         addPage.afterRender();
       },
 
-      "/update/:id": async () => {
+      '/update/:id': async () => {
         const updatePage = new UpdatePage();
         const id = parseInt(params.id, 10);
         const result = await mediaController.getMovieById(id);
@@ -81,10 +76,9 @@ export class BaseController {
         const data: ContentRender = { mediaRes: result, idMedia: id };
         root.innerHTML = updatePage.renderContent(data);
         updatePage.afterRender();
-
       },
 
-      "/detail/:id": async () => {
+      '/detail/:id': async () => {
         const detailPage = new TvShowsDetailsPage();
         const id = parseInt(params.id, 10);
 
@@ -95,37 +89,36 @@ export class BaseController {
         detailPage.afterRender();
       },
 
-      "/movies": async () => {
+      '/movies': async () => {
         const moviePage = new MoviePage();
-        const result = await mediaController.getMoviesByFilter("Movie", {
+        const result = await mediaController.getMoviesByFilter('Movie', {
           page,
           limit,
         });
-          const data: ContentRender = {
-            mediaRes: result.data,
-            totalItems: result.totalItems,
-          };
-          root.innerHTML = moviePage.renderContent(data);
-          moviePage.afterRender();
+        const data: ContentRender = {
+          mediaRes: result.data,
+          totalItems: result.totalItems,
+        };
+        root.innerHTML = moviePage.renderContent(data);
+        moviePage.afterRender();
       },
 
-      "/tvshows": async () => {
+      '/tvshows': async () => {
         const tvShowPage = new TvShowPage();
-        const result = await mediaController.getMoviesByFilter("TV Show", {
+        const result = await mediaController.getMoviesByFilter('TV Show', {
           page,
           limit,
         });
 
-          const data: ContentRender = {
-            mediaRes: result.data,
-            totalItems: result.totalItems,
-          };
-          root.innerHTML = tvShowPage.renderContent(data);
-          tvShowPage.afterRender();
-
+        const data: ContentRender = {
+          mediaRes: result.data,
+          totalItems: result.totalItems,
+        };
+        root.innerHTML = tvShowPage.renderContent(data);
+        tvShowPage.afterRender();
       },
 
-      "/error": async () => {
+      '/error': async () => {
         const errorPage = new ErrorPage();
         root.innerHTML = errorPage.renderContent();
         errorPage.afterRender();
@@ -137,7 +130,7 @@ export class BaseController {
       document.title = title;
     } else {
       console.error(`Route ${route} not found.`);
-      Router.getInstance().navigateTo("/error");
+      Router.getInstance().navigateTo('/error');
     }
   }
 }

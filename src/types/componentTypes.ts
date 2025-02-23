@@ -14,7 +14,6 @@ export type FieldConfig = {
   step?: number;
   max?: number | string;
   min?: number | string;
-  multiple?: boolean;
   options?: string[];
 };
 
