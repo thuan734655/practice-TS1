@@ -80,7 +80,8 @@ private attachBoxFullTextEventListeners() {
         { key: 'title', value: media.title },
         { key: 'desc', value: media.description },
         { key: 'movie_name', value: media.movie_name },
-        { key: 'Genres', value: media.genres.join(', ') }
+        { key: 'Genres', value: media.genres.join(', ') },
+        { key: 'Status', value: media.status }
     ];
 
     truncateFields.forEach(field => {
