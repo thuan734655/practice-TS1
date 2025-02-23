@@ -9,16 +9,20 @@ import { RenderPaginationData } from '@/types/componentTypes';
 import { scrollToTop } from '@/utils/scrollToTop';
 import SearchComponent from '../components/Search';
 import mediaController from '../../controllers/mediaController';
+import DeleteMedia from '../components/deleteMedia';
 
 export class MoviePage extends BasePage {
   constructor() {
     super();
     this.setState<number>('currentPage', 1);
     this.setState<number>('itemsPerPage', 8);
+    this.setState<boolean>('isConfirmBoxShow', true);
+    this.setState<string>('titleConfirm', 'Are you sure you want to delete?');
   }
 
   public renderContent(content: ContentRender): string {
-    this.setState<IMedia[]>('media', content.mediaRes as IMedia[]);
+    const media = content.mediaRes as IMedia[];
+    this.setState<IMedia[]>('media', media);
     this.setState<number>('totalItems', content.totalItems as number);
 
     return `
@@ -35,9 +39,10 @@ export class MoviePage extends BasePage {
         <span>${this.getState('totalItems')} items</span>
         </p>
         <div class="section-main--list-movies" id="movieList">
-          ${this.getState<IMedia[]>('media')?.length ? LoadMovies.render(this.getState<IMedia[]>('media')!) : '<p>Empty</p>'}
+          ${this.getState<IMedia[]>('media')?.length ? LoadMovies.render(media) : '<p>Empty</p>'}
         </div>
         <div class="pagination"></div>
+        <div class="confirm-container"></div>
       </div>
     `;
   }
@@ -45,41 +50,33 @@ export class MoviePage extends BasePage {
   private renderPagination(): void {
     const totalItems = this.getState<number>('totalItems');
     const currentPage = this.getState<number>('currentPage');
-    if (totalItems && currentPage) {
-      const itemsPerPage = 8;
-      const statePagination: RenderPaginationData = {
-        totalItems,
-        itemsPerPage,
-        currentPage,
-      };
-      Pagination.render(statePagination);
-    }
+    const itemsPerPage = this.getState<number>('itemsPerPage');
+
+    const statePagination: RenderPaginationData = {
+      totalItems,
+      itemsPerPage,
+      currentPage,
+    };
+    Pagination.render(statePagination);
   }
 
   private renderMovieList(isSearch?: Boolean): void {
     const listMoviesElement = document.querySelector('.section-main--list-movies');
-    const mediaSearch = this.getState<IMedia[]>('mediaSearch');
-    const media = this.getState<IMedia[]>('media');
-    if (!listMoviesElement) {
-      return;
-    }
+
+    if (!listMoviesElement) return;
+
     if (isSearch) {
-      if (listMoviesElement) {
-        (listMoviesElement as HTMLElement).innerHTML = mediaSearch ? LoadMovies.render(mediaSearch) : "<p class = 'empty'>Empty</p>";
-        LoadMovies.attachEventListener();
-        this.attachDeleteEventListener();
-        scrollToTop();
-        Pagination.isVisiblePagination(false);
-      }
-    } else if (media) {
-      if (listMoviesElement) {
-        (listMoviesElement as HTMLElement).innerHTML = media ? LoadMovies.render(media) : "<p class = 'empty'>Empty</p>";
-        LoadMovies.attachEventListener();
-        this.attachDeleteEventListener();
-        scrollToTop();
-        Pagination.isVisiblePagination(true);
-      }
+      const mediaSearch = this.getState<IMedia[]>('mediaSearch');
+      listMoviesElement.innerHTML = mediaSearch.length > 0 ? LoadMovies.render(mediaSearch) : "<p class = 'empty'>Empty</p>";
+      Pagination.isVisiblePagination(false);
+    } else {
+      const media = this.getState<IMedia[]>('media');
+      listMoviesElement.innerHTML = media.length > 0 ? LoadMovies.render(media) : "<p class = 'empty'>Empty</p>";
+      Pagination.isVisiblePagination(true);
     }
+    LoadMovies.attachEventListener();
+    this.attachDeleteEventListener();
+    scrollToTop();
   }
 
   public afterRender(): void {
@@ -89,51 +86,18 @@ export class MoviePage extends BasePage {
     this.renderPagination();
     this.attachDeleteEventListener();
   }
-  public attachDeleteEventListener(): void {
-    const movieContainers = document.querySelectorAll('.list-movies-container');
-
-    movieContainers.forEach(container => {
-      const deleteButton = container.querySelector('.btn-delete');
-      const media = this.getState<IMedia[]>('media');
-
-      if (deleteButton && media) {
-        deleteButton.addEventListener('click', async () => {
-          const mediaId = deleteButton.getAttribute('data-id');
-          if (!mediaId) return;
-
-          const result: boolean = await mediaController.deleteMovie(parseInt(mediaId, 10));
-          if (result) {
-            container.remove(); // update view
-            // update state
-            this.setState<IMedia[]>(
-              'media',
-              media.filter(item => item.id != parseInt(mediaId, 10))
-            );
-
-            console.log(this.getState<IMedia[]>('media'));
-
-            Toast.showSuccess('Media has been deleted successfully');
-          } else {
-            Toast.showError('Failed to delete media');
-          }
-        });
-      }
-    });
-  }
   private attachSearchEventListener(): void {
     const searchInput = document.getElementById('searchInput') as HTMLInputElement;
-    if (searchInput) {
-      searchInput.addEventListener('input', async e => {
-        const query = (e.target as HTMLInputElement).value;
-        this.setState<string>('searchQuery', query);
-        //no more searching
-        if (query === '') {
-          this.renderMovieList();
-        } else {
-          await this.updateSearchContent(query);
-        }
-      });
-    }
+    if (!searchInput) return;
+
+    let debounceTimer: NodeJS.Timeout;
+    searchInput.addEventListener('input', e => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(async () => {
+        const query = (e.target as HTMLInputElement).value.trim();
+        query ? await this.updateSearchContent(query) : this.renderMovieList();
+      }, 400);
+    });
   }
 
   private attachPaginationEventListener(): void {
@@ -161,6 +125,42 @@ export class MoviePage extends BasePage {
     });
   }
 
+  private attachDeleteEventListener(): void {
+    // Select the parent container that holds all movie items
+    const listMoviesContainer = document.querySelector('.section-main--list-movies');
+
+    if (!listMoviesContainer) return;
+
+    listMoviesContainer.addEventListener('click', async event => {
+      const target = event.target as HTMLElement;
+
+      if (target.classList.contains('btn-delete')) {
+        const deleteButton = target as HTMLButtonElement;
+
+        // Find the closest movie container
+        const container = deleteButton.closest('.list-movies-container') as HTMLElement;
+        if (!container) return;
+
+        // Show confirmation box
+        const isConfirmBoxVisible = DeleteMedia.toggleConfirmBox(this.getState<boolean>('isConfirmBoxShow'), this.getState<string>('titleConfirm'));
+        this.setState<boolean>('isConfirmBoxShow', isConfirmBoxVisible);
+
+        const confirmDelete = await DeleteMedia.confirmAction();
+        if (confirmDelete) {
+          const mediaAfterDelete = await DeleteMedia.deleteMedia(deleteButton, container, this.getState<IMedia[]>('media'));
+          this.setState<IMedia[]>('media', mediaAfterDelete);
+
+          this.setState<number>('totalItems', this.getState<number>('totalItems') - 1);
+          this.updateQuantityVideos();
+          this.renderPagination();
+        }
+
+        // Hide confirmation box after action is completed
+        this.setState<boolean>('isConfirmBoxShow', DeleteMedia.toggleConfirmBox(this.getState<boolean>('isConfirmBoxShow')));
+      }
+    });
+  }
+
   private async updateFilteredContent(): Promise<void> {
     await this.fetchMedia();
     this.renderPagination();
@@ -171,21 +171,17 @@ export class MoviePage extends BasePage {
     const limit = this.getState<number>('itemsPerPage');
     const currentPage = this.getState<number>('currentPage');
 
-    if (limit && currentPage) {
-      const response = await mediaController.getMoviesByFilter('movie', {
-        limit,
-        page: currentPage,
-      });
+    const response = await mediaController.getMoviesByFilter('movie', {
+      limit,
+      page: currentPage,
+    });
 
-      const mediaRes = response.data;
-      const totalItemsRes = response.totalItems;
+    const mediaRes = response.data;
+    const totalItemsRes = response.totalItems;
 
-      if (mediaRes) {
-        this.setState<IMedia[]>('media', mediaRes);
-        this.setState<number>('totalItems', totalItemsRes || 0);
-      } else {
-        Toast.showError('Error occurred while performing this action!');
-      }
+    if (mediaRes) {
+      this.setState<IMedia[]>('media', mediaRes);
+      this.setState<number>('totalItems', totalItemsRes || 0);
     } else {
       Toast.showError('Error occurred while performing this action!');
     }
@@ -197,5 +193,12 @@ export class MoviePage extends BasePage {
     this.setState<IMedia[]>('mediaSearch', searchContent.data);
     this.setState<number>('totalItems', searchContent.data?.length);
     this.renderMovieList(true);
+  }
+
+  private updateQuantityVideos(): void {
+    const quantityVideosElement = document.querySelector('.quantity-videos') as HTMLElement;
+    const totalItems = this.getState<number>('totalItems');
+
+    quantityVideosElement.innerHTML = `<span>${totalItems} items</span>`;
   }
 }
