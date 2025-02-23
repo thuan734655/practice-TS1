@@ -67,7 +67,9 @@
   
           textarea {
             @include set-size($h: pxToRem(80));
+            font-family: $primary-font;
             resize: vertical;
+
           }
         }
       }
@@ -112,3 +114,9 @@
     }
   }
   
+  .error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    visibility: hidden;
+  }

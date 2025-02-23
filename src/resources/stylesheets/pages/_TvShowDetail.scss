@@ -21,7 +21,8 @@ body {
           img {
             border-radius: pxToRem(20) !important;
             @include set-size($w: 100%, $h: 100%);
-            overflow: hidden;
+            object-fit: cover;
+            // overflow: hidden;
           }
         }
       }
@@ -31,7 +32,7 @@ body {
         backdrop-filter: blur(12px);
         @include flex($direction: column, $align: flex-start, $gap: pxToRem(8));
         @include set-size($w: pxToRem(560));
-        padding: 40px;
+        padding: 30px;
         position: absolute;
         bottom: pxToRem(-55);
         left: pxToRem(78);
@@ -52,12 +53,15 @@ body {
           }
           &--name-movie {
             @include font(
-              $font-size: pxToRem(32),
+              $font-size: pxToRem(24),
               $font-weight: 600,
               $line-height: 125%,
               $color: $ninth-color
             );
+            word-wrap: break-word;
+            @include set-size($w: 450px);
             letter-spacing: -0.64px;
+            margin-top: 10px;
           }
         }
       }
@@ -73,7 +77,8 @@ body {
               object-fit: cover;
               border-radius: pxToRem(20) !important;
               @include set-size($w: 100%, $h: 100%);
-              overflow: hidden;
+              // overflow: hidden;
+              object-fit: cover;
             }
           }
         }
@@ -89,6 +94,7 @@ body {
                 $color: $ninth-color
               );
               letter-spacing: -0.36px;
+              word-wrap: break-word;
             }
             .head--desc {
               @include font(
@@ -98,6 +104,7 @@ body {
                 $color: $fourth-color
               );
               @include set-size($w: pxToRem(480));
+              word-wrap: break-word;
             }
             figure {
               @include flex($gap: pxToRem(4), $justify: center);
