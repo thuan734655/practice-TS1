@@ -9,6 +9,7 @@ import { buildFormData } from '@/helper/formHelper.ts';
 import { Toast } from '@/utils/toast.ts';
 import { Router } from '@/router/router.ts';
 import { getDataLocalStorage } from '@/utils/localStorage.ts';
+import ConfirmBox from '../components/ConfirmBox.ts';
 
 export class UpdatePage extends BasePage {
   constructor() {
@@ -17,9 +18,11 @@ export class UpdatePage extends BasePage {
 
   public renderContent(data: ContentRender): string {
     const media = data.mediaRes as IMedia;
-    
+
     this.setState<IMedia>('mediaRes', media);
     this.setState<number>('idMedia', data.idMedia as number);
+    this.setState<boolean>('isConfirmBoxShow', true);
+    this.setState<string>('titleConfirm', 'Are you sure you want to update?');
 
     return `
             ${Header.render()}
@@ -38,6 +41,7 @@ export class UpdatePage extends BasePage {
                     ${UpdateForm.render(this.getState("mediaRes"))}
                 </div>
             </section>
+             <div class="confirm-container"></div>
         `;
   }
 
@@ -60,21 +64,29 @@ export class UpdatePage extends BasePage {
     if (form && media) {
       form.addEventListener('submit', async event => {
         event.preventDefault();
+        
+        const isConfirmBoxVisible = this.toggleConfirmBox(this.getState<boolean>('isConfirmBoxShow'), this.getState<string>('titleConfirm'));
+        this.setState<boolean>('isConfirmBoxShow', isConfirmBoxVisible);
 
-        const formData = buildFormData(form);
+        const updateConfirm = await this.confirmAction();
+        if (updateConfirm) {
+          const formData = buildFormData(form);
 
-        Object.keys(media).forEach(key => {
-          if (media[key as keyof IMedia] == formData.get(key)) {
-            formData.delete(key);
-          }
-        });
-        let isEmpty = false;
-        formData.forEach((vale, key) => {
-          console.log(vale, key);
-          isEmpty = true;
-        });
+          Object.keys(media).forEach(key => {
+            if (media[key as keyof IMedia] == formData.get(key)) {
+              formData.delete(key);
+            }
+          });
+          let isEmpty = false;
+          formData.forEach((vale, key) => {
+            console.log(vale, key);
+            isEmpty = true;
+          });
 
-        isEmpty ? this.updateMediaData(formData, media) : Toast.showError('Nothing to update');
+          isEmpty ? this.updateMediaData(formData, media) : Toast.showError('Nothing to update');
+        }
+
+         this.setState<boolean>('isConfirmBoxShow', this.toggleConfirmBox(this.getState<boolean>('isConfirmBoxShow')));
       });
     }
   }
@@ -90,13 +102,34 @@ export class UpdatePage extends BasePage {
       if (!result) {
         const resetData: ContentRender = {
           mediaRes: mediaRes,
+          idMedia: idMedia,
         };
         this.renderContent(resetData);
+        Toast.showError('Failed to update');
         return;
       } else {
         Toast.showSuccess('Updated successfully');
         Router.getInstance().navigateTo(`/add/${getDataLocalStorage('name')}`);
       }
     }
+  }
+  private confirmAction(): Promise<boolean> {
+    const btnYes = document.querySelector('.confirm-yes') as HTMLButtonElement;
+    const btnNo = document.querySelector('.confirm-no') as HTMLButtonElement;
+
+    return new Promise(resolve => {
+      btnYes.addEventListener('click', () => resolve(true));
+      btnNo.addEventListener('click', () => resolve(false));
+    });
+  }
+  private toggleConfirmBox(isConfirmBoxShow: boolean, titleConfirm?: string): boolean {
+    const confirmContainer = document.querySelector('.confirm-container') as HTMLDivElement;
+
+    if (isConfirmBoxShow && titleConfirm) {
+      confirmContainer.innerHTML = ConfirmBox.render(titleConfirm);
+    } else {
+      confirmContainer.innerHTML = '';
+    }
+    return !isConfirmBoxShow;
   }
 }
