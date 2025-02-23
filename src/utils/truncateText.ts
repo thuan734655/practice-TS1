@@ -21,7 +21,7 @@ class TruncateText {
 
     if (seeMoreElements && boxFullTextElement) {
       seeMoreElements.addEventListener('click', () => {
-        boxFullTextElement.innerHTML = BoxFullText.render(fullText.replace(/\n/g, ' ')); // Xóa xuống dòng trước khi hiển thị
+        boxFullTextElement.innerHTML = BoxFullText.render(fullText.replace(/\n/g, ' ')); 
         (boxFullTextElement as HTMLElement).style.display = 'block';
         BoxFullText.eventListeners();
       });

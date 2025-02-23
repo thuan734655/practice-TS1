@@ -1,14 +1,12 @@
-export class Validate {
-    public static validateEmail(email: string): boolean  {
-        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-        return emailRegex.test(email) ? false : true;
-    }
-
-    public static validatePassword(password: string): boolean  {
-        return password.length >= 6 ? false : true;
-    }
-
-    public static validateName(name: string): boolean{
-        return name.length > 0 ? false : true;
+class ValidateAuth {
+    public static validatePassword(password: string): string {
+        if (password.length < 6) return "At least 6 characters.";
+        if (!/[A-Z]/.test(password)) return "Include an uppercase letter.";
+        if (!/[a-z]/.test(password)) return "Include a lowercase letter.";
+        if (!/\d/.test(password)) return "Include a number.";
+        if (!/[@$!%*?&]/.test(password)) return "Include a special character.";
+        return "";
     }
 }
+
+export default ValidateAuth;
