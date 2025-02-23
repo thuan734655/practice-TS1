@@ -223,3 +223,11 @@
     
   }
 }
+.empty {
+  @include font(
+        $font-size: pxToRem(18),
+        $font-weight: 400,
+        $line-height: pxToRem(24),
+        $color: $first-button
+      );
+}
