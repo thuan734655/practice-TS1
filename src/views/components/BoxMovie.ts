@@ -21,7 +21,7 @@ class BoxMovie {
       },
       {
         title: "Genres",
-        value: TruncateText.render(data.genres.join(", "),40,"geners"),
+        value: TruncateText.render(data.genres.join(", "),40,"Genres"),
       },
     ];
   

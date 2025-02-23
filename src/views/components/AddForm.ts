@@ -21,7 +21,7 @@ export default class AddForm {
   }
 
   private static generateFieldHTML(key: string, config: FieldConfig): string {
-    const { label, type, required, placeholder, maxlength, accept, step, max, min, multiple, options } = config;
+    const { label, type, required, placeholder, maxlength, accept, step, max, min, options } = config;
  
     if (type == "select") {
       return `
@@ -56,10 +56,9 @@ export default class AddForm {
           ${accept ? `accept="${accept}"` : ""} 
           ${step ? `step="${step}"` : ""} 
           ${min ? `min="${min}"` : ""} 
-          ${max ? `max="${max}"` : ""} 
-          ${multiple ? "multiple" : ""}
+          ${max ? `max="${max}"` : ""}
         >
-        <p id="error-${key}" class = "error-message">Invalid date</p>
+        <p id="error-${key}" class = "error-message">Invalid</p>
       </div>
     `;
   }
