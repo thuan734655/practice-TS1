@@ -1,5 +1,6 @@
 import { IMedia } from "@/models/mediaForm";
 import formatDate from "@/utils/formatDate";
+import TruncateText from "@/utils/truncateText";
 
 class BoxTVShow {
   static render = (data: IMedia) => {
@@ -11,7 +12,7 @@ class BoxTVShow {
       },
       {
         title: "Status",
-        value: data.status,
+        value: TruncateText.render(data.status,100,"Status"),
       },
       {
         title: "First air date",
@@ -35,7 +36,7 @@ class BoxTVShow {
       },
       {
         title: "Genres",
-        value: data.genres.join(", "),
+        value: TruncateText.render(data.genres.join(", "),100,"Genres"),
       },
     ];
   

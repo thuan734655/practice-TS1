@@ -1,21 +1,15 @@
-import { IMedia } from "@/models/mediaForm";
-import { fieldConfigs } from "@/constants/formFieldConfig";
-import { FieldConfig } from "@/types/componentTypes";
+import { IMedia } from '@/types/mediaForm';
+import { fieldConfigMovies, fieldConfigsTVShow } from '@/constants/formFieldConfig';
+
+import { FieldConfig } from '@/types/componentTypes';
 
 class UpdateForm {
-  public static render(video: Partial<IMedia>): string {
-    const formFields = Object.entries(fieldConfigs).map(([key, config]) => {
-      if (!(key in video)) return "";
+  public static render(media: IMedia): string {
+    const fieldConfig = media.type === 'TV Show' ? fieldConfigsTVShow : fieldConfigMovies;
 
-      const value = video[key as keyof IMedia];
-      const formattedValue = value instanceof Date
-        ? value.toISOString().split("T")[0]
-        : Array.isArray(value)
-        ? value.join(", ")
-        : value != null ? String(value) : "";
-
-      return this.generateFieldHTML(key, config, formattedValue);
-    }).join("");
+    const formFields = Object.keys(fieldConfig)
+      .map(key => this.generateFieldHTML(key, fieldConfig[key], this.getFormattedValue(media[key as keyof IMedia])))
+      .join('');
 
     return `
       <form id="update-feature-form" enctype="multipart/form-data">
@@ -26,38 +20,34 @@ class UpdateForm {
     `;
   }
 
+  private static getFormattedValue(value: unknown): string {
+    if (value instanceof Date) return value.toISOString().split('T')[0];
+    if (Array.isArray(value)) return value.join(', ');
+    return value != null ? String(value) : '';
+  }
+
   private static generateFieldHTML(key: string, config: FieldConfig, formattedValue: string): string {
-    const { label, type, required, placeholder, maxlength, accept, step, max, min, multiple, options } = config;
-  
-    // Nếu trường là "select"
-    if (type === "select") {
-      return `
-        <div class="form-group">
-          <label for="${key}">${label}:</label>
-          <select id="${key}" name="${key}" ${required ? "required" : ""}>
-            ${options?.map(option => {
-              const selected = option === formattedValue ? "selected" : "";
-              return `<option value="${option}" ${selected}>${option}</option>`;
-            }).join('')}
-          </select>
-        </div>
-      `;
+    let { label, type, required, placeholder, maxlength, accept, step, max, min } = config;
+    if (type == 'file') {
+      required = false;
     }
-  
-    // Nếu trường là "textarea"
-    if (type === "textarea") {
+
+    if (type == 'select') {
+      return '';
+    }
+
+    if (type == 'textarea') {
       return `
         <div class="form-group">
           <label for="${key}">${label}:</label>
           <textarea id="${key}" name="${key}" 
-            ${required ? "required" : ""} 
-            ${maxlength ? `maxlength="${maxlength}"` : ""} 
-            placeholder="${placeholder || ""}">${formattedValue}</textarea>
+            ${required ? 'required' : ''} 
+            ${maxlength ? `maxlength="${maxlength}"` : ''} 
+            placeholder="${placeholder || ''}">${formattedValue}</textarea>
         </div>
       `;
     }
-  
-    // Các trường còn lại (input)
+
     return `
       <div class="form-group">
         <label for="${key}">${label}:</label>
@@ -65,21 +55,19 @@ class UpdateForm {
           type="${type}" 
           id="${key}" 
           name="${key}" 
-          ${required ? "required" : ""} 
-          ${placeholder ? `placeholder="${placeholder}"` : ""} 
-          ${maxlength ? `maxlength="${maxlength}"` : ""} 
-          ${accept ? `accept="${accept}"` : ""} 
-          ${step ? `step="${step}"` : ""} 
-          ${max ? `max="${max}"` : ""} 
-          ${min ? `min="${min}"` : ""} 
-          ${multiple ? "multiple" : ""}
+          ${required ? 'required' : ''} 
+          ${placeholder ? `placeholder="${placeholder}"` : ''} 
+          ${maxlength ? `maxlength="${maxlength}"` : ''} 
+          ${accept ? `accept="${accept}"` : ''} 
+          ${step ? `step="${step}"` : ''} 
+          ${max ? `max="${max}"` : ''} 
+          ${min ? `min="${min}"` : ''}
           value="${formattedValue}"
         >
+        <p id="error-update-${key}" class = "error-message">Invalid</p>
       </div>
     `;
   }
-  
-  
 }
 
 export default UpdateForm;
