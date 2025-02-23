@@ -18,11 +18,9 @@ export abstract class BasePage {
     }
   }
 
-  protected getState<T>(key: string): T | null {
+  protected getState<T>(key: string): T {
     const jsonString = this.state[key];
-    if (!jsonString) {
-      return null;
-    }
+    
     const parsedData: unknown = JSON.parse(jsonString);
 
     if (parsedData == false) {

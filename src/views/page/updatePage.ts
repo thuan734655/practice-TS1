@@ -16,13 +16,10 @@ export class UpdatePage extends BasePage {
   }
 
   public renderContent(data: ContentRender): string {
-    this.setState<IMedia>('mediaRes', data.mediaRes as IMedia);
-    this.setState<number>('idMedia', data.idMedia as number);
     const media = data.mediaRes as IMedia;
-
-    Object.keys(media).forEach(key => {
-      this.setState(key, media[key as keyof IMedia]);
-    });
+    
+    this.setState<IMedia>('mediaRes', media);
+    this.setState<number>('idMedia', data.idMedia as number);
 
     return `
             ${Header.render()}
@@ -48,6 +45,15 @@ export class UpdatePage extends BasePage {
     this.attachSubmitEventListener();
     this.attachBackEventListener();
   }
+  private attachBackEventListener(): void {
+    const backButton = document.querySelector('.btn-back');
+    if (backButton) {
+      backButton.addEventListener('click', () => {
+        Router.getInstance().navigateTo(`/add/${getDataLocalStorage('name')}`);
+      });
+    }
+  }
+
   private attachSubmitEventListener(): void {
     const form = document.getElementById('update-feature-form') as HTMLFormElement;
     const media = this.getState<IMedia>('mediaRes');
@@ -58,27 +64,28 @@ export class UpdatePage extends BasePage {
         const formData = buildFormData(form);
 
         Object.keys(media).forEach(key => {
-          if (this.getState(key) == formData.get(key)) {
+          if (media[key as keyof IMedia] == formData.get(key)) {
             formData.delete(key);
           }
         });
-        this.updateMediaData(formData);
+        let isEmpty = false;
+        formData.forEach((vale, key) => {
+          console.log(vale, key);
+          isEmpty = true;
+        });
+
+        isEmpty ? this.updateMediaData(formData, media) : Toast.showError('Nothing to update');
       });
     }
   }
-  private attachBackEventListener(): void {
-    const backButton = document.querySelector('.btn-back');
-    if (backButton) {
-      backButton.addEventListener('click', () => {
-        Router.getInstance().navigateTo(`/add/${getDataLocalStorage('name')}`);
-      });
-    }
-  }
-  private async updateMediaData(formData: FormData): Promise<void> {
+
+  private async updateMediaData(formData: FormData, media: IMedia): Promise<void> {
     const idMedia = this.getState<number>('idMedia');
     const mediaRes = this.getState<IMedia>('mediaRes');
     if (idMedia && mediaRes) {
-      const result = await mediaController.updateMovie(idMedia, formData);
+      const result = await mediaController.updateMovie(idMedia, formData, media);
+
+      if (result == null) return;
 
       if (!result) {
         const resetData: ContentRender = {
