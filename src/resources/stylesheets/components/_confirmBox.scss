@@ -1,0 +1,56 @@
+@use "../Abstract/" as *;
+
+.confirm-container {
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    .confirm-box {
+        width: 280px;
+        padding: 20px;
+        background: $fourth-color;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    
+        .confirm-title {
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: #333;
+        }
+    
+        .confirm-options {
+            display: flex;
+            justify-content: space-around;
+    
+            .confirm-btn {
+                padding: 8px 16px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: 0.3s;
+    
+                &.confirm-yes {
+                    background: #28a745;
+                    color: white;
+    
+                    &:hover {
+                        background: #218838;
+                    }
+                }
+    
+                &.confirm-no {
+                    background: #dc3545;
+                    color: white;
+    
+                    &:hover {
+                        background: #c82333;
+                    }
+                }
+            }
+        }
+    }
+}

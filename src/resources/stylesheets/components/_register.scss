@@ -43,6 +43,19 @@
     form {
       @include flex($direction: column, $gap: pxToRem(15));
 
+      .register-input-password {
+        position: relative;
+
+        .register-eyes {
+          position: absolute;
+          right: pxToRem(10);
+          top: pxToRem(8);
+          cursor: pointer;
+        }
+      }
+      p {
+        padding-top: pxToRem(5);
+      }
       input {
         @include set-size($w: 100%, $h: pxToRem(40));
         @include font($font-size: pxToRem(14), $color: $text-input);
