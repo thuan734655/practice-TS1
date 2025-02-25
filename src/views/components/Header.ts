@@ -14,7 +14,7 @@ export default class Header {
   static listNavIcon: NavItem[] = [
     {
       text: `<figure><img src="${IcLogout}" alt="logout"/><figcaption>Logout</figcaption></figure>`,
-      href: '/login',
+      href: '/logout',
     },
   ];
   public static render(): string {

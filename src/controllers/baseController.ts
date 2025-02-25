@@ -9,6 +9,7 @@ import { MoviePage } from '@/views/page/moivePage.ts';
 import { TvShowPage } from '@/views/page/tvshowPage.ts';
 import { ErrorPage } from '@/views/page/errorPage.ts';
 import { Router } from '@/router/router.ts';
+import { removeDataLocalStorage } from '@/utils/localStorage.ts';
 
 export class BaseController {
   /**
@@ -47,6 +48,13 @@ export class BaseController {
         const authPage = new AuthPage();
         root.innerHTML = authPage.renderContent();
         authPage.afterRender();
+      },
+
+      '/logout': async () => {
+        const authPage = new AuthPage();
+        root.innerHTML = authPage.renderContent();
+        authPage.afterRender();
+        removeDataLocalStorage('name');
       },
 
       '/add/:author': async () => {

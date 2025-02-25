@@ -1,6 +1,6 @@
 import { HomePage } from './src/views/page/homePage';
 import { Router } from './src/router/router';
-import {getDataLocalStorage} from "./src/utils/localStorage";
+import { getDataLocalStorage } from './src/utils/localStorage';
 
 class App {
   private static instance: App;
@@ -18,40 +18,27 @@ class App {
   }
 
   public async initialize(): Promise<void> {
-    try {
-      const rootElement = document.getElementById('app');
-      if (!rootElement) {
-        throw new Error('Root element not found! Please ensure an element with id "app" exists in your HTML.');
-      }
-
-      // Set up router
-      this.router.setRoot(rootElement);
-      this.router.addRoute('/', 'Login');
-      this.router.addRoute('/login', 'Login');
-      this.router.addRoute('/home', 'Home');
-      this.router.addRoute('/add/:author', 'Add');
-      this.router.addRoute('/update/:id', 'Update');
-      this.router.addRoute('/detail/:id', 'Detai');
-      this.router.addRoute('/movies', 'Movie');
-      this.router.addRoute('/tvshows', 'TV Show');
-      this.router.addRoute('/error', 'Error');
-
-      const isLogin = getDataLocalStorage('name');
-      const currentPath = window.location.pathname;
-      if(isLogin && currentPath == "/") { 
-        // Navigate to home page
-        this.router.navigateTo('/home');
-      }
-      else {
-        // Navigate to current path
-        this.router.navigateTo(window.location.pathname);
-      }
-      
-    } catch (error) {
-      console.error('Failed to initialize application:', error);
+    const rootElement = document.getElementById('app') as HTMLElement;
+    if (!rootElement) {
+      console.log('Root element not found! Please ensure an element with id "app" exists in your HTML.');
     }
-  }
 
+    // Set up router
+    this.router.setRoot(rootElement);
+    this.router.addRoute('/', 'Login');
+    this.router.addRoute('/login', 'Login');
+    this.router.addRoute('/logout', 'Login');
+    this.router.addRoute('/home', 'Home');
+    this.router.addRoute('/add/:author', 'Add');
+    this.router.addRoute('/update/:id', 'Update');
+    this.router.addRoute('/detail/:id', 'Detai');
+    this.router.addRoute('/movies', 'Movie');
+    this.router.addRoute('/tvshows', 'TV Show');
+    this.router.addRoute('/error', 'Error');
+
+    // Navigate to current path
+    this.router.navigateTo(window.location.pathname);
+  }
 }
 
 // Initialize app when DOM is loaded
