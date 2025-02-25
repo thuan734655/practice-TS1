@@ -7,11 +7,11 @@ import { IAuthResponse } from '@/types/apiResponseTypes.ts';
 import ValidateAuth from '@/helper/validateAuth.ts';
 
 export default class AuthController {
-  public static async login(dataLogin: dataLogin): Promise<IAuthResponse | null> {
+  public static async login(dataLogin: dataLogin): Promise<IAuthResponse> {
     const validatePassword = ValidateAuth.validatePassword(dataLogin.password);
-    if (validatePassword != '') {
+    if (validatePassword) {
       showErrorAndEditText('password', validatePassword);
-      return null;
+      return { success: false, message: '', isValid: true };
     }
 
     clearError('password');
@@ -27,11 +27,11 @@ export default class AuthController {
     }
   }
 
-  public static async register(dataRegister: dataRegister): Promise<IAuthResponse | null> {
+  public static async register(dataRegister: dataRegister): Promise<IAuthResponse> {
     const validatePassword = ValidateAuth.validatePassword(dataRegister.password);
-    if (validatePassword != '') {
+    if (validatePassword) {
       showErrorAndEditText('register-password', validatePassword);
-      return null;
+      return { success: false, message: '', isValid: true };
     }
 
     clearError('register-password');

@@ -142,8 +142,8 @@ export class AuthPage extends BasePage {
     });
 
     eyeIcon.addEventListener('click', () => {
-      const isPasswordVisible = (input_pass).type === 'text';
-      (input_pass ).type = isPasswordVisible ? 'password' : 'text';
+      const isPasswordVisible = input_pass.type === 'text';
+      input_pass.type = isPasswordVisible ? 'password' : 'text';
     });
   }
 
@@ -151,7 +151,7 @@ export class AuthPage extends BasePage {
     const dataLogin = { email: email, password: password };
     const result = await AuthController.login(dataLogin);
 
-    if (result == null) return;
+    if (result.isValid) return;
 
     if (result.success) {
       Toast.showSuccess('Login Success');
@@ -163,10 +163,10 @@ export class AuthPage extends BasePage {
     const dataRegister: dataRegister = { email: email, password: password, name: name };
     const result = await AuthController.register(dataRegister);
 
-    if (result == null) return;
+    if (result.isValid) return;
 
     if (result.success) {
-      Toast.showSuccess('Login Success');
+      Toast.showSuccess(result.message);
     } else {
       Toast.showError(result.message);
     }

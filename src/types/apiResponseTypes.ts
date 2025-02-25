@@ -15,4 +15,5 @@ export type IUserResponse = {
 export interface IAuthResponse  {
     success: boolean;
     message: string;
+    isValid?: boolean;
 }

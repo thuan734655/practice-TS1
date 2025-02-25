@@ -51,7 +51,7 @@ export class BaseController {
 
       '/add/:author': async () => {
         const addPage = new AddPage();
-        const author = params.author;
+        const author = decodeURIComponent(params.author);
 
         const result = await mediaController.getMovieByAuthor(author, {
           page,

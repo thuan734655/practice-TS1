@@ -64,7 +64,7 @@ export class UpdatePage extends BasePage {
     if (form && media) {
       form.addEventListener('submit', async event => {
         event.preventDefault();
-        
+
         const isConfirmBoxVisible = this.toggleConfirmBox(this.getState<boolean>('isConfirmBoxShow'), this.getState<string>('titleConfirm'));
         this.setState<boolean>('isConfirmBoxShow', isConfirmBoxVisible);
 
@@ -77,6 +77,7 @@ export class UpdatePage extends BasePage {
               formData.delete(key);
             }
           });
+          
           let isEmpty = false;
           formData.forEach((vale, key) => {
             console.log(vale, key);
@@ -86,7 +87,7 @@ export class UpdatePage extends BasePage {
           isEmpty ? this.updateMediaData(formData, media) : Toast.showError('Nothing to update');
         }
 
-         this.setState<boolean>('isConfirmBoxShow', this.toggleConfirmBox(this.getState<boolean>('isConfirmBoxShow')));
+        this.setState<boolean>('isConfirmBoxShow', this.toggleConfirmBox(this.getState<boolean>('isConfirmBoxShow')));
       });
     }
   }

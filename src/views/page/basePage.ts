@@ -1,4 +1,4 @@
-import { ContentRender } from "@/types/basePageTypes";
+import { ContentRender } from '@/types/basePageTypes';
 
 export abstract class BasePage {
   protected state: Record<string, string> = {};
@@ -20,12 +20,9 @@ export abstract class BasePage {
 
   protected getState<T>(key: string): T {
     const jsonString = this.state[key];
-    
+
     const parsedData: unknown = JSON.parse(jsonString);
 
-    if (parsedData == false) {
-      return false as T;
-    }
     return parsedData as T;
   }
 }

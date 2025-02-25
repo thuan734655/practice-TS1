@@ -225,7 +225,8 @@ export class AddPage extends BasePage {
       if (isSearching) {
         this.updateSearchContent(searchInput.value.trim());
         updateSearchState(false);
-      } else { // button: cancel -> search
+      } else {
+        // button: cancel -> search
         searchInput.value = '';
         this.updateSearchContent('');
         updateSearchState(true);
