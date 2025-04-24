@@ -1,21 +1,23 @@
 import header from '../components/Header';
-import { ContentRender } from "@/types/basePageTypes";
-import { BasePage } from "./basePage";
+import { ContentRender } from '@/types/basePageTypes';
+import { BasePage } from './basePage';
 import { IcStar } from '../../resources/assets/icons';
 import { IMedia } from '@/types/mediaForm';
 import { BASE_URL } from '@/constants/baseURL';
 import BoxMovie from '../components/BoxMovie';
 import BoxTVShow from '../components/BoxTVShow';
+import TruncateText from '@/utils/truncateText';
 
 class TvShowsDetailsPage extends BasePage {
   constructor() {
     super();
   }
 
-  public  renderContent(content: ContentRender): string {
-    this.setState<IMedia>("mediaRes", content.mediaRes as IMedia);
-    this.setState<number>("idMedia", content.idMedia as number );
-   
+  public renderContent(content: ContentRender): string {
+    const mediaRes = content.mediaRes as IMedia;
+    this.setState<IMedia>('mediaRes', mediaRes);
+    this.setState<number>('idMedia', content.idMedia as number);
+
     return `
       ${header.render()}
      <section class="section-main-tvshow"  id= "rootApp"> 
@@ -23,7 +25,7 @@ class TvShowsDetailsPage extends BasePage {
         <div class="section-main-tvshow__container--top">
         <div class="top-container">
            <figure>
-           <img src="${BASE_URL}${this.getState<IMedia>("mediaRes")?.background ?? ""}" alt="background">
+           <img src="${BASE_URL}${mediaRes.background}" alt="background">
            </figure>
          <div class="top-detail">
           <div class="top-detail-container">
@@ -32,7 +34,7 @@ class TvShowsDetailsPage extends BasePage {
             <p>/</p>
             <a class="nav-TVShows link" href="/tvshows">TV Shows</a>
            </div> 
-           <div class="top-detail-container--name-movie">${this.getState<IMedia>("mediaRes")?.movie_name ?? "" }</div>
+           <div class="top-detail-container--name-movie">${TruncateText.render(mediaRes.movie_name, 100, 'movie_name')}</div>
           </div>
          </div> <!-- end top-detail --> 
         </div>
@@ -41,17 +43,17 @@ class TvShowsDetailsPage extends BasePage {
         <div class="bottom-container">
          <div class="bottom-container--left">
         <figure>
-           <img src="${BASE_URL}${this.getState<IMedia>("mediaRes")?.avatar ?? ""}" alt="Avatar">
+           <img src="${BASE_URL}${mediaRes.avatar}" alt="Avatar">
         </figure>
          </div>
          <div class="bottom-container--right">
           <div class="right--head">
-           <p class="head--title">${this.getState<IMedia>("mediaRes")?.title ?? "" }</p>
-           <p class="head--desc">${this.getState<IMedia>("mediaRes")?.description ?? ""}</p>
+           <p class="head--title">${TruncateText.render(mediaRes.title, 100, 'title')}</p>
+           <p class="head--desc">${TruncateText.render(mediaRes.description, 100, 'desc')}</p>
            <figure>
            <img src="${IcStar}" alt="Star">
            <figcaption>
-           ${this.getState<IMedia>("mediaRes")?.rating ?? "" }
+           ${mediaRes.rating}
            </figcaption>
            </figure>
            </div> <!-- end right--head --> 
@@ -62,33 +64,37 @@ class TvShowsDetailsPage extends BasePage {
         </div>
         </div><!-- end section-main-tvshow__container--bottom -->
        </div> 
+       <div class = "box-full-text"></div>
       </section>
     `;
   }
 
   public afterRender(): void {
-    const navLinks = document.querySelectorAll('.link');
-    navLinks.forEach((link) => {
-      link.addEventListener('click', (event) => {
-        event.preventDefault();
-        const target = (event.target as HTMLElement).getAttribute('data-href');
-        if (target) {
-          window.location.href = target;
-        }
-      });
+    this.attachBoxFullTextEventListeners();
+  }
+private attachBoxFullTextEventListeners() {
+    const media = this.getState<IMedia>('mediaRes');
+    if (!media) return;
+
+    const truncateFields = [
+        { key: 'title', value: media.title },
+        { key: 'desc', value: media.description },
+        { key: 'movie_name', value: media.movie_name },
+        { key: 'Genres', value: media.genres.join(', ') },
+        { key: 'Status', value: media.status }
+    ];
+
+    truncateFields.forEach(field => {
+        TruncateText.eventListener(`truncate-text-${field.key}`, field.value);
     });
-  }
+}
   public TvShowOrMovie(): string {
-    const media = this.getState<IMedia>("mediaRes");
-    if(media != null) {
-      if ( media.type == "TV Show") {
-        return BoxMovie.render(media);
-      } else {
-        return BoxTVShow.render(media);
-      }
-    }
-    return "";
-  }
+    const media = this.getState<IMedia>('mediaRes');
+    if (!media) return '';
+
+    return media.type === 'TV Show' ? BoxTVShow.render(media) : BoxMovie.render(media);
+}
+
 }
 
 export default TvShowsDetailsPage;
